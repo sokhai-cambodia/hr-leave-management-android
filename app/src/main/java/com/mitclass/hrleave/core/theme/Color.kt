@@ -1,6 +1,7 @@
 package com.mitclass.hrleave.core.theme
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
 
 // Verified against the Flutter sibling app's actual design system (tasks/plan.md Phase 13),
 // which supersedes the stale SPEC.md §7 table.
@@ -26,5 +27,10 @@ val DarkSurface = Color(0xFF1E1E1E)
  * STYLE_GUIDE.md "status pastel formula": derive a badge/stat-card background by blending the
  * status color at 14% alpha over white, using the full-saturation color as the foreground. One
  * shared helper instead of hand-picked bg/fg pairs per status.
+ *
+ * Actually composites down to an OPAQUE color rather than returning a translucent
+ * `copy(alpha = 0.14f)` — a translucent Card background lets its own elevation shadow show
+ * through unevenly (stronger near the edges), producing a muddy two-tone "frame" instead of a
+ * flat pastel fill.
  */
-fun Color.pastelContainer(): Color = this.copy(alpha = 0.14f)
+fun Color.pastelContainer(): Color = this.copy(alpha = 0.14f).compositeOver(Color.White)
