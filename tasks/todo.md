@@ -67,5 +67,5 @@ Full detail (acceptance criteria, verify steps) in `tasks/plan.md`.
 ## Phase 12 — Hardening & Report-Readiness
 - [x] 12.1 Targeted unit tests
 - [x] 12.2 Lint-clean pass + empty/error/loading state audit + feature checklist walkthrough
-- [ ] 12.3 App icon, display name, screenshots for the report
+- [x] 12.3 App icon, display name, screenshots for the report
 - [ ] **Checkpoint 12 (final)**
