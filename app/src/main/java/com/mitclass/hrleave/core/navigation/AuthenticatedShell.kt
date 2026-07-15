@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.mitclass.hrleave.core.notifications.NotificationPermissionRequester
 import com.mitclass.hrleave.data.remote.dto.UserDto
 import kotlinx.coroutines.launch
 
@@ -39,6 +40,7 @@ fun AuthenticatedShell(
     unreadNotificationCount: Int = 0,
     onLogout: () -> Unit,
 ) {
+    NotificationPermissionRequester()
     val navController = rememberNavController()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
