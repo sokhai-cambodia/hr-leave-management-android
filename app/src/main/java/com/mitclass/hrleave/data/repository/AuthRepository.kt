@@ -4,6 +4,8 @@ import com.mitclass.hrleave.core.network.AppResult
 import com.mitclass.hrleave.core.storage.TokenStore
 import com.mitclass.hrleave.data.remote.api.AuthApi
 import com.mitclass.hrleave.core.network.safeApiCall
+import com.mitclass.hrleave.data.remote.dto.MessageDto
+import com.mitclass.hrleave.data.remote.dto.NewPasswordDto
 import com.mitclass.hrleave.data.remote.dto.UserDto
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -54,4 +56,10 @@ class AuthRepository @Inject constructor(
         tokenStore.clearToken()
         _currentUser.value = null
     }
+
+    suspend fun recoverPassword(email: String): AppResult<MessageDto> =
+        safeApiCall { authApi.recoverPassword(email) }
+
+    suspend fun resetPassword(token: String, newPassword: String): AppResult<MessageDto> =
+        safeApiCall { authApi.resetPassword(NewPasswordDto(token = token, newPassword = newPassword)) }
 }

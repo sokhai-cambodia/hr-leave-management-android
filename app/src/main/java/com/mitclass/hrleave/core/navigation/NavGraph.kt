@@ -7,7 +7,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.mitclass.hrleave.feature.auth.AuthViewModel
+import com.mitclass.hrleave.feature.auth.ForgotPasswordScreen
 import com.mitclass.hrleave.feature.auth.LoginScreen
+import com.mitclass.hrleave.feature.auth.ResetPasswordScreen
 import com.mitclass.hrleave.feature.auth.SessionState
 import com.mitclass.hrleave.feature.auth.WelcomeScreen
 
@@ -19,7 +21,23 @@ fun NavGraph(
 ) {
     NavHost(navController = navController, startDestination = startDestination) {
         composable(Destination.Login.route) {
-            LoginScreen()
+            LoginScreen(
+                onForgotPassword = { navController.navigate(Destination.ForgotPassword.route) },
+            )
+        }
+        composable(Destination.ForgotPassword.route) {
+            ForgotPasswordScreen(
+                onBack = { navController.popBackStack() },
+                onHaveResetToken = { navController.navigate(Destination.ResetPassword.route) },
+            )
+        }
+        composable(Destination.ResetPassword.route) {
+            ResetPasswordScreen(
+                onResetSuccess = {
+                    navController.popBackStack(Destination.Login.route, inclusive = false)
+                },
+                onBack = { navController.popBackStack() },
+            )
         }
         composable(Destination.Welcome.route) {
             val sessionState by authViewModel.sessionState.collectAsState()
