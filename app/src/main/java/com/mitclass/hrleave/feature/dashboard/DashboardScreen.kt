@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.mitclass.hrleave.core.ui.OnResume
 import com.mitclass.hrleave.data.remote.dto.LeaveBalanceDto
 import com.mitclass.hrleave.data.remote.dto.UserDto
 import java.util.Locale
@@ -44,6 +45,9 @@ fun DashboardScreen(
     LaunchedEffect(isApprover) {
         if (isApprover) pendingApprovalsViewModel.loadIfNeeded()
     }
+    // Balances change as a side effect of actions taken on other screens (e.g. submitting a
+    // leave request debits them) - refresh on every return to the dashboard, not just once.
+    OnResume(onResume = leaveBalancesViewModel::load)
 
     Column(
         modifier = Modifier
