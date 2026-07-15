@@ -56,9 +56,8 @@ fun LoginScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(24.dp),
-        verticalArrangement = Arrangement.Top,
+        verticalArrangement = Arrangement.Center,
     ) {
-        Spacer(Modifier.height(AppSpacing.xl))
         TwoToneWordmark()
         Spacer(Modifier.height(AppSpacing.lg))
         Text(
