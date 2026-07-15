@@ -187,7 +187,10 @@ fun LeavePlanRequestFormScreen(
         AppTextField(
             value = state.description,
             onValueChange = viewModel::onDescriptionChanged,
-            label = "Description (optional)",
+            label = "Description",
+            placeholder = "Enter reason or extra notes (optional)...",
+            singleLine = false,
+            minLines = 3,
         )
 
         state.errorMessage?.let {
@@ -195,25 +198,25 @@ fun LeavePlanRequestFormScreen(
         }
 
         Spacer(Modifier.height(AppSpacing.lg))
-        if (viewModel.isPrefilled && !viewModel.isEditMode) {
-            // Task 6.3: the AI-recommendation entry point offers a one-tap "Submit now"
-            // alongside the regular draft save — the plan's create-mode submit hierarchy
-            // (primary Submit over an outlined Save as Draft).
+        if (!viewModel.isEditMode) {
+            // Create-mode submit hierarchy (Task 14.5): primary Submit over an outlined
+            // Save as Draft, same as the single-Leave-Request form — not just the
+            // recommendation-prefilled path (Task 6.3).
             AppButton(
-                text = "Submit now",
+                text = "Submit",
                 onClick = viewModel::saveAndSubmit,
                 enabled = state.canSave,
                 loading = state.isSaving,
             )
             Spacer(Modifier.height(AppSpacing.sm))
             AppOutlinedButton(
-                text = "Save draft",
+                text = "Save as Draft",
                 onClick = viewModel::save,
                 enabled = state.canSave,
             )
         } else {
             AppButton(
-                text = if (viewModel.isEditMode) "Save changes" else "Save draft",
+                text = "Update",
                 onClick = viewModel::save,
                 enabled = state.canSave,
                 loading = state.isSaving,

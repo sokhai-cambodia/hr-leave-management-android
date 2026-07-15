@@ -1,12 +1,12 @@
 package com.mitclass.hrleave.feature.dashboard
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -14,15 +14,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.EventNote
 import androidx.compose.material.icons.automirrored.filled.FactCheck
-import androidx.compose.material.icons.filled.Approval
-import androidx.compose.material.icons.filled.CalendarToday
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -40,8 +36,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mitclass.hrleave.core.theme.AppSpacing
 import com.mitclass.hrleave.core.theme.BrandPrimary
-import com.mitclass.hrleave.core.theme.CardCornerRadius
-import com.mitclass.hrleave.core.theme.CardElevation
 import com.mitclass.hrleave.core.theme.InfoColor
 import com.mitclass.hrleave.core.theme.WarningColor
 import com.mitclass.hrleave.core.ui.EmptyStateView
@@ -77,7 +71,7 @@ fun DashboardScreen(
             .verticalScroll(rememberScrollState())
             .padding(AppSpacing.lg),
     ) {
-        ProfileCard(user = user)
+        ProfileHeader(user = user)
         Spacer(Modifier.height(AppSpacing.lg))
         Row(horizontalArrangement = Arrangement.spacedBy(AppSpacing.md)) {
             PastelActionTile(
@@ -99,7 +93,6 @@ fun DashboardScreen(
         val balancesState by leaveBalancesViewModel.uiState.collectAsState()
         Row(horizontalArrangement = Arrangement.spacedBy(AppSpacing.md)) {
             StatCard(
-                icon = Icons.Filled.CalendarToday,
                 label = "Available Days",
                 value = availableDaysValue(balancesState),
                 tint = InfoColor,
@@ -108,7 +101,6 @@ fun DashboardScreen(
             if (isApprover) {
                 val approvalsState by pendingApprovalsViewModel.uiState.collectAsState()
                 StatCard(
-                    icon = Icons.Filled.Approval,
                     label = "Approvals",
                     value = approvalsValue(approvalsState),
                     tint = WarningColor,
@@ -122,9 +114,14 @@ fun DashboardScreen(
             Text(
                 text = "Quick actions",
                 style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(top = AppSpacing.xl, bottom = AppSpacing.md),
+                modifier = Modifier.padding(top = AppSpacing.xl, bottom = AppSpacing.sm),
             )
-            QuickActionsGrid(quickActions = quickActions, onClick = onQuickActionClick)
+            Column {
+                quickActions.forEachIndexed { index, action ->
+                    QuickActionRow(action = action, onClick = { onQuickActionClick(action) })
+                    if (index != quickActions.lastIndex) HorizontalDivider()
+                }
+            }
         }
     }
 }
@@ -150,39 +147,33 @@ private fun initials(fullName: String?, email: String): String {
 }
 
 @Composable
-private fun ProfileCard(user: UserDto) {
-    Card(
+private fun ProfileHeader(user: UserDto) {
+    Row(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(CardCornerRadius),
-        elevation = CardDefaults.cardElevation(defaultElevation = CardElevation),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
-            modifier = Modifier.padding(AppSpacing.lg),
-            verticalAlignment = Alignment.CenterVertically,
+        Box(
+            modifier = Modifier
+                .size(56.dp)
+                .background(color = BrandPrimary.copy(alpha = 0.15f), shape = CircleShape),
+            contentAlignment = Alignment.Center,
         ) {
-            Box(
-                modifier = Modifier
-                    .size(56.dp)
-                    .background(color = BrandPrimary.copy(alpha = 0.15f), shape = CircleShape),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    text = initials(user.fullName, user.email),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = BrandPrimary,
-                    fontWeight = FontWeight.Bold,
-                )
-            }
-            Spacer(Modifier.width(AppSpacing.md))
-            Column {
-                Text(text = user.fullName ?: user.email, style = MaterialTheme.typography.titleLarge)
-                Text(text = user.email, style = MaterialTheme.typography.bodyMedium)
-                Text(
-                    text = user.team?.name ?: "No team assigned",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
+            Text(
+                text = initials(user.fullName, user.email),
+                style = MaterialTheme.typography.titleMedium,
+                color = BrandPrimary,
+                fontWeight = FontWeight.Bold,
+            )
+        }
+        Spacer(Modifier.width(AppSpacing.md))
+        Column {
+            Text(text = user.fullName ?: user.email, style = MaterialTheme.typography.titleLarge)
+            Text(text = user.email, style = MaterialTheme.typography.bodyMedium)
+            Text(
+                text = user.team?.name ?: "No team assigned",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }
@@ -192,7 +183,7 @@ private fun LeaveBalancesSection(state: LeaveBalancesUiState, onRetry: () -> Uni
     Text(
         text = "Leave Balances",
         style = MaterialTheme.typography.titleMedium,
-        modifier = Modifier.padding(top = AppSpacing.xl, bottom = AppSpacing.md),
+        modifier = Modifier.padding(top = AppSpacing.xl, bottom = AppSpacing.sm),
     )
     when (state) {
         is LeaveBalancesUiState.Loading -> CircularProgressIndicator(modifier = Modifier.padding(8.dp))
@@ -204,16 +195,10 @@ private fun LeaveBalancesSection(state: LeaveBalancesUiState, onRetry: () -> Uni
             if (state.balances.isEmpty()) {
                 EmptyStateView(message = "No leave balances yet")
             } else {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(CardCornerRadius),
-                    elevation = CardDefaults.cardElevation(defaultElevation = CardElevation),
-                ) {
-                    Column(modifier = Modifier.padding(vertical = 4.dp)) {
-                        state.balances.forEachIndexed { index, balance ->
-                            LeaveBalanceRow(balance)
-                            if (index != state.balances.lastIndex) HorizontalDivider()
-                        }
+                Column {
+                    state.balances.forEachIndexed { index, balance ->
+                        LeaveBalanceRow(balance)
+                        if (index != state.balances.lastIndex) HorizontalDivider()
                     }
                 }
             }
@@ -226,22 +211,31 @@ private fun LeaveBalanceRow(balance: LeaveBalanceDto) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = AppSpacing.lg, vertical = AppSpacing.md),
+            .padding(vertical = AppSpacing.md),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f)) {
-            Text(text = balance.leaveType.name, style = MaterialTheme.typography.bodyLarge)
+            Text(
+                text = "${balance.leaveType.name} (${balance.leaveType.code})",
+                style = MaterialTheme.typography.bodyLarge,
+            )
             Text(
                 text = "Balance ${formatBalance(balance.balance)} · Taken ${formatBalance(balance.takenBalance)}",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
-        Text(
-            text = formatBalance(balance.availableBalance),
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.primary,
-        )
+        Column(horizontalAlignment = Alignment.End) {
+            Text(
+                text = formatBalance(balance.availableBalance),
+                style = MaterialTheme.typography.titleMedium,
+            )
+            Text(
+                text = "available",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
     }
 }
 
@@ -253,41 +247,22 @@ private fun formatBalance(value: Double): String =
     }
 
 @Composable
-private fun QuickActionsGrid(quickActions: List<QuickAction>, onClick: (QuickAction) -> Unit) {
-    Column(verticalArrangement = Arrangement.spacedBy(AppSpacing.md)) {
-        quickActions.chunked(2).forEach { rowActions ->
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(AppSpacing.md),
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                rowActions.forEach { action ->
-                    Box(modifier = Modifier.weight(1f)) {
-                        QuickActionTile(action = action, onClick = { onClick(action) })
-                    }
-                }
-                if (rowActions.size == 1) Box(modifier = Modifier.weight(1f))
-            }
-        }
-    }
-}
-
-@Composable
-private fun QuickActionTile(action: QuickAction, onClick: () -> Unit) {
-    Card(
-        onClick = onClick,
-        shape = RoundedCornerShape(CardCornerRadius),
-        elevation = CardDefaults.cardElevation(defaultElevation = CardElevation),
+private fun QuickActionRow(action: QuickAction, onClick: () -> Unit) {
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .aspectRatio(1.4f),
+            .clickable(onClick = onClick)
+            .padding(vertical = AppSpacing.md),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Column(
-            modifier = Modifier.padding(AppSpacing.lg),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            Icon(imageVector = action.icon, contentDescription = null)
-            Text(text = action.label, style = MaterialTheme.typography.bodyMedium)
-        }
+        Icon(imageVector = action.icon, contentDescription = null)
+        Text(
+            text = action.label,
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = AppSpacing.md),
+        )
+        Icon(imageVector = Icons.Filled.ChevronRight, contentDescription = null)
     }
 }

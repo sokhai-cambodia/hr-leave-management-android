@@ -1,6 +1,7 @@
 package com.mitclass.hrleave.feature.notifications
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,12 +13,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -32,8 +31,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mitclass.hrleave.core.theme.AppSpacing
 import com.mitclass.hrleave.core.theme.BrandPrimary
-import com.mitclass.hrleave.core.theme.CardCornerRadius
-import com.mitclass.hrleave.core.theme.CardElevation
 import com.mitclass.hrleave.core.ui.EmptyStateView
 import com.mitclass.hrleave.core.ui.ErrorStateView
 import com.mitclass.hrleave.core.ui.OnResume
@@ -51,11 +48,9 @@ fun NotificationsListScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
+                .padding(horizontal = AppSpacing.lg, vertical = AppSpacing.sm),
+            horizontalArrangement = Arrangement.End,
         ) {
-            Text(text = "Notifications", style = MaterialTheme.typography.titleLarge)
             TextButton(onClick = viewModel::markAllRead) { Text("Mark all read") }
         }
         when (val current = state) {
@@ -72,10 +67,9 @@ fun NotificationsListScreen(
                 } else {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        contentPadding = PaddingValues(horizontal = AppSpacing.lg),
                     ) {
-                        items(current.notifications, key = { it.id }) { notification ->
+                        itemsIndexed(current.notifications, key = { _, item -> item.id }) { index, notification ->
                             NotificationRow(
                                 notification = notification,
                                 onClick = {
@@ -83,6 +77,7 @@ fun NotificationsListScreen(
                                     onNavigateToEntity(notification.entityType)
                                 },
                             )
+                            if (index != current.notifications.lastIndex) HorizontalDivider()
                         }
                         if (current.canLoadMore) {
                             item {
@@ -101,38 +96,32 @@ fun NotificationsListScreen(
 
 @Composable
 private fun NotificationRow(notification: NotificationDto, onClick: () -> Unit) {
-    Card(
-        onClick = onClick,
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(CardCornerRadius),
-        elevation = CardDefaults.cardElevation(defaultElevation = CardElevation),
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(vertical = AppSpacing.md),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(AppSpacing.lg),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            if (!notification.isRead) {
-                Box(
-                    modifier = Modifier
-                        .size(8.dp)
-                        .background(color = BrandPrimary, shape = CircleShape),
-                )
-                Spacer(modifier = Modifier.padding(start = 6.dp))
-            }
-            Column(modifier = Modifier.padding(start = if (notification.isRead) 14.dp else 0.dp)) {
-                Text(
-                    text = notification.message,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = if (notification.isRead) FontWeight.Normal else FontWeight.Bold,
-                )
-                Text(
-                    text = notification.createdAt,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
+        if (!notification.isRead) {
+            Box(
+                modifier = Modifier
+                    .size(8.dp)
+                    .background(color = BrandPrimary, shape = CircleShape),
+            )
+            Spacer(modifier = Modifier.padding(start = 6.dp))
+        }
+        Column(modifier = Modifier.padding(start = if (notification.isRead) 14.dp else 0.dp)) {
+            Text(
+                text = notification.message,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = if (notification.isRead) FontWeight.Normal else FontWeight.Bold,
+            )
+            Text(
+                text = notification.createdAt,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }

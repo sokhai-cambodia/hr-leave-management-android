@@ -9,19 +9,19 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -38,9 +38,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mitclass.hrleave.core.theme.AppSpacing
-import com.mitclass.hrleave.core.theme.CardCornerRadius
-import com.mitclass.hrleave.core.theme.CardElevation
-import com.mitclass.hrleave.core.theme.SuccessColor
+import com.mitclass.hrleave.core.theme.BrandPrimary
 import com.mitclass.hrleave.core.theme.WarningColor
 import com.mitclass.hrleave.core.ui.ErrorStateView
 import com.mitclass.hrleave.data.remote.dto.PublicHolidayDto
@@ -51,7 +49,7 @@ import java.time.format.TextStyle
 import java.util.Locale
 
 private val HolidayColor = WarningColor
-private val TeamLeaveColor = SuccessColor
+private val TeamLeaveColor = BrandPrimary
 
 @Composable
 fun ScheduleScreen(
@@ -122,53 +120,69 @@ private fun ScheduleContent(
         )
     }
 
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
+    LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(horizontal = AppSpacing.lg)) {
         item {
-            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+            Column {
                 CalendarGrid(yearMonth = yearMonth, holidaysByDay = holidaysByDay, teamLeaveByDay = teamLeaveByDay)
                 Legend()
                 SectionHeader("Holidays in ${monthLabel(yearMonth)}")
             }
         }
         if (holidaysThisMonth.isEmpty()) {
-            item { EmptyRow("No holidays this month") }
+            item { EmptyRow("No public holidays this month.") }
         } else {
-            items(holidaysThisMonth, key = { "h-${it.id}" }) { holiday ->
-                Card(
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp).fillMaxWidth(),
-                    shape = RoundedCornerShape(CardCornerRadius),
-                    elevation = CardDefaults.cardElevation(defaultElevation = CardElevation),
-                ) {
-                    Column(modifier = Modifier.padding(AppSpacing.md)) {
-                        Text(text = holiday.name, style = MaterialTheme.typography.titleSmall)
-                        Text(text = holiday.date, style = MaterialTheme.typography.bodySmall)
-                    }
+            itemsIndexed(holidaysThisMonth, key = { _, item -> "h-${item.id}" }) { index, holiday ->
+                Column(modifier = Modifier.padding(vertical = AppSpacing.sm)) {
+                    Text(text = holiday.name, style = MaterialTheme.typography.titleSmall)
+                    Text(text = holiday.date, style = MaterialTheme.typography.bodySmall)
                 }
+                if (index != holidaysThisMonth.lastIndex) HorizontalDivider()
             }
         }
         item {
-            SectionHeader("Team Leave in ${monthLabel(yearMonth)}", modifier = Modifier.padding(horizontal = 16.dp))
+            SectionHeader("Team Leave in ${monthLabel(yearMonth)}")
         }
         if (teamLeaveThisMonth.isEmpty()) {
-            item { EmptyRow("No team leave this month") }
+            item { EmptyRow("No team leave this month.") }
         } else {
-            items(teamLeaveThisMonth, key = { "t-${it.id}-${it.startDate}" }) { entry ->
-                Card(
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp).fillMaxWidth(),
-                    shape = RoundedCornerShape(CardCornerRadius),
-                    elevation = CardDefaults.cardElevation(defaultElevation = CardElevation),
+            itemsIndexed(teamLeaveThisMonth, key = { _, item -> "t-${item.id}-${item.startDate}" }) { index, entry ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = AppSpacing.sm),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Column(modifier = Modifier.padding(AppSpacing.md)) {
+                    Box(
+                        modifier = Modifier
+                            .size(32.dp)
+                            .background(color = TeamLeaveColor.copy(alpha = 0.15f), shape = CircleShape),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Person,
+                            contentDescription = null,
+                            tint = TeamLeaveColor,
+                            modifier = Modifier.size(18.dp),
+                        )
+                    }
+                    Column(modifier = Modifier.padding(start = AppSpacing.md).weight(1f)) {
                         Text(
                             text = entry.owner.fullName ?: entry.owner.email,
                             style = MaterialTheme.typography.titleSmall,
                         )
                         Text(
-                            text = "${entry.leaveType.name} · ${entry.startDate} → ${entry.endDate}",
+                            text = entry.leaveType.name,
                             style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
+                    Text(
+                        text = "${entry.startDate} – ${entry.endDate}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                 }
+                if (index != teamLeaveThisMonth.lastIndex) HorizontalDivider()
             }
         }
         item { Spacer(modifier = Modifier.height(16.dp)) }
@@ -192,15 +206,14 @@ private fun EmptyRow(text: String) {
         text = text,
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
-        modifier = Modifier.padding(horizontal = 16.dp),
     )
 }
 
 @Composable
 private fun Legend() {
     Row(modifier = Modifier.padding(vertical = 8.dp), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-        LegendItem(color = HolidayColor, label = "Holiday")
-        LegendItem(color = TeamLeaveColor, label = "Team leave")
+        LegendItem(color = HolidayColor, label = "Public Holiday")
+        LegendItem(color = TeamLeaveColor, label = "Team Leave")
     }
 }
 
@@ -220,22 +233,24 @@ private fun CalendarGrid(
 ) {
     val firstOfMonth = yearMonth.atDay(1)
     val daysInMonth = yearMonth.lengthOfMonth()
-    val leadingBlanks = firstOfMonth.dayOfWeek.value - 1 // Monday-first week
+    // Sunday-first week, matching the Flutter client's actual calendar layout.
+    val leadingBlanks = firstOfMonth.dayOfWeek.value % 7
     val totalCells = leadingBlanks + daysInMonth
     val weeks = (totalCells + 6) / 7
 
     Column {
         Row(modifier = Modifier.fillMaxWidth()) {
-            listOf("Mo", "Tu", "We", "Th", "Fr", "Sa", "Su").forEach { label ->
+            listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat").forEach { label ->
                 Text(
                     text = label,
                     style = MaterialTheme.typography.labelSmall,
-                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(1f),
                 )
             }
         }
+        val today = LocalDate.now()
         for (week in 0 until weeks) {
             Row(modifier = Modifier.fillMaxWidth()) {
                 for (dayOfWeek in 0 until 7) {
@@ -251,6 +266,7 @@ private fun CalendarGrid(
                             val date = yearMonth.atDay(dayNumber)
                             CalendarDayCell(
                                 dayNumber = dayNumber,
+                                isToday = date == today,
                                 hasHoliday = holidaysByDay.containsKey(date),
                                 hasTeamLeave = teamLeaveByDay.containsKey(date),
                             )
@@ -263,9 +279,24 @@ private fun CalendarGrid(
 }
 
 @Composable
-private fun CalendarDayCell(dayNumber: Int, hasHoliday: Boolean, hasTeamLeave: Boolean) {
+private fun CalendarDayCell(dayNumber: Int, isToday: Boolean, hasHoliday: Boolean, hasTeamLeave: Boolean) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = dayNumber.toString(), style = MaterialTheme.typography.bodyMedium)
+        Box(
+            modifier = Modifier
+                .size(28.dp)
+                .background(
+                    color = if (isToday) BrandPrimary.copy(alpha = 0.15f) else Color.Transparent,
+                    shape = CircleShape,
+                ),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = dayNumber.toString(),
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = if (isToday) FontWeight.Bold else FontWeight.Normal,
+                color = if (isToday) BrandPrimary else MaterialTheme.colorScheme.onSurface,
+            )
+        }
         Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
             if (hasHoliday) Box(modifier = Modifier.size(6.dp).background(color = HolidayColor, shape = CircleShape))
             if (hasTeamLeave) Box(modifier = Modifier.size(6.dp).background(color = TeamLeaveColor, shape = CircleShape))

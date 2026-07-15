@@ -86,3 +86,17 @@ sibling app. SPEC.md §7 is stale — ground truth is the Flutter app's actual D
 - [x] 13.8 Auth screens polish (two-tone wordmark, headline, splash)
 - [x] **Checkpoint 13 (final)** — visual consistency pass complete; SPEC.md §7 updated to the
       verified token table
+
+## Phase 14 — Exact Flutter Screenshot Match
+Added after the user supplied real screenshots of the Flutter app (`ui/` folder: login, home,
+leave-list, leave-form, notification, profile, schedule, business card) — ground truth over the
+Phase 13 fork analysis + ui.webp moodboard where they conflict. Business Card stays out of scope
+(SPEC.md-documented Phase 11 decision; no username/phone fields in the backend contract either).
+- [x] 14.1 Login screen exact match (subtitle, field labels, right-aligned Forgot password, casing)
+- [x] 14.2 FAB shape fix (rounded-square, not circular)
+- [x] 14.3 Dashboard flat sections + StatCard fix (no card wrapper, no icon badge)
+- [x] 14.4 List rows flatten + StatusChip border/casing + segmented control checkmark fix
+- [x] 14.5 Leave form Submit+Save-as-Draft dual action (both request types) + outlined date fields
+- [x] 14.6 Profile restructure + fix missing Logout button (regression from 13.2's drawer removal)
+- [x] 14.7 Schedule color fix (team leave = red not green) + flatten rows
+- [x] **Checkpoint 14 (final)** — full build/lint/test clean, merged to main

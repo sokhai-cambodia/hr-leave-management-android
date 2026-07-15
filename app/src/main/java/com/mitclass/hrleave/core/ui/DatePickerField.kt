@@ -1,5 +1,6 @@
 package com.mitclass.hrleave.core.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,15 +32,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.mitclass.hrleave.core.theme.AppSpacing
-import com.mitclass.hrleave.core.theme.LightFieldFill
+import com.mitclass.hrleave.core.theme.LightBorder
 import com.mitclass.hrleave.core.theme.TextFieldCornerRadius
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
 
 /**
- * Bold label + a filled InkWell-style trigger surface (Task 13.6) opening the same Material3
- * date picker dialog — shared by every start/end/single-date field.
+ * Bold label + an outlined (white bg + border) trigger surface — distinct from the filled
+ * AppTextField convention, matching the Flutter client's actual date fields (`ui/leave-form.jpg`)
+ * — opening the same Material3 date picker dialog. Shared by every start/end/single-date field.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -60,7 +62,8 @@ fun DatePickerField(
                 .fillMaxWidth()
                 .clickable(enabled = enabled) { showDialog = true },
             shape = RoundedCornerShape(TextFieldCornerRadius),
-            color = LightFieldFill,
+            color = MaterialTheme.colorScheme.surface,
+            border = BorderStroke(1.dp, LightBorder),
         ) {
             Row(
                 modifier = Modifier
@@ -70,7 +73,7 @@ fun DatePickerField(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = date?.toString() ?: "Select date",
+                    text = date?.toString() ?: "Select Date",
                     style = MaterialTheme.typography.bodyLarge,
                     color = if (date != null) LocalContentColor.current else MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.weight(1f),

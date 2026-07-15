@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mitclass.hrleave.core.network.AppResult
+import com.mitclass.hrleave.data.remote.dto.LeaveRequestDto
 import com.mitclass.hrleave.data.remote.dto.LeaveRequestUpsertDto
 import com.mitclass.hrleave.data.remote.dto.LeaveTypeDto
 import com.mitclass.hrleave.data.repository.LeaveRequestsRepository
@@ -26,6 +27,7 @@ data class LeaveRequestFormUiState(
     val isSaving: Boolean = false,
     val errorMessage: String? = null,
     val saved: Boolean = false,
+    val submittedRequestId: String? = null,
 ) {
     val canSave: Boolean
         get() = !isSaving && selectedLeaveTypeId != null && startDate != null && endDate != null &&
@@ -40,6 +42,12 @@ class LeaveRequestFormViewModel @Inject constructor(
 ) : ViewModel() {
     private val existingId: String? = savedStateHandle[LeaveRequestRoutes.FORM_ARG]
     val isEditMode: Boolean get() = existingId != null
+
+    // Task 14.5: mirrors LeavePlanRequestFormViewModel's create-then-submit pattern — once
+    // "Submit" (or a plain save) creates the row server-side, every subsequent save/submit
+    // targets that row via update(), never a second create().
+    private var createdId: String? = null
+    private val effectiveId: String? get() = existingId ?: createdId
 
     private val _uiState = MutableStateFlow(LeaveRequestFormUiState())
     val uiState: StateFlow<LeaveRequestFormUiState> = _uiState.asStateFlow()
@@ -98,25 +106,56 @@ class LeaveRequestFormViewModel @Inject constructor(
 
     fun save() {
         val state = _uiState.value
-        val leaveTypeId = state.selectedLeaveTypeId ?: return
-        val start = state.startDate ?: return
-        val end = state.endDate ?: return
-        if (state.isSaving) return
+        if (!state.canSave) return
 
         viewModelScope.launch {
             _uiState.value = state.copy(isSaving = true, errorMessage = null)
-            val body = LeaveRequestUpsertDto(
-                startDate = start.toString(),
-                endDate = end.toString(),
-                description = state.description.trim().ifBlank { null },
-                leaveTypeId = leaveTypeId,
-            )
-            val result = existingId?.let { leaveRequestsRepository.update(it, body) }
-                ?: leaveRequestsRepository.create(body)
-            _uiState.value = when (result) {
-                is AppResult.Success -> _uiState.value.copy(isSaving = false, saved = true)
-                is AppResult.Failure -> _uiState.value.copy(isSaving = false, errorMessage = result.message)
+            when (val result = createOrUpdate(state)) {
+                is AppResult.Success -> _uiState.value = _uiState.value.copy(isSaving = false, saved = true)
+                is AppResult.Failure -> _uiState.value =
+                    _uiState.value.copy(isSaving = false, errorMessage = result.message)
             }
         }
+    }
+
+    /** "Submit": create/update, then immediately submit in the same gesture. */
+    fun saveAndSubmit() {
+        val state = _uiState.value
+        if (!state.canSave) return
+
+        viewModelScope.launch {
+            _uiState.value = state.copy(isSaving = true, errorMessage = null)
+            when (val createResult = createOrUpdate(state)) {
+                is AppResult.Failure -> _uiState.value =
+                    _uiState.value.copy(isSaving = false, errorMessage = createResult.message)
+                is AppResult.Success -> {
+                    val id = createResult.data.id
+                    createdId = id
+                    _uiState.value = when (val submitResult = leaveRequestsRepository.submit(id)) {
+                        is AppResult.Success -> _uiState.value.copy(isSaving = false, submittedRequestId = id)
+                        is AppResult.Failure -> _uiState.value.copy(
+                            isSaving = false,
+                            errorMessage = "Draft saved, but couldn't submit: ${submitResult.message}",
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private suspend fun createOrUpdate(state: LeaveRequestFormUiState): AppResult<LeaveRequestDto> {
+        val leaveTypeId = requireNotNull(state.selectedLeaveTypeId)
+        val start = requireNotNull(state.startDate)
+        val end = requireNotNull(state.endDate)
+        val body = LeaveRequestUpsertDto(
+            startDate = start.toString(),
+            endDate = end.toString(),
+            description = state.description.trim().ifBlank { null },
+            leaveTypeId = leaveTypeId,
+        )
+        val id = effectiveId
+        val result = if (id != null) leaveRequestsRepository.update(id, body) else leaveRequestsRepository.create(body)
+        if (result is AppResult.Success && id == null) createdId = result.data.id
+        return result
     }
 }
