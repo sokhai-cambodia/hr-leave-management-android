@@ -45,7 +45,7 @@ Full detail (acceptance criteria, verify steps) in `tasks/plan.md`.
 - [ ] **Checkpoint 7**
 
 ## Phase 8 — Schedule (month calendar)
-- [ ] 8.1 Schedule screen backed by `GET /schedule/?year&month`
+- [x] 8.1 Schedule screen backed by `GET /schedule/?year&month`
 - [ ] **Checkpoint 8**
 
 ## Phase 9 — Notifications

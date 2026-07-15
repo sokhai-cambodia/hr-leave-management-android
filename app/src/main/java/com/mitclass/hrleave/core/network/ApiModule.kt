@@ -7,6 +7,7 @@ import com.mitclass.hrleave.data.remote.api.LeavePlanRequestsApi
 import com.mitclass.hrleave.data.remote.api.LeaveRequestsApi
 import com.mitclass.hrleave.data.remote.api.LeaveTypesApi
 import com.mitclass.hrleave.data.remote.api.RecommendsApi
+import com.mitclass.hrleave.data.remote.api.ScheduleApi
 import com.mitclass.hrleave.data.remote.api.TeamsApi
 import dagger.Module
 import dagger.Provides
@@ -55,4 +56,8 @@ object ApiModule {
     @Singleton
     fun provideRecommendsApi(retrofit: Retrofit): RecommendsApi =
         retrofit.create(RecommendsApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideScheduleApi(retrofit: Retrofit): ScheduleApi = retrofit.create(ScheduleApi::class.java)
 }
