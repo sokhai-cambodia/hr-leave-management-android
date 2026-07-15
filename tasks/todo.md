@@ -54,7 +54,7 @@ Full detail (acceptance criteria, verify steps) in `tasks/plan.md`.
 
 ## Phase 10 — Admin/Superuser Master Data CRUD
 - [x] 10.1 Generic CRUD scaffold, proven on Leave Types
-- [ ] 10.2 Apply pattern: Public Holidays, Policies
+- [x] 10.2 Apply pattern: Public Holidays, Policies
 - [ ] 10.3 Apply pattern: Teams, Users (relational pickers)
 - [ ] 10.4 Apply pattern: Leave Balances (admin)
 - [ ] **Checkpoint 10**

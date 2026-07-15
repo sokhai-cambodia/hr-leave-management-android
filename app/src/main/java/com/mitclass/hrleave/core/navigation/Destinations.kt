@@ -18,6 +18,7 @@ sealed class Destination(val route: String) {
 
     // Authenticated shell — superuser only
     data object AdminPolicies : Destination("admin_policies")
+    data object AdminPublicHolidays : Destination("admin_public_holidays")
     data object AdminLeaveTypes : Destination("admin_leave_types")
     data object AdminTeams : Destination("admin_teams")
     data object AdminLeaveBalances : Destination("admin_leave_balances")
