@@ -3,11 +3,14 @@ package com.mitclass.hrleave.data.remote.api
 import com.mitclass.hrleave.data.remote.dto.MessageDto
 import com.mitclass.hrleave.data.remote.dto.NewPasswordDto
 import com.mitclass.hrleave.data.remote.dto.TokenDto
+import com.mitclass.hrleave.data.remote.dto.UpdatePasswordDto
 import com.mitclass.hrleave.data.remote.dto.UserDto
+import com.mitclass.hrleave.data.remote.dto.UserUpdateMeDto
 import retrofit2.http.Body
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 
@@ -25,6 +28,12 @@ interface AuthApi {
 
     @GET("users/me")
     suspend fun getMe(): UserDto
+
+    @PATCH("users/me")
+    suspend fun updateMe(@Body body: UserUpdateMeDto): UserDto
+
+    @PATCH("users/me/password")
+    suspend fun updatePassword(@Body body: UpdatePasswordDto): MessageDto
 
     @POST("password-recovery/{email}")
     suspend fun recoverPassword(@Path("email") email: String): MessageDto

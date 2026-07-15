@@ -60,7 +60,7 @@ Full detail (acceptance criteria, verify steps) in `tasks/plan.md`.
 - [ ] **Checkpoint 10**
 
 ## Phase 11 — Profile & Identity
-- [ ] 11.1 Profile view/edit + Change Password
+- [x] 11.1 Profile view/edit + Change Password
 - [ ] **Checkpoint 11**
 - Out of scope (not in SPEC §8): QR business card, username login, phone number field.
 

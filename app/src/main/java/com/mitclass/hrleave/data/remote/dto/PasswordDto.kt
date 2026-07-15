@@ -11,3 +11,9 @@ data class NewPasswordDto(
 
 @Serializable
 data class MessageDto(val message: String)
+
+@Serializable
+data class UpdatePasswordDto(
+    @SerialName("current_password") val currentPassword: String,
+    @SerialName("new_password") val newPassword: String,
+)

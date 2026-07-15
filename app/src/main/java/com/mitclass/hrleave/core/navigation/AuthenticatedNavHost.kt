@@ -31,6 +31,9 @@ import com.mitclass.hrleave.feature.leaverequests.LeaveRequestFormScreen
 import com.mitclass.hrleave.feature.leaverequests.LeaveRequestRoutes
 import com.mitclass.hrleave.feature.leaverequests.LeaveRequestsListScreen
 import com.mitclass.hrleave.feature.notifications.NotificationsListScreen
+import com.mitclass.hrleave.feature.profile.ChangePasswordScreen
+import com.mitclass.hrleave.feature.profile.ProfileRoutes
+import com.mitclass.hrleave.feature.profile.ProfileScreen
 import com.mitclass.hrleave.feature.recommendations.RecommendationsScreen
 import com.mitclass.hrleave.feature.schedule.ScheduleScreen
 
@@ -164,7 +167,12 @@ fun AuthenticatedNavHost(
                 },
             )
         }
-        composable(Destination.Profile.route) { ComingSoonScreen("Profile") }
+        composable(Destination.Profile.route) {
+            ProfileScreen(onChangePasswordClick = { navController.navigate(ProfileRoutes.CHANGE_PASSWORD_ROUTE) })
+        }
+        composable(ProfileRoutes.CHANGE_PASSWORD_ROUTE) {
+            ChangePasswordScreen(onSuccess = { navController.popBackStack() })
+        }
         composable(Destination.AdminPolicies.route) { PoliciesAdminScreen(isSuperuser = user.isSuperuser) }
         composable(Destination.AdminPublicHolidays.route) { PublicHolidaysAdminScreen(isSuperuser = user.isSuperuser) }
         composable(Destination.AdminLeaveTypes.route) { LeaveTypesAdminScreen(isSuperuser = user.isSuperuser) }
