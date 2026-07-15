@@ -1,18 +1,20 @@
 package com.mitclass.hrleave.feature.leaveplanrequests
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -21,6 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,12 +44,16 @@ import java.time.LocalDate
 @Composable
 fun LeavePlanRequestFormScreen(
     onSaved: () -> Unit,
+    onSubmittedSuccess: (String) -> Unit = {},
     viewModel: LeavePlanRequestFormViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsState()
 
     LaunchedEffect(state.saved) {
         if (state.saved) onSaved()
+    }
+    LaunchedEffect(state.submittedRequestId) {
+        state.submittedRequestId?.let(onSubmittedSuccess)
     }
 
     if (state.isLoading) {
@@ -145,15 +152,41 @@ fun LeavePlanRequestFormScreen(
         }
 
         Spacer(Modifier.height(24.dp))
-        Button(
-            onClick = viewModel::save,
-            enabled = state.canSave,
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            if (state.isSaving) {
-                CircularProgressIndicator(modifier = Modifier.height(20.dp), color = MaterialTheme.colorScheme.onPrimary)
-            } else {
-                Text(if (viewModel.isEditMode) "Save changes" else "Save draft")
+        if (viewModel.isPrefilled && !viewModel.isEditMode) {
+            // Task 6.3: the AI-recommendation entry point offers a one-tap "Submit now"
+            // alongside the regular draft save.
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                OutlinedButton(
+                    onClick = viewModel::save,
+                    enabled = state.canSave,
+                    modifier = Modifier.weight(1f),
+                ) { Text("Save draft") }
+                Button(
+                    onClick = viewModel::saveAndSubmit,
+                    enabled = state.canSave,
+                    modifier = Modifier.weight(1f),
+                ) {
+                    if (state.isSaving) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.height(20.dp),
+                            color = MaterialTheme.colorScheme.onPrimary,
+                        )
+                    } else {
+                        Text("Submit now")
+                    }
+                }
+            }
+        } else {
+            Button(
+                onClick = viewModel::save,
+                enabled = state.canSave,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                if (state.isSaving) {
+                    CircularProgressIndicator(modifier = Modifier.height(20.dp), color = MaterialTheme.colorScheme.onPrimary)
+                } else {
+                    Text(if (viewModel.isEditMode) "Save changes" else "Save draft")
+                }
             }
         }
     }

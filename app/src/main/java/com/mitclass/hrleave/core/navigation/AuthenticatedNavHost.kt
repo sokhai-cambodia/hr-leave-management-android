@@ -97,7 +97,14 @@ fun AuthenticatedNavHost(
                 },
             ),
         ) {
-            LeavePlanRequestFormScreen(onSaved = { navController.popBackStack() })
+            LeavePlanRequestFormScreen(
+                onSaved = { navController.popBackStack() },
+                onSubmittedSuccess = { id ->
+                    navController.navigate(LeavePlanRequestRoutes.detail(id)) {
+                        popUpTo(LeavePlanRequestRoutes.FORM_ROUTE) { inclusive = true }
+                    }
+                },
+            )
         }
         composable(Destination.LeaveRequests.route) {
             LeaveRequestsListScreen(
