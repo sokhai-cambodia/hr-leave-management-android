@@ -27,6 +27,7 @@ import com.mitclass.hrleave.feature.leaverequests.LeaveRequestFormScreen
 import com.mitclass.hrleave.feature.leaverequests.LeaveRequestRoutes
 import com.mitclass.hrleave.feature.leaves.LeavesTabScreen
 import com.mitclass.hrleave.feature.notifications.NotificationsListScreen
+import com.mitclass.hrleave.feature.profile.BusinessCardScreen
 import com.mitclass.hrleave.feature.profile.ChangePasswordScreen
 import com.mitclass.hrleave.feature.profile.ProfileRoutes
 import com.mitclass.hrleave.feature.profile.ProfileScreen
@@ -64,6 +65,7 @@ fun AuthenticatedNavHost(
                 onPendingApprovalsClick = { navController.navigate(Destination.Approvals.route) },
                 onRequestLeaveClick = { navController.navigate(LeaveRequestRoutes.FORM_CREATE_ROUTE) },
                 onPlanLeaveClick = { navController.navigate(LeavePlanRequestRoutes.FORM_CREATE_ROUTE) },
+                onBusinessCardClick = { navController.navigate(Destination.BusinessCard.route) },
             )
         }
         composable(Destination.Schedule.route) { ScheduleScreen() }
@@ -174,11 +176,15 @@ fun AuthenticatedNavHost(
                 isApprover = isApprover,
                 onChangePasswordClick = { navController.navigate(ProfileRoutes.CHANGE_PASSWORD_ROUTE) },
                 onAdminEntryClick = { destination -> navController.navigate(destination.route) },
+                onBusinessCardClick = { navController.navigate(Destination.BusinessCard.route) },
                 onLogout = onLogout,
             )
         }
         composable(ProfileRoutes.CHANGE_PASSWORD_ROUTE) {
             ChangePasswordScreen(onSuccess = { navController.popBackStack() })
+        }
+        composable(Destination.BusinessCard.route) {
+            BusinessCardScreen(user = user)
         }
         composable(Destination.AdminPolicies.route) { PoliciesAdminScreen(isSuperuser = user.isSuperuser) }
         composable(Destination.AdminPublicHolidays.route) { PublicHolidaysAdminScreen(isSuperuser = user.isSuperuser) }

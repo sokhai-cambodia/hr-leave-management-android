@@ -24,6 +24,7 @@ sealed class Destination(val route: String) {
     data object Approvals : Destination("approvals")
     data object Notifications : Destination("notifications")
     data object Profile : Destination("profile")
+    data object BusinessCard : Destination("business_card")
 
     // Authenticated shell — superuser only
     data object AdminPolicies : Destination("admin_policies")

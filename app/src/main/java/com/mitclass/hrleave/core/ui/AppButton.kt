@@ -39,6 +39,7 @@ fun AppButton(
     enabled: Boolean = true,
     loading: Boolean = false,
     colors: ButtonColors = ButtonDefaults.buttonColors(containerColor = BrandPrimary, contentColor = Color.White),
+    icon: (@Composable () -> Unit)? = null,
 ) {
     Button(
         onClick = onClick,
@@ -53,6 +54,12 @@ fun AppButton(
                 strokeWidth = 2.dp,
                 color = colors.contentColor,
             )
+        } else if (icon != null) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                icon()
+                Spacer(Modifier.width(AppSpacing.sm))
+                Text(text, style = MaterialTheme.typography.labelLarge)
+            }
         } else {
             Text(text, style = MaterialTheme.typography.labelLarge)
         }

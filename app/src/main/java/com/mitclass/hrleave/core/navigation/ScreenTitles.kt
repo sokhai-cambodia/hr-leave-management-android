@@ -13,6 +13,7 @@ fun screenTitle(entry: NavBackStackEntry?): String {
         Destination.Leaves.route -> "Leaves"
         Destination.Schedule.route -> "Calendar"
         Destination.Profile.route -> "Profile"
+        Destination.BusinessCard.route -> "My Business Card"
         Destination.Approvals.route -> "Approvals"
         Destination.Notifications.route -> "Notifications"
         Destination.Recommendations.route -> "Recommendations"

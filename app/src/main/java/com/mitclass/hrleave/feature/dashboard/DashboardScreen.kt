@@ -19,9 +19,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.EventNote
 import androidx.compose.material.icons.automirrored.filled.FactCheck
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.QrCode2
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -55,6 +57,7 @@ fun DashboardScreen(
     onPendingApprovalsClick: () -> Unit = {},
     onRequestLeaveClick: () -> Unit = {},
     onPlanLeaveClick: () -> Unit = {},
+    onBusinessCardClick: () -> Unit = {},
     pendingApprovalsViewModel: PendingApprovalsViewModel = hiltViewModel(),
     leaveBalancesViewModel: LeaveBalancesViewModel = hiltViewModel(),
 ) {
@@ -71,7 +74,7 @@ fun DashboardScreen(
             .verticalScroll(rememberScrollState())
             .padding(AppSpacing.lg),
     ) {
-        ProfileHeader(user = user)
+        ProfileHeader(user = user, onBusinessCardClick = onBusinessCardClick)
         Spacer(Modifier.height(AppSpacing.lg))
         Row(horizontalArrangement = Arrangement.spacedBy(AppSpacing.md)) {
             PastelActionTile(
@@ -147,7 +150,7 @@ private fun initials(fullName: String?, email: String): String {
 }
 
 @Composable
-private fun ProfileHeader(user: UserDto) {
+private fun ProfileHeader(user: UserDto, onBusinessCardClick: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -166,7 +169,7 @@ private fun ProfileHeader(user: UserDto) {
             )
         }
         Spacer(Modifier.width(AppSpacing.md))
-        Column {
+        Column(modifier = Modifier.weight(1f)) {
             Text(text = user.fullName ?: user.email, style = MaterialTheme.typography.titleLarge)
             Text(text = user.email, style = MaterialTheme.typography.bodyMedium)
             Text(
@@ -174,6 +177,9 @@ private fun ProfileHeader(user: UserDto) {
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+        }
+        IconButton(onClick = onBusinessCardClick) {
+            Icon(imageVector = Icons.Filled.QrCode2, contentDescription = "My Business Card", tint = BrandPrimary)
         }
     }
 }

@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.Gavel
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.QrCode2
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -88,6 +89,7 @@ fun ProfileScreen(
     isApprover: Boolean = false,
     onChangePasswordClick: () -> Unit,
     onAdminEntryClick: (Destination) -> Unit = {},
+    onBusinessCardClick: () -> Unit = {},
     onLogout: () -> Unit = {},
     viewModel: ProfileViewModel = hiltViewModel(),
 ) {
@@ -165,6 +167,24 @@ fun ProfileScreen(
         InfoRow(label = "Role", value = roleLabel(user.isSuperuser, isApprover))
 
         Spacer(Modifier.height(AppSpacing.lg))
+        HorizontalDivider()
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onBusinessCardClick)
+                .padding(vertical = AppSpacing.md),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(imageVector = Icons.Filled.QrCode2, contentDescription = null)
+            Text(
+                text = "My Business Card",
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = AppSpacing.md),
+            )
+            Icon(imageVector = Icons.Filled.ChevronRight, contentDescription = null)
+        }
         HorizontalDivider()
         Row(
             modifier = Modifier
