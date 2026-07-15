@@ -10,6 +10,7 @@ data class UserDto(
     @SerialName("is_active") val isActive: Boolean = true,
     @SerialName("is_superuser") val isSuperuser: Boolean = false,
     @SerialName("full_name") val fullName: String? = null,
+    @SerialName("phone_number") val phoneNumber: String? = null,
     val team: TeamPresentableDto? = null,
 )
 

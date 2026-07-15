@@ -3,16 +3,17 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- Leaf mark (leave/nature pun), sized to sit inside the adaptive-icon safe zone. -->
+    <!-- Simple "HR" monogram, white on the brand-red adaptive background. -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M54,26 C76,26 76,60 54,88 C32,60 32,26 54,26 Z" />
+        android:pathData="M24,32 H32 V50 H40 V32 H48 V76 H40 V58 H32 V76 H24 Z" />
     <path
-        android:strokeColor="#CA282C"
-        android:strokeWidth="2.5"
-        android:pathData="M54,34 L54,80" />
+        android:fillColor="#FFFFFF"
+        android:fillType="evenOdd"
+        android:pathData="M56,32 H64 V76 H56 Z M64,32 H82 V54 H64 Z M68,37 H78 V47 H68 Z" />
     <path
-        android:strokeColor="#CA282C"
-        android:strokeWidth="2"
-        android:pathData="M54,46 L64,40 M54,60 L64,56 M54,46 L44,40 M54,60 L44,56" />
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="9"
+        android:strokeLineCap="round"
+        android:pathData="M66,56 L84,76" />
 </vector>

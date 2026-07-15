@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -108,8 +109,11 @@ fun AuthenticatedShell(
         floatingActionButton = {
             if (isTopLevel) {
                 // Rounded-square (not circular) per the Flutter client's actual FAB shape.
+                // ui/home.jpg docks the FAB so its bottom half overlaps the bottom bar, rather
+                // than floating the full default gap above it — the offset closes that gap.
                 FloatingActionButton(
                     onClick = { showCreateSheet = true },
+                    modifier = Modifier.offset(y = 28.dp),
                     shape = RoundedCornerShape(20.dp),
                     containerColor = BrandPrimary,
                     contentColor = Color.White,
