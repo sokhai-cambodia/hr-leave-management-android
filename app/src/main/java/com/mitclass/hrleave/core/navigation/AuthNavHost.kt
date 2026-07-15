@@ -1,25 +1,18 @@
 package com.mitclass.hrleave.core.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.mitclass.hrleave.feature.auth.AuthViewModel
+import androidx.navigation.compose.rememberNavController
 import com.mitclass.hrleave.feature.auth.ForgotPasswordScreen
 import com.mitclass.hrleave.feature.auth.LoginScreen
 import com.mitclass.hrleave.feature.auth.ResetPasswordScreen
-import com.mitclass.hrleave.feature.auth.SessionState
-import com.mitclass.hrleave.feature.auth.WelcomeScreen
 
+/** Nav graph for the unauthenticated flow (Login / Forgot / Reset password), no shell chrome. */
 @Composable
-fun NavGraph(
-    navController: NavHostController,
-    startDestination: String,
-    authViewModel: AuthViewModel,
-) {
-    NavHost(navController = navController, startDestination = startDestination) {
+fun AuthNavHost() {
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = Destination.Login.route) {
         composable(Destination.Login.route) {
             LoginScreen(
                 onForgotPassword = { navController.navigate(Destination.ForgotPassword.route) },
@@ -38,13 +31,6 @@ fun NavGraph(
                 },
                 onBack = { navController.popBackStack() },
             )
-        }
-        composable(Destination.Welcome.route) {
-            val sessionState by authViewModel.sessionState.collectAsState()
-            val user = (sessionState as? SessionState.Authenticated)?.user
-            if (user != null) {
-                WelcomeScreen(user = user, onLogout = { authViewModel.logout() })
-            }
         }
     }
 }
