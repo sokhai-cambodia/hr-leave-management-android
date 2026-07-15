@@ -61,6 +61,8 @@ fun AuthenticatedNavHost(
                 quickActions = dashboardQuickActions,
                 onQuickActionClick = { action -> navController.navigate(action.route) },
                 onPendingApprovalsClick = { navController.navigate(Destination.Approvals.route) },
+                onRequestLeaveClick = { navController.navigate(LeaveRequestRoutes.FORM_CREATE_ROUTE) },
+                onPlanLeaveClick = { navController.navigate(LeavePlanRequestRoutes.FORM_CREATE_ROUTE) },
             )
         }
         composable(Destination.Schedule.route) { ScheduleScreen() }
