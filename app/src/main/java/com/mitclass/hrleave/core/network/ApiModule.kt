@@ -1,6 +1,6 @@
 package com.mitclass.hrleave.core.network
 
-import com.mitclass.hrleave.data.remote.api.HealthCheckApi
+import com.mitclass.hrleave.data.remote.api.AuthApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,6 +14,5 @@ object ApiModule {
 
     @Provides
     @Singleton
-    fun provideHealthCheckApi(retrofit: Retrofit): HealthCheckApi =
-        retrofit.create(HealthCheckApi::class.java)
+    fun provideAuthApi(retrofit: Retrofit): AuthApi = retrofit.create(AuthApi::class.java)
 }
