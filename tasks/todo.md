@@ -29,7 +29,7 @@ Full detail (acceptance criteria, verify steps) in `tasks/plan.md`.
 - [ ] **Checkpoint 4**
 
 ## Phase 5 — Leave Plan Requests
-- [ ] 5.1 List + detail (detail = list of dates), owner-scoped
+- [x] 5.1 List + detail (detail = list of dates), owner-scoped
 - [ ] 5.2 Create/edit (multi-date picker, duplicate guard) + delete
 - [ ] 5.3 Submit action
 - [ ] **Checkpoint 5**
