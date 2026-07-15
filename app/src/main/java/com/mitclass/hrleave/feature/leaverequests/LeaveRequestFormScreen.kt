@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -15,6 +15,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,9 +26,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.mitclass.hrleave.core.theme.AppSpacing
+import com.mitclass.hrleave.core.theme.BrandPrimary
+import com.mitclass.hrleave.core.theme.LightFieldFill
+import com.mitclass.hrleave.core.theme.TextFieldCornerRadius
+import com.mitclass.hrleave.core.ui.AppButton
+import com.mitclass.hrleave.core.ui.AppTextField
 import com.mitclass.hrleave.core.ui.DatePickerField
+import com.mitclass.hrleave.core.ui.ErrorBanner
 import com.mitclass.hrleave.data.remote.dto.LeaveTypeDto
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,79 +62,77 @@ fun LeaveRequestFormScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(AppSpacing.lg),
     ) {
-        Text(
-            text = if (viewModel.isEditMode) "Edit Leave Request" else "New Leave Request",
-            style = MaterialTheme.typography.headlineSmall,
-        )
-        Spacer(Modifier.height(16.dp))
-
         var expanded by remember { mutableStateOf(false) }
         val selectedType = state.leaveTypes.firstOrNull { it.id == state.selectedLeaveTypeId }
-        ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }) {
-            OutlinedTextField(
-                value = selectedType?.name ?: "",
-                onValueChange = {},
-                readOnly = true,
-                label = { Text("Leave type") },
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .menuAnchor(),
-            )
-            ExposedDropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
-            ) {
-                state.leaveTypes.forEach { type: LeaveTypeDto ->
-                    DropdownMenuItem(
-                        text = { Text(type.name) },
-                        onClick = {
-                            viewModel.onLeaveTypeSelected(type.id)
-                            expanded = false
-                        },
-                    )
+        Column {
+            Text(text = "Leave type", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold)
+            Spacer(Modifier.height(AppSpacing.sm))
+            ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }) {
+                OutlinedTextField(
+                    value = selectedType?.name ?: "",
+                    onValueChange = {},
+                    readOnly = true,
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                    shape = RoundedCornerShape(TextFieldCornerRadius),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = LightFieldFill,
+                        unfocusedContainerColor = LightFieldFill,
+                        focusedBorderColor = BrandPrimary,
+                        unfocusedBorderColor = Color.Transparent,
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .menuAnchor(),
+                )
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false },
+                ) {
+                    state.leaveTypes.forEach { type: LeaveTypeDto ->
+                        DropdownMenuItem(
+                            text = { Text(type.name) },
+                            onClick = {
+                                viewModel.onLeaveTypeSelected(type.id)
+                                expanded = false
+                            },
+                        )
+                    }
                 }
             }
         }
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(AppSpacing.md))
 
         DatePickerField(
             label = "Start date",
             date = state.startDate,
             onDateSelected = viewModel::onStartDateSelected,
         )
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(AppSpacing.md))
         DatePickerField(
             label = "End date",
             date = state.endDate,
             onDateSelected = viewModel::onEndDateSelected,
         )
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(AppSpacing.md))
 
-        OutlinedTextField(
+        AppTextField(
             value = state.description,
             onValueChange = viewModel::onDescriptionChanged,
-            label = { Text("Description (optional)") },
-            modifier = Modifier.fillMaxWidth(),
+            label = "Description (optional)",
         )
 
         state.errorMessage?.let {
-            Text(text = it, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 12.dp))
+            ErrorBanner(message = it, modifier = Modifier.padding(top = AppSpacing.md))
         }
 
-        Spacer(Modifier.height(24.dp))
-        Button(
+        Spacer(Modifier.height(AppSpacing.lg))
+        AppButton(
+            text = if (viewModel.isEditMode) "Save changes" else "Save draft",
             onClick = viewModel::save,
             enabled = state.canSave,
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            if (state.isSaving) {
-                CircularProgressIndicator(modifier = Modifier.height(20.dp), color = MaterialTheme.colorScheme.onPrimary)
-            } else {
-                Text(if (viewModel.isEditMode) "Save changes" else "Save draft")
-            }
-        }
+            loading = state.isSaving,
+        )
     }
 }

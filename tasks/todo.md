@@ -80,7 +80,7 @@ sibling app. SPEC.md §7 is stale — ground truth is the Flutter app's actual D
       bottom action panel, split action buttons)
 - [x] 13.5 List/detail screen polish (Leave Requests, Leave Plan Requests, Approvals,
       Notifications, Schedule)
-- [ ] 13.6 Form screen polish (bold-label fields, error banner, styled date field, chip picker,
+- [x] 13.6 Form screen polish (bold-label fields, error banner, styled date field, chip picker,
       submit-button hierarchy)
 - [ ] 13.7 Admin CRUD + Profile hub restyle (admin entries move under Profile tab)
 - [ ] 13.8 Auth screens polish (two-tone wordmark, headline, splash)

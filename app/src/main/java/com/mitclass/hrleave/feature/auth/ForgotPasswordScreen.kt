@@ -4,14 +4,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -24,6 +20,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.mitclass.hrleave.core.theme.AppSpacing
+import com.mitclass.hrleave.core.theme.SuccessColor
+import com.mitclass.hrleave.core.ui.AppButton
+import com.mitclass.hrleave.core.ui.AppTextField
+import com.mitclass.hrleave.core.ui.ErrorBanner
 
 @Composable
 fun ForgotPasswordScreen(
@@ -48,46 +49,34 @@ fun ForgotPasswordScreen(
             style = MaterialTheme.typography.bodyMedium,
         )
         Spacer(Modifier.height(24.dp))
-        OutlinedTextField(
+        AppTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text("Email") },
+            label = "Email",
             singleLine = true,
             enabled = !isLoading,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            modifier = Modifier.fillMaxWidth(),
         )
         when (val state = uiState) {
             is ForgotPasswordUiState.Success -> Text(
                 text = state.message,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(top = 8.dp),
+                color = SuccessColor,
+                modifier = Modifier.padding(top = AppSpacing.sm),
             )
-            is ForgotPasswordUiState.Error -> Text(
-                text = state.message,
-                color = MaterialTheme.colorScheme.error,
-                modifier = Modifier.padding(top = 8.dp),
+            is ForgotPasswordUiState.Error -> ErrorBanner(
+                message = state.message,
+                modifier = Modifier.padding(top = AppSpacing.sm),
             )
             else -> Unit
         }
-        Spacer(Modifier.height(16.dp))
-        Button(
+        Spacer(Modifier.height(AppSpacing.lg))
+        AppButton(
+            text = "Send reset email",
             onClick = { viewModel.submit(email.trim()) },
             enabled = !isLoading && email.isNotBlank(),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp),
-        ) {
-            if (isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.height(20.dp),
-                    color = MaterialTheme.colorScheme.onPrimary,
-                )
-            } else {
-                Text("Send reset email")
-            }
-        }
-        Spacer(Modifier.height(8.dp))
+            loading = isLoading,
+        )
+        Spacer(Modifier.height(AppSpacing.sm))
         TextButton(onClick = onHaveResetToken) {
             Text("I already have a reset token")
         }

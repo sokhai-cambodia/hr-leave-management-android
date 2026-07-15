@@ -39,3 +39,13 @@ fun screenTitle(entry: NavBackStackEntry?): String {
 
 /** Whether [route] is one of the 4 persistent bottom tabs (vs. a back-arrow pushed screen). */
 fun isTopLevelRoute(route: String?): Boolean = BottomTab.entries.any { it.matchRoute == route }
+
+/**
+ * Create/edit forms get a close "X" instead of a back arrow (Task 13.6); every other
+ * back-arrow pushed screen (detail/list/admin/notifications/approvals) keeps the arrow.
+ */
+fun isModalFormRoute(route: String?): Boolean = route in setOf(
+    LeaveRequestRoutes.FORM_ROUTE,
+    LeavePlanRequestRoutes.FORM_ROUTE,
+    ProfileRoutes.CHANGE_PASSWORD_ROUTE,
+)

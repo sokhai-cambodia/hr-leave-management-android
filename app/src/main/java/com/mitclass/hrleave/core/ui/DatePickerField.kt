@@ -1,14 +1,23 @@
 package com.mitclass.hrleave.core.ui
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
@@ -17,12 +26,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import com.mitclass.hrleave.core.theme.AppSpacing
+import com.mitclass.hrleave.core.theme.LightFieldFill
+import com.mitclass.hrleave.core.theme.TextFieldCornerRadius
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
 
-/** Read-only text field + Material3 date picker dialog, shared by every start/end/single-date field. */
+/**
+ * Bold label + a filled InkWell-style trigger surface (Task 13.6) opening the same Material3
+ * date picker dialog — shared by every start/end/single-date field.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerField(
@@ -34,19 +52,33 @@ fun DatePickerField(
 ) {
     var showDialog by remember { mutableStateOf(false) }
 
-    OutlinedTextField(
-        value = date?.toString() ?: "",
-        onValueChange = {},
-        readOnly = true,
-        enabled = enabled,
-        label = { Text(label) },
-        trailingIcon = {
-            IconButton(onClick = { showDialog = true }, enabled = enabled) {
+    Column(modifier = modifier) {
+        Text(text = label, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold)
+        Spacer(Modifier.height(AppSpacing.sm))
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(enabled = enabled) { showDialog = true },
+            shape = RoundedCornerShape(TextFieldCornerRadius),
+            color = LightFieldFill,
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 56.dp)
+                    .padding(horizontal = AppSpacing.md),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = date?.toString() ?: "Select date",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = if (date != null) LocalContentColor.current else MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.weight(1f),
+                )
                 Icon(Icons.Filled.CalendarMonth, contentDescription = "Pick date")
             }
-        },
-        modifier = modifier.fillMaxWidth(),
-    )
+        }
+    }
 
     if (showDialog) {
         val state = rememberDatePickerState(
