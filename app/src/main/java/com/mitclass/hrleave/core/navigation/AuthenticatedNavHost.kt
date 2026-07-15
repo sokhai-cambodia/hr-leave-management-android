@@ -51,6 +51,7 @@ fun AuthenticatedNavHost(
     navController: NavHostController,
     user: UserDto,
     isApprover: Boolean = false,
+    onLogout: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     NavHost(navController = navController, startDestination = Destination.Dashboard.route, modifier = modifier) {
@@ -78,9 +79,7 @@ fun AuthenticatedNavHost(
             LeavesTabScreen(
                 initialTab = entry.arguments?.getString(Destination.Leaves.TAB_ARG) ?: Destination.Leaves.REQUESTS_TAB,
                 onRequestItemClick = { id -> navController.navigate(LeaveRequestRoutes.detail(id)) },
-                onRequestCreateClick = { navController.navigate(LeaveRequestRoutes.FORM_CREATE_ROUTE) },
                 onPlanItemClick = { id -> navController.navigate(LeavePlanRequestRoutes.detail(id)) },
-                onPlanCreateClick = { navController.navigate(LeavePlanRequestRoutes.FORM_CREATE_ROUTE) },
             )
         }
         composable(
@@ -140,7 +139,14 @@ fun AuthenticatedNavHost(
                 },
             ),
         ) {
-            LeaveRequestFormScreen(onSaved = { navController.popBackStack() })
+            LeaveRequestFormScreen(
+                onSaved = { navController.popBackStack() },
+                onSubmittedSuccess = { id ->
+                    navController.navigate(LeaveRequestRoutes.detail(id)) {
+                        popUpTo(LeaveRequestRoutes.FORM_ROUTE) { inclusive = true }
+                    }
+                },
+            )
         }
         composable(Destination.Recommendations.route) {
             RecommendationsScreen(
@@ -164,9 +170,11 @@ fun AuthenticatedNavHost(
         }
         composable(Destination.Profile.route) {
             ProfileScreen(
+                user = user,
+                isApprover = isApprover,
                 onChangePasswordClick = { navController.navigate(ProfileRoutes.CHANGE_PASSWORD_ROUTE) },
-                isSuperuser = user.isSuperuser,
                 onAdminEntryClick = { destination -> navController.navigate(destination.route) },
+                onLogout = onLogout,
             )
         }
         composable(ProfileRoutes.CHANGE_PASSWORD_ROUTE) {

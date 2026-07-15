@@ -1,6 +1,8 @@
 package com.mitclass.hrleave.core.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -16,18 +18,20 @@ import com.mitclass.hrleave.core.theme.WarningColor
 
 /**
  * Renders a leave-request/leave-plan-request status ("draft"|"pending"|"approved"|"rejected") as
- * a colored pill chip — standardized on the pill shape everywhere (Task 13.4), rather than
- * replicating the Flutter client's own inconsistent radius-8-vs-pill split.
+ * an outlined ALL-CAPS pill chip (tinted fill + colored border), matching the Flutter client's
+ * actual status badges (`ui/leave-list.jpg`) rather than a solid-fill chip.
  */
 @Composable
 fun StatusChip(status: String, modifier: Modifier = Modifier) {
     val color = statusColor(status)
+    val shape = RoundedCornerShape(PillCornerRadius)
     Text(
-        text = status.replaceFirstChar { it.uppercase() },
+        text = status.uppercase(),
         style = MaterialTheme.typography.labelMedium,
         color = color,
         modifier = modifier
-            .background(color = color.copy(alpha = 0.12f), shape = RoundedCornerShape(PillCornerRadius))
+            .background(color = color.copy(alpha = 0.1f), shape = shape)
+            .border(BorderStroke(1.dp, color.copy(alpha = 0.4f)), shape = shape)
             .padding(horizontal = 10.dp, vertical = 4.dp),
     )
 }

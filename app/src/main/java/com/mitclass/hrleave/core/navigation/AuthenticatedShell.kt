@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.EventNote
@@ -100,8 +101,10 @@ fun AuthenticatedShell(
         },
         floatingActionButton = {
             if (isTopLevel) {
+                // Rounded-square (not circular) per the Flutter client's actual FAB shape.
                 FloatingActionButton(
                     onClick = { showCreateSheet = true },
+                    shape = RoundedCornerShape(20.dp),
                     containerColor = BrandPrimary,
                     contentColor = Color.White,
                 ) {
@@ -138,6 +141,7 @@ fun AuthenticatedShell(
             navController = navController,
             user = user,
             isApprover = isApprover,
+            onLogout = onLogout,
             modifier = Modifier.padding(paddingValues),
         )
     }

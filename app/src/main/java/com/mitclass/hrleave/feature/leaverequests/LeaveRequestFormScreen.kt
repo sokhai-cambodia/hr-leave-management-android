@@ -1,7 +1,9 @@
 package com.mitclass.hrleave.feature.leaverequests
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -35,6 +37,7 @@ import com.mitclass.hrleave.core.theme.BrandPrimary
 import com.mitclass.hrleave.core.theme.LightFieldFill
 import com.mitclass.hrleave.core.theme.TextFieldCornerRadius
 import com.mitclass.hrleave.core.ui.AppButton
+import com.mitclass.hrleave.core.ui.AppOutlinedButton
 import com.mitclass.hrleave.core.ui.AppTextField
 import com.mitclass.hrleave.core.ui.DatePickerField
 import com.mitclass.hrleave.core.ui.ErrorBanner
@@ -44,12 +47,16 @@ import com.mitclass.hrleave.data.remote.dto.LeaveTypeDto
 @Composable
 fun LeaveRequestFormScreen(
     onSaved: () -> Unit,
+    onSubmittedSuccess: (String) -> Unit = {},
     viewModel: LeaveRequestFormViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsState()
 
     LaunchedEffect(state.saved) {
         if (state.saved) onSaved()
+    }
+    LaunchedEffect(state.submittedRequestId) {
+        state.submittedRequestId?.let(onSubmittedSuccess)
     }
 
     if (state.isLoading) {
@@ -67,13 +74,14 @@ fun LeaveRequestFormScreen(
         var expanded by remember { mutableStateOf(false) }
         val selectedType = state.leaveTypes.firstOrNull { it.id == state.selectedLeaveTypeId }
         Column {
-            Text(text = "Leave type", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold)
+            Text(text = "Leave Type", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold)
             Spacer(Modifier.height(AppSpacing.sm))
             ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }) {
                 OutlinedTextField(
                     value = selectedType?.name ?: "",
                     onValueChange = {},
                     readOnly = true,
+                    placeholder = { Text("Select a leave type") },
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                     shape = RoundedCornerShape(TextFieldCornerRadius),
                     colors = OutlinedTextFieldDefaults.colors(
@@ -104,23 +112,29 @@ fun LeaveRequestFormScreen(
         }
         Spacer(Modifier.height(AppSpacing.md))
 
-        DatePickerField(
-            label = "Start date",
-            date = state.startDate,
-            onDateSelected = viewModel::onStartDateSelected,
-        )
-        Spacer(Modifier.height(AppSpacing.md))
-        DatePickerField(
-            label = "End date",
-            date = state.endDate,
-            onDateSelected = viewModel::onEndDateSelected,
-        )
+        Row(horizontalArrangement = Arrangement.spacedBy(AppSpacing.md)) {
+            DatePickerField(
+                label = "Start Date",
+                date = state.startDate,
+                onDateSelected = viewModel::onStartDateSelected,
+                modifier = Modifier.weight(1f),
+            )
+            DatePickerField(
+                label = "End Date",
+                date = state.endDate,
+                onDateSelected = viewModel::onEndDateSelected,
+                modifier = Modifier.weight(1f),
+            )
+        }
         Spacer(Modifier.height(AppSpacing.md))
 
         AppTextField(
             value = state.description,
             onValueChange = viewModel::onDescriptionChanged,
-            label = "Description (optional)",
+            label = "Description",
+            placeholder = "Enter reason or extra notes (optional)...",
+            singleLine = false,
+            minLines = 3,
         )
 
         state.errorMessage?.let {
@@ -128,11 +142,26 @@ fun LeaveRequestFormScreen(
         }
 
         Spacer(Modifier.height(AppSpacing.lg))
-        AppButton(
-            text = if (viewModel.isEditMode) "Save changes" else "Save draft",
-            onClick = viewModel::save,
-            enabled = state.canSave,
-            loading = state.isSaving,
-        )
+        if (viewModel.isEditMode) {
+            AppButton(
+                text = "Update",
+                onClick = viewModel::save,
+                enabled = state.canSave,
+                loading = state.isSaving,
+            )
+        } else {
+            AppButton(
+                text = "Submit",
+                onClick = viewModel::saveAndSubmit,
+                enabled = state.canSave,
+                loading = state.isSaving,
+            )
+            Spacer(Modifier.height(AppSpacing.sm))
+            AppOutlinedButton(
+                text = "Save as Draft",
+                onClick = viewModel::save,
+                enabled = state.canSave,
+            )
+        }
     }
 }

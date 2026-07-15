@@ -13,18 +13,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.EventNote
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -35,50 +30,36 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mitclass.hrleave.core.theme.AppSpacing
-import com.mitclass.hrleave.core.theme.CardCornerRadius
-import com.mitclass.hrleave.core.theme.CardElevation
 import com.mitclass.hrleave.core.ui.EmptyStateView
 import com.mitclass.hrleave.core.ui.ErrorStateView
 import com.mitclass.hrleave.core.ui.OnResume
 import com.mitclass.hrleave.core.ui.StatusChip
 import com.mitclass.hrleave.data.remote.dto.LeavePlanRequestDto
 
+/** No FAB here — the shell's global center FAB is the one create entry point (Task 14.2). */
 @Composable
 fun LeavePlanRequestsListScreen(
     onItemClick: (String) -> Unit,
-    onCreateClick: () -> Unit,
     viewModel: LeavePlanRequestsListViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsState()
     OnResume(onResume = viewModel::load)
 
-    Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(onClick = onCreateClick) {
-                Icon(Icons.Filled.Add, contentDescription = "New leave plan request")
-            }
-        },
-    ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-        ) {
-            when (val current = state) {
-                is LeavePlanRequestsListUiState.Loading -> LoadingBox()
-                is LeavePlanRequestsListUiState.Error -> ErrorStateView(message = current.message, onRetry = viewModel::load)
-                is LeavePlanRequestsListUiState.Loaded -> {
-                    if (current.requests.isEmpty()) {
-                        EmptyStateView(message = "No leave plan requests yet")
-                    } else {
-                        LeavePlanRequestsList(
-                            requests = current.requests,
-                            canLoadMore = current.canLoadMore,
-                            isLoadingMore = current.isLoadingMore,
-                            onItemClick = onItemClick,
-                            onLoadMore = viewModel::loadMore,
-                        )
-                    }
+    Box(modifier = Modifier.fillMaxSize()) {
+        when (val current = state) {
+            is LeavePlanRequestsListUiState.Loading -> LoadingBox()
+            is LeavePlanRequestsListUiState.Error -> ErrorStateView(message = current.message, onRetry = viewModel::load)
+            is LeavePlanRequestsListUiState.Loaded -> {
+                if (current.requests.isEmpty()) {
+                    EmptyStateView(message = "No leave plan requests yet")
+                } else {
+                    LeavePlanRequestsList(
+                        requests = current.requests,
+                        canLoadMore = current.canLoadMore,
+                        isLoadingMore = current.isLoadingMore,
+                        onItemClick = onItemClick,
+                        onLoadMore = viewModel::loadMore,
+                    )
                 }
             }
         }
@@ -95,11 +76,11 @@ private fun LeavePlanRequestsList(
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(horizontal = AppSpacing.lg, vertical = AppSpacing.sm),
     ) {
-        items(requests, key = { it.id }) { request ->
+        itemsIndexed(requests, key = { _, item -> item.id }) { index, request ->
             LeavePlanRequestRow(request = request, onClick = { onItemClick(request.id) })
+            if (index != requests.lastIndex) HorizontalDivider()
         }
         if (canLoadMore) {
             item {
@@ -114,36 +95,33 @@ private fun LeavePlanRequestsList(
 
 @Composable
 private fun LeavePlanRequestRow(request: LeavePlanRequestDto, onClick: () -> Unit) {
-    Card(
-        onClick = onClick,
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(CardCornerRadius),
-        elevation = CardDefaults.cardElevation(defaultElevation = CardElevation),
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = AppSpacing.md),
     ) {
-        Column(modifier = Modifier.padding(AppSpacing.lg)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(text = request.leaveType.name, style = MaterialTheme.typography.titleMedium)
-                StatusChip(status = request.status)
-            }
-            Spacer(modifier = Modifier.height(AppSpacing.sm))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.EventNote,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(16.dp),
-                )
-                Spacer(modifier = Modifier.width(AppSpacing.xs))
-                Text(
-                    text = "${request.amount.toInt()} date(s)",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(text = request.leaveType.name, style = MaterialTheme.typography.titleMedium)
+            StatusChip(status = request.status)
+        }
+        Spacer(modifier = Modifier.height(AppSpacing.sm))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.EventNote,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(16.dp),
+            )
+            Spacer(modifier = Modifier.width(AppSpacing.xs))
+            Text(
+                text = "${request.amount.toInt()} date(s)",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }

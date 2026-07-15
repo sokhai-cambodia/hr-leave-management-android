@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -21,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -54,8 +56,9 @@ fun LoginScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(24.dp),
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Top,
     ) {
+        Spacer(Modifier.height(AppSpacing.xl))
         TwoToneWordmark()
         Spacer(Modifier.height(AppSpacing.lg))
         Text(
@@ -65,11 +68,18 @@ fun LoginScreen(
             },
             fontSize = 28.sp,
         )
+        Spacer(Modifier.height(AppSpacing.sm))
+        Text(
+            text = "Please take a moment to log in to your account when you're ready.",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
         Spacer(Modifier.height(32.dp))
         AppTextField(
             value = identifier,
             onValueChange = { identifier = it },
-            label = "Email",
+            label = "Email or Username",
+            placeholder = "Email or username",
             singleLine = true,
             enabled = !isLoading,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
@@ -79,6 +89,7 @@ fun LoginScreen(
             value = password,
             onValueChange = { password = it },
             label = "Password",
+            placeholder = "Password",
             singleLine = true,
             enabled = !isLoading,
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
@@ -93,7 +104,11 @@ fun LoginScreen(
             },
         )
         Spacer(Modifier.height(AppSpacing.xs))
-        TextButton(onClick = onForgotPassword, enabled = !isLoading) {
+        TextButton(
+            onClick = onForgotPassword,
+            enabled = !isLoading,
+            modifier = Modifier.align(Alignment.End),
+        ) {
             Text("Forgot password?")
         }
         if (uiState is LoginUiState.Error) {
@@ -104,7 +119,7 @@ fun LoginScreen(
         }
         Spacer(Modifier.height(AppSpacing.lg))
         AppButton(
-            text = "Log in",
+            text = "Log In",
             onClick = { viewModel.login(identifier.trim(), password) },
             enabled = !isLoading && identifier.isNotBlank() && password.isNotBlank(),
             loading = isLoading,
