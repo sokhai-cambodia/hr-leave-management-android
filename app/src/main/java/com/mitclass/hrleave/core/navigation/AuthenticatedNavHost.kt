@@ -12,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.mitclass.hrleave.data.remote.dto.UserDto
+import com.mitclass.hrleave.feature.approvals.ApprovalsQueueScreen
 import com.mitclass.hrleave.feature.dashboard.DashboardScreen
 import com.mitclass.hrleave.feature.dashboard.QuickAction
 import com.mitclass.hrleave.feature.leaveplanrequests.LeavePlanRequestDetailScreen
@@ -140,7 +141,7 @@ fun AuthenticatedNavHost(
                 },
             )
         }
-        composable(Destination.Approvals.route) { ComingSoonScreen("Approvals") }
+        composable(Destination.Approvals.route) { ApprovalsQueueScreen() }
         composable(Destination.Notifications.route) { ComingSoonScreen("Notifications") }
         composable(Destination.Profile.route) { ComingSoonScreen("Profile") }
         composable(Destination.AdminPolicies.route) { ComingSoonScreen("Policies") }

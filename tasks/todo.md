@@ -41,7 +41,7 @@ Full detail (acceptance criteria, verify steps) in `tasks/plan.md`.
 - [ ] **Checkpoint 6**
 
 ## Phase 7 — Approvals Queue
-- [ ] 7.1 Approvals list (two tabs) + approve/reject
+- [x] 7.1 Approvals list (two tabs) + approve/reject
 - [ ] **Checkpoint 7**
 
 ## Phase 8 — Schedule (month calendar)

@@ -43,4 +43,18 @@ class LeaveRequestsRepository @Inject constructor(
                 result
             }
         }
+
+    /** Server-side filtered — not client-side — to rows where the caller is the assigned approver. */
+    suspend fun listPendingForApprover(approverId: String): AppResult<List<LeaveRequestDto>> =
+        when (
+            val result = safeApiCall { leaveRequestsApi.list(approverId = approverId, status = "pending", limit = 100) }
+        ) {
+            is AppResult.Success -> AppResult.Success(result.data.data)
+            is AppResult.Failure -> result
+        }
+
+    /** Reject credits the balance back — verified server-side (Task 7.1), nothing to recompute client-side. */
+    suspend fun approve(id: String): AppResult<LeaveRequestDto> = safeApiCall { leaveRequestsApi.approve(id) }
+
+    suspend fun reject(id: String): AppResult<LeaveRequestDto> = safeApiCall { leaveRequestsApi.reject(id) }
 }

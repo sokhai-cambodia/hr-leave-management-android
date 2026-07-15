@@ -44,4 +44,18 @@ class LeavePlanRequestsRepository @Inject constructor(
                 result
             }
         }
+
+    suspend fun listPendingForApprover(approverId: String): AppResult<List<LeavePlanRequestDto>> =
+        when (
+            val result =
+                safeApiCall { leavePlanRequestsApi.list(approverId = approverId, status = "pending", limit = 100) }
+        ) {
+            is AppResult.Success -> AppResult.Success(result.data.data)
+            is AppResult.Failure -> result
+        }
+
+    /** No balance credit on reject here (unlike Leave Requests) — plan requests never touch balances. */
+    suspend fun approve(id: String): AppResult<LeavePlanRequestDto> = safeApiCall { leavePlanRequestsApi.approve(id) }
+
+    suspend fun reject(id: String): AppResult<LeavePlanRequestDto> = safeApiCall { leavePlanRequestsApi.reject(id) }
 }

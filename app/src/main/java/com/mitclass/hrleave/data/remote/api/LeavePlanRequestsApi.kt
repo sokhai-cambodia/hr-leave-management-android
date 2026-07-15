@@ -16,6 +16,7 @@ interface LeavePlanRequestsApi {
     @GET("leave-plan-requests/")
     suspend fun list(
         @Query("owner_id") ownerId: String? = null,
+        @Query("approver_id") approverId: String? = null,
         @Query("status") status: String? = null,
         @Query("skip") skip: Int = 0,
         @Query("limit") limit: Int = 100,
@@ -35,4 +36,10 @@ interface LeavePlanRequestsApi {
 
     @PUT("leave-plan-requests/{id}/submit")
     suspend fun submit(@Path("id") id: String): LeavePlanRequestDto
+
+    @PUT("leave-plan-requests/{id}/approve")
+    suspend fun approve(@Path("id") id: String): LeavePlanRequestDto
+
+    @PUT("leave-plan-requests/{id}/reject")
+    suspend fun reject(@Path("id") id: String): LeavePlanRequestDto
 }
