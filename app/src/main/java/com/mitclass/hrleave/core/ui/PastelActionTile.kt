@@ -17,8 +17,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import com.mitclass.hrleave.core.theme.AppSpacing
 import com.mitclass.hrleave.core.theme.CardCornerRadius
+import com.mitclass.hrleave.core.theme.CardElevation
+import com.mitclass.hrleave.core.theme.pastelContainer
 
-/** A pastel-tinted action tile ("Request Leave"/"Plan Leave") — Task 13.3/13.4. */
+/** A pastel-tinted action tile ("Request Leave"/"Plan Leave") using STYLE_GUIDE.md's status
+ * pastel formula (tint @ 14% over white) for the container, full tint on the icon. */
 @Composable
 fun PastelActionTile(
     icon: ImageVector,
@@ -31,7 +34,8 @@ fun PastelActionTile(
         onClick = onClick,
         modifier = modifier,
         shape = RoundedCornerShape(CardCornerRadius),
-        colors = CardDefaults.cardColors(containerColor = tint.copy(alpha = 0.12f)),
+        colors = CardDefaults.cardColors(containerColor = tint.pastelContainer()),
+        elevation = CardDefaults.cardElevation(defaultElevation = CardElevation),
     ) {
         Column(modifier = Modifier.padding(AppSpacing.lg)) {
             Icon(imageVector = icon, contentDescription = null, tint = tint)

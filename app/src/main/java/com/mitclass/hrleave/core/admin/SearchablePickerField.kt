@@ -1,5 +1,6 @@
 package com.mitclass.hrleave.core.admin
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,7 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.outlined.ArrowDropDown
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -31,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.mitclass.hrleave.core.theme.AppSpacing
+import com.mitclass.hrleave.core.theme.LightBorder
 import com.mitclass.hrleave.core.theme.LightFieldFill
 import com.mitclass.hrleave.core.theme.TextFieldCornerRadius
 import com.mitclass.hrleave.core.ui.AppTextField
@@ -59,6 +61,7 @@ fun SearchablePickerField(
                 .clickable { showDialog = true },
             shape = RoundedCornerShape(TextFieldCornerRadius),
             color = LightFieldFill,
+            border = BorderStroke(1.dp, LightBorder),
         ) {
             Row(
                 modifier = Modifier
@@ -77,7 +80,7 @@ fun SearchablePickerField(
                     },
                     modifier = Modifier.weight(1f),
                 )
-                Icon(Icons.Filled.ArrowDropDown, contentDescription = "Choose $label")
+                Icon(Icons.Outlined.ArrowDropDown, contentDescription = "Choose $label")
             }
         }
     }

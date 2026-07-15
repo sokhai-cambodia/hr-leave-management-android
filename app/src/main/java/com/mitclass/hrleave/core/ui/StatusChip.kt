@@ -15,6 +15,7 @@ import com.mitclass.hrleave.core.theme.DangerColor
 import com.mitclass.hrleave.core.theme.PillCornerRadius
 import com.mitclass.hrleave.core.theme.SuccessColor
 import com.mitclass.hrleave.core.theme.WarningColor
+import com.mitclass.hrleave.core.theme.pastelContainer
 
 /**
  * Renders a leave-request/leave-plan-request status ("draft"|"pending"|"approved"|"rejected") as
@@ -30,7 +31,7 @@ fun StatusChip(status: String, modifier: Modifier = Modifier) {
         style = MaterialTheme.typography.labelMedium,
         color = color,
         modifier = modifier
-            .background(color = color.copy(alpha = 0.1f), shape = shape)
+            .background(color = color.pastelContainer(), shape = shape)
             .border(BorderStroke(1.dp, color.copy(alpha = 0.4f)), shape = shape)
             .padding(horizontal = 10.dp, vertical = 4.dp),
     )

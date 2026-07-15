@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ErrorOutline
+import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -35,7 +35,7 @@ fun ErrorBanner(message: String, modifier: Modifier = Modifier) {
             modifier = Modifier.padding(horizontal = AppSpacing.md, vertical = AppSpacing.sm),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(imageVector = Icons.Filled.ErrorOutline, contentDescription = null, tint = DangerColor)
+            Icon(imageVector = Icons.Outlined.ErrorOutline, contentDescription = null, tint = DangerColor)
             Text(
                 text = message,
                 style = MaterialTheme.typography.bodyMedium,

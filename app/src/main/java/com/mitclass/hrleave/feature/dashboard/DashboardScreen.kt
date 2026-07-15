@@ -16,10 +16,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.EventNote
-import androidx.compose.material.icons.automirrored.filled.FactCheck
-import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.QrCode2
+import androidx.compose.material.icons.automirrored.outlined.EventNote
+import androidx.compose.material.icons.automirrored.outlined.FactCheck
+import androidx.compose.material.icons.outlined.ChevronRight
+import androidx.compose.material.icons.outlined.QrCode2
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -40,6 +40,7 @@ import com.mitclass.hrleave.core.theme.AppSpacing
 import com.mitclass.hrleave.core.theme.BrandPrimary
 import com.mitclass.hrleave.core.theme.InfoColor
 import com.mitclass.hrleave.core.theme.WarningColor
+import com.mitclass.hrleave.core.theme.pastelContainer
 import com.mitclass.hrleave.core.ui.EmptyStateView
 import com.mitclass.hrleave.core.ui.OnResume
 import com.mitclass.hrleave.core.ui.PastelActionTile
@@ -78,14 +79,14 @@ fun DashboardScreen(
         Spacer(Modifier.height(AppSpacing.lg))
         Row(horizontalArrangement = Arrangement.spacedBy(AppSpacing.md)) {
             PastelActionTile(
-                icon = Icons.AutoMirrored.Filled.FactCheck,
+                icon = Icons.AutoMirrored.Outlined.FactCheck,
                 label = "Request Leave",
                 tint = BrandPrimary,
                 onClick = onRequestLeaveClick,
                 modifier = Modifier.weight(1f),
             )
             PastelActionTile(
-                icon = Icons.AutoMirrored.Filled.EventNote,
+                icon = Icons.AutoMirrored.Outlined.EventNote,
                 label = "Plan Leave",
                 tint = WarningColor,
                 onClick = onPlanLeaveClick,
@@ -158,7 +159,7 @@ private fun ProfileHeader(user: UserDto, onBusinessCardClick: () -> Unit) {
         Box(
             modifier = Modifier
                 .size(56.dp)
-                .background(color = BrandPrimary.copy(alpha = 0.15f), shape = CircleShape),
+                .background(color = BrandPrimary.pastelContainer(), shape = CircleShape),
             contentAlignment = Alignment.Center,
         ) {
             Text(
@@ -179,7 +180,7 @@ private fun ProfileHeader(user: UserDto, onBusinessCardClick: () -> Unit) {
             )
         }
         IconButton(onClick = onBusinessCardClick) {
-            Icon(imageVector = Icons.Filled.QrCode2, contentDescription = "My Business Card", tint = BrandPrimary)
+            Icon(imageVector = Icons.Outlined.QrCode2, contentDescription = "My Business Card", tint = BrandPrimary)
         }
     }
 }
@@ -269,6 +270,6 @@ private fun QuickActionRow(action: QuickAction, onClick: () -> Unit) {
                 .weight(1f)
                 .padding(start = AppSpacing.md),
         )
-        Icon(imageVector = Icons.Filled.ChevronRight, contentDescription = null)
+        Icon(imageVector = Icons.Outlined.ChevronRight, contentDescription = null)
     }
 }

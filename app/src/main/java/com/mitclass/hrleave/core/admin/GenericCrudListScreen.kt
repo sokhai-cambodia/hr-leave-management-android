@@ -12,11 +12,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowDownward
-import androidx.compose.material.icons.filled.ArrowUpward
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.ArrowDownward
+import androidx.compose.material.icons.outlined.ArrowUpward
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -59,7 +59,7 @@ fun <T> GenericCrudListScreen(engine: CrudEngine<T>) {
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(onClick = engine::startCreate) {
-                Icon(Icons.Filled.Add, contentDescription = "Create")
+                Icon(Icons.Outlined.Add, contentDescription = "Create")
             }
         },
     ) { paddingValues ->
@@ -79,12 +79,12 @@ fun <T> GenericCrudListScreen(engine: CrudEngine<T>) {
                     onValueChange = engine::onSearchQueryChange,
                     label = "Search",
                     singleLine = true,
-                    leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
+                    leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = null) },
                     modifier = Modifier.weight(1f),
                 )
                 IconButton(onClick = engine::toggleSortDirection) {
                     Icon(
-                        imageVector = if (sortAscending) Icons.Filled.ArrowUpward else Icons.Filled.ArrowDownward,
+                        imageVector = if (sortAscending) Icons.Outlined.ArrowUpward else Icons.Outlined.ArrowDownward,
                         contentDescription = if (sortAscending) "Sorted A to Z, tap to reverse" else "Sorted Z to A, tap to reverse",
                     )
                 }
@@ -185,7 +185,7 @@ private fun CrudRow(
                 CircularProgressIndicator(modifier = Modifier.padding(8.dp))
             } else {
                 IconButton(onClick = onDeleteClick) {
-                    Icon(Icons.Filled.Delete, contentDescription = "Delete")
+                    Icon(Icons.Outlined.Delete, contentDescription = "Delete")
                 }
             }
         }

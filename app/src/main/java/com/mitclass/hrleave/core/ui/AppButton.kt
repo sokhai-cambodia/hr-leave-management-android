@@ -47,6 +47,14 @@ fun AppButton(
         enabled = enabled && !loading,
         shape = RoundedCornerShape(ButtonCornerRadius),
         colors = colors,
+        // STYLE_GUIDE.md: "Buttons: ... no elevation."
+        elevation = ButtonDefaults.buttonElevation(
+            defaultElevation = 0.dp,
+            pressedElevation = 0.dp,
+            focusedElevation = 0.dp,
+            hoveredElevation = 0.dp,
+            disabledElevation = 0.dp,
+        ),
     ) {
         if (loading) {
             CircularProgressIndicator(
