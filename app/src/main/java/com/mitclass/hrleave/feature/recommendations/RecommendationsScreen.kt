@@ -12,8 +12,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ChevronLeft
-import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.outlined.ChevronLeft
+import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -117,11 +117,11 @@ private fun YearSelector(year: Int, onYearChange: (Int) -> Unit) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         IconButton(onClick = { onYearChange(year - 1) }) {
-            Icon(Icons.Filled.ChevronLeft, contentDescription = "Previous year")
+            Icon(Icons.Outlined.ChevronLeft, contentDescription = "Previous year")
         }
         Text(text = year.toString(), style = MaterialTheme.typography.titleLarge)
         IconButton(onClick = { onYearChange(year + 1) }) {
-            Icon(Icons.Filled.ChevronRight, contentDescription = "Next year")
+            Icon(Icons.Outlined.ChevronRight, contentDescription = "Next year")
         }
     }
 }

@@ -15,8 +15,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.outlined.CalendarMonth
+import androidx.compose.material.icons.outlined.Schedule
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
@@ -130,13 +130,13 @@ private fun LeaveRequestDetailContent(
             Spacer(modifier = Modifier.height(AppSpacing.lg))
 
             IconDetailRow(
-                icon = Icons.Filled.CalendarMonth,
+                icon = Icons.Outlined.CalendarMonth,
                 label = "Duration",
                 value = "${request.startDate} to ${request.endDate}",
             )
             Spacer(modifier = Modifier.height(AppSpacing.md))
             IconDetailRow(
-                icon = Icons.Filled.Schedule,
+                icon = Icons.Outlined.Schedule,
                 label = "Requested Days",
                 value = "${request.amount} Days",
             )

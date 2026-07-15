@@ -11,8 +11,8 @@ val CardCornerRadius = 18.dp
 val TextFieldCornerRadius = 12.dp
 val PillCornerRadius = 999.dp
 
-// Soft, tinted card shadow depth (per ui.webp) instead of a bare 1dp hairline.
-val CardElevation = 3.dp
+// STYLE_GUIDE.md: "Cards: elevation 1 (subtle), shadow at black @ 8% alpha, 18dp radius."
+val CardElevation = 1.dp
 
 val HrLeaveShapes = Shapes(
     extraSmall = RoundedCornerShape(8.dp),

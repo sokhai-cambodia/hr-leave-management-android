@@ -8,8 +8,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ErrorOutline
-import androidx.compose.material.icons.filled.Inbox
+import androidx.compose.material.icons.outlined.ErrorOutline
+import androidx.compose.material.icons.outlined.Inbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -33,7 +33,7 @@ fun ErrorStateView(message: String, onRetry: () -> Unit, modifier: Modifier = Mo
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(AppSpacing.xl),
         ) {
-            Icon(imageVector = Icons.Filled.ErrorOutline, contentDescription = null, tint = DangerColor)
+            Icon(imageVector = Icons.Outlined.ErrorOutline, contentDescription = null, tint = DangerColor)
             Spacer(Modifier.height(AppSpacing.sm))
             Text(text = message, color = DangerColor, textAlign = TextAlign.Center)
             Spacer(Modifier.height(AppSpacing.md))
@@ -47,7 +47,7 @@ fun ErrorStateView(message: String, onRetry: () -> Unit, modifier: Modifier = Mo
 fun EmptyStateView(
     message: String,
     modifier: Modifier = Modifier,
-    icon: ImageVector = Icons.Filled.Inbox,
+    icon: ImageVector = Icons.Outlined.Inbox,
 ) {
     Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(

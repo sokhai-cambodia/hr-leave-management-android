@@ -15,8 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.outlined.CalendarMonth
+import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -38,12 +38,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mitclass.hrleave.core.theme.AppSpacing
 import com.mitclass.hrleave.core.theme.BrandPrimary
+import com.mitclass.hrleave.core.theme.LightBorder
 import com.mitclass.hrleave.core.theme.LightFieldFill
 import com.mitclass.hrleave.core.theme.TextFieldCornerRadius
 import com.mitclass.hrleave.core.ui.AppButton
@@ -97,7 +97,7 @@ fun LeavePlanRequestFormScreen(
                         focusedContainerColor = LightFieldFill,
                         unfocusedContainerColor = LightFieldFill,
                         focusedBorderColor = BrandPrimary,
-                        unfocusedBorderColor = Color.Transparent,
+                        unfocusedBorderColor = LightBorder,
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -164,14 +164,14 @@ fun LeavePlanRequestFormScreen(
                                 label = { Text(date.toString()) },
                                 avatar = {
                                     Icon(
-                                        Icons.Filled.CalendarMonth,
+                                        Icons.Outlined.CalendarMonth,
                                         contentDescription = null,
                                         modifier = Modifier.size(18.dp),
                                     )
                                 },
                                 trailingIcon = {
                                     Icon(
-                                        Icons.Filled.Close,
+                                        Icons.Outlined.Close,
                                         contentDescription = "Remove $date",
                                         modifier = Modifier.size(18.dp),
                                     )

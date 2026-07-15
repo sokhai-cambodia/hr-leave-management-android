@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -18,14 +18,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import com.mitclass.hrleave.core.theme.AppSpacing
 import com.mitclass.hrleave.core.theme.CardCornerRadius
+import com.mitclass.hrleave.core.theme.CardElevation
+import com.mitclass.hrleave.core.theme.pastelContainer
 
 /**
- * A dashboard stat tile: colored label + a bold, large numeral in the same tint, matching the
- * Flutter client's actual "Available Days"/"Approvals" cards (`ui/home.jpg`) — no icon badge, a
- * trailing chevron only when tappable.
+ * A dashboard stat tile: STYLE_GUIDE.md's "status pastel formula" container (tint @ 14% over
+ * white) + a colored label and bold, large numeral in the same tint — no icon badge, a trailing
+ * chevron only when tappable.
  */
 @Composable
 fun StatCard(
@@ -47,24 +48,25 @@ fun StatCard(
                 Text(text = value, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold, color = tint)
             }
             if (onClick != null) {
-                Icon(imageVector = Icons.Filled.ChevronRight, contentDescription = null, tint = tint)
+                Icon(imageVector = Icons.Outlined.ChevronRight, contentDescription = null, tint = tint)
             }
         }
     }
+    val colors = CardDefaults.cardColors(containerColor = tint.pastelContainer())
     if (onClick != null) {
         Card(
             onClick = onClick,
             modifier = modifier,
             shape = shape,
-            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-            colors = CardDefaults.cardColors(containerColor = tint.copy(alpha = 0.12f)),
+            colors = colors,
+            elevation = CardDefaults.cardElevation(defaultElevation = CardElevation),
         ) { content() }
     } else {
         Card(
             modifier = modifier,
             shape = shape,
-            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-            colors = CardDefaults.cardColors(containerColor = tint.copy(alpha = 0.12f)),
+            colors = colors,
+            elevation = CardDefaults.cardElevation(defaultElevation = CardElevation),
         ) { content() }
     }
 }

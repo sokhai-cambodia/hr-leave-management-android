@@ -11,12 +11,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.EventNote
-import androidx.compose.material.icons.automirrored.filled.FactCheck
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.EventNote
+import androidx.compose.material.icons.automirrored.outlined.FactCheck
+import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.BottomAppBar
@@ -31,6 +31,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -78,13 +79,18 @@ fun AuthenticatedShell(
         topBar = {
             TopAppBar(
                 title = { Text(screenTitle(backStackEntry)) },
+                // STYLE_GUIDE.md: "App bar: flat (elevation 0), background matches scaffold."
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background,
+                    scrolledContainerColor = MaterialTheme.colorScheme.background,
+                ),
                 navigationIcon = {
                     if (!isTopLevel) {
                         IconButton(onClick = { navController.popBackStack() }) {
                             if (isModalFormRoute(currentRoute)) {
-                                Icon(Icons.Filled.Close, contentDescription = "Close")
+                                Icon(Icons.Outlined.Close, contentDescription = "Close")
                             } else {
-                                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                                Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "Back")
                             }
                         }
                     }
@@ -108,14 +114,18 @@ fun AuthenticatedShell(
                     containerColor = BrandPrimary,
                     contentColor = Color.White,
                 ) {
-                    Icon(Icons.Filled.Add, contentDescription = "Create")
+                    Icon(Icons.Outlined.Add, contentDescription = "Create")
                 }
             }
         },
         floatingActionButtonPosition = FabPosition.Center,
         bottomBar = {
             if (isTopLevel) {
-                BottomAppBar {
+                // STYLE_GUIDE.md: "Bottom nav: surface-colored background ... elevation 8."
+                BottomAppBar(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    tonalElevation = 8.dp,
+                ) {
                     BottomTab.entries.take(2).forEach {
                         BottomTabButton(
                             tab = it,
@@ -174,7 +184,8 @@ private fun BottomTabButton(
     modifier: Modifier = Modifier,
 ) {
     val selected = currentRoute == tab.matchRoute
-    val tint = if (selected) BrandPrimary else MaterialTheme.colorScheme.onSurfaceVariant
+    // STYLE_GUIDE.md: "primary color for selected icon/label, unselected at 45% opacity."
+    val tint = if (selected) BrandPrimary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.45f)
     Column(
         modifier = modifier
             .clickable(onClick = {
@@ -211,7 +222,7 @@ private fun NotificationBellChip(unreadCount: Int, onClick: () -> Unit) {
                 }
             },
         ) {
-            Icon(Icons.Filled.Notifications, contentDescription = "Notifications")
+            Icon(Icons.Outlined.Notifications, contentDescription = "Notifications")
         }
     }
 }
@@ -226,14 +237,14 @@ private fun CreateActionSheetContent(onRequestLeave: () -> Unit, onPlanLeave: ()
         )
         ListItem(
             headlineContent = { Text("Request Leave") },
-            leadingContent = { Icon(Icons.AutoMirrored.Filled.FactCheck, contentDescription = null) },
+            leadingContent = { Icon(Icons.AutoMirrored.Outlined.FactCheck, contentDescription = null) },
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable(onClick = onRequestLeave),
         )
         ListItem(
             headlineContent = { Text("Plan Leave") },
-            leadingContent = { Icon(Icons.AutoMirrored.Filled.EventNote, contentDescription = null) },
+            leadingContent = { Icon(Icons.AutoMirrored.Outlined.EventNote, contentDescription = null) },
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable(onClick = onPlanLeave),

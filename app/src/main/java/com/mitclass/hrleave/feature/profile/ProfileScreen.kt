@@ -17,17 +17,17 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Logout
-import androidx.compose.material.icons.filled.AccountBalance
-import androidx.compose.material.icons.filled.AdminPanelSettings
-import androidx.compose.material.icons.filled.Category
-import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Event
-import androidx.compose.material.icons.filled.Gavel
-import androidx.compose.material.icons.filled.Groups
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.QrCode2
+import androidx.compose.material.icons.automirrored.outlined.Logout
+import androidx.compose.material.icons.outlined.AccountBalance
+import androidx.compose.material.icons.outlined.AdminPanelSettings
+import androidx.compose.material.icons.outlined.Category
+import androidx.compose.material.icons.outlined.ChevronRight
+import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.Event
+import androidx.compose.material.icons.outlined.Gavel
+import androidx.compose.material.icons.outlined.Groups
+import androidx.compose.material.icons.outlined.Lock
+import androidx.compose.material.icons.outlined.QrCode2
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -59,12 +59,12 @@ import com.mitclass.hrleave.data.remote.dto.UserDto
 private data class AdminEntry(val label: String, val icon: ImageVector, val destination: Destination)
 
 private val adminEntries = listOf(
-    AdminEntry("Policies", Icons.Filled.Gavel, Destination.AdminPolicies),
-    AdminEntry("Public Holidays", Icons.Filled.Event, Destination.AdminPublicHolidays),
-    AdminEntry("Leave Types", Icons.Filled.Category, Destination.AdminLeaveTypes),
-    AdminEntry("Teams", Icons.Filled.Groups, Destination.AdminTeams),
-    AdminEntry("Leave Balances", Icons.Filled.AccountBalance, Destination.AdminLeaveBalances),
-    AdminEntry("Admin Users", Icons.Filled.AdminPanelSettings, Destination.AdminUsers),
+    AdminEntry("Policies", Icons.Outlined.Gavel, Destination.AdminPolicies),
+    AdminEntry("Public Holidays", Icons.Outlined.Event, Destination.AdminPublicHolidays),
+    AdminEntry("Leave Types", Icons.Outlined.Category, Destination.AdminLeaveTypes),
+    AdminEntry("Teams", Icons.Outlined.Groups, Destination.AdminTeams),
+    AdminEntry("Leave Balances", Icons.Outlined.AccountBalance, Destination.AdminLeaveBalances),
+    AdminEntry("Admin Users", Icons.Outlined.AdminPanelSettings, Destination.AdminUsers),
 )
 
 private fun initials(fullName: String?, email: String): String {
@@ -126,7 +126,7 @@ fun ProfileScreen(
                 Text(text = user.email, style = MaterialTheme.typography.bodyMedium)
             }
             IconButton(onClick = { isEditing = !isEditing }) {
-                Icon(imageVector = Icons.Filled.Edit, contentDescription = "Edit profile")
+                Icon(imageVector = Icons.Outlined.Edit, contentDescription = "Edit profile")
             }
         }
 
@@ -175,7 +175,7 @@ fun ProfileScreen(
                 .padding(vertical = AppSpacing.md),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(imageVector = Icons.Filled.QrCode2, contentDescription = null)
+            Icon(imageVector = Icons.Outlined.QrCode2, contentDescription = null)
             Text(
                 text = "My Business Card",
                 style = MaterialTheme.typography.bodyLarge,
@@ -183,7 +183,7 @@ fun ProfileScreen(
                     .weight(1f)
                     .padding(start = AppSpacing.md),
             )
-            Icon(imageVector = Icons.Filled.ChevronRight, contentDescription = null)
+            Icon(imageVector = Icons.Outlined.ChevronRight, contentDescription = null)
         }
         HorizontalDivider()
         Row(
@@ -193,7 +193,7 @@ fun ProfileScreen(
                 .padding(vertical = AppSpacing.md),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(imageVector = Icons.Filled.Lock, contentDescription = null)
+            Icon(imageVector = Icons.Outlined.Lock, contentDescription = null)
             Text(
                 text = "Change Password",
                 style = MaterialTheme.typography.bodyLarge,
@@ -201,7 +201,7 @@ fun ProfileScreen(
                     .weight(1f)
                     .padding(start = AppSpacing.md),
             )
-            Icon(imageVector = Icons.Filled.ChevronRight, contentDescription = null)
+            Icon(imageVector = Icons.Outlined.ChevronRight, contentDescription = null)
         }
         HorizontalDivider()
 
@@ -209,7 +209,7 @@ fun ProfileScreen(
         AppOutlinedButton(
             text = "Log out",
             onClick = onLogout,
-            icon = { Icon(imageVector = Icons.AutoMirrored.Filled.Logout, contentDescription = null) },
+            icon = { Icon(imageVector = Icons.AutoMirrored.Outlined.Logout, contentDescription = null) },
         )
 
         if (user.isSuperuser) {
@@ -261,6 +261,6 @@ private fun AdminRow(entry: AdminEntry, onClick: () -> Unit) {
                 .weight(1f)
                 .padding(start = AppSpacing.md),
         )
-        Icon(imageVector = Icons.Filled.ChevronRight, contentDescription = null)
+        Icon(imageVector = Icons.Outlined.ChevronRight, contentDescription = null)
     }
 }

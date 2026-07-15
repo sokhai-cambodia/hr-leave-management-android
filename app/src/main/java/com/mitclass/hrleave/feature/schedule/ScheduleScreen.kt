@@ -17,9 +17,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ChevronLeft
-import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.outlined.ChevronLeft
+import androidx.compose.material.icons.outlined.ChevronRight
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -83,14 +83,14 @@ private fun MonthHeader(yearMonth: YearMonth, onPrevious: () -> Unit, onNext: ()
         verticalAlignment = Alignment.CenterVertically,
     ) {
         IconButton(onClick = onPrevious) {
-            Icon(Icons.Filled.ChevronLeft, contentDescription = "Previous month")
+            Icon(Icons.Outlined.ChevronLeft, contentDescription = "Previous month")
         }
         Text(
             text = "${yearMonth.month.getDisplayName(TextStyle.FULL, Locale.getDefault())} ${yearMonth.year}",
             style = MaterialTheme.typography.titleLarge,
         )
         IconButton(onClick = onNext) {
-            Icon(Icons.Filled.ChevronRight, contentDescription = "Next month")
+            Icon(Icons.Outlined.ChevronRight, contentDescription = "Next month")
         }
     }
 }
@@ -159,7 +159,7 @@ private fun ScheduleContent(
                         contentAlignment = Alignment.Center,
                     ) {
                         Icon(
-                            imageVector = Icons.Filled.Person,
+                            imageVector = Icons.Outlined.Person,
                             contentDescription = null,
                             tint = TeamLeaveColor,
                             modifier = Modifier.size(18.dp),

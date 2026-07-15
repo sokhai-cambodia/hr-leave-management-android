@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.outlined.Schedule
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.CircularProgressIndicator
@@ -128,7 +128,7 @@ private fun LeavePlanRequestDetailContent(
             Spacer(modifier = Modifier.height(AppSpacing.lg))
 
             IconDetailRow(
-                icon = Icons.Filled.Schedule,
+                icon = Icons.Outlined.Schedule,
                 label = "Requested Days",
                 value = "${request.amount.toInt()} Days",
             )

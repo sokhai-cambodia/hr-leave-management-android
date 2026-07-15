@@ -23,8 +23,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -45,8 +43,10 @@ import com.mitclass.hrleave.core.theme.CardCornerRadius
 import com.mitclass.hrleave.core.theme.CardElevation
 import com.mitclass.hrleave.core.theme.PillCornerRadius
 import com.mitclass.hrleave.core.theme.SuccessColor
+import com.mitclass.hrleave.core.theme.pastelContainer
 import com.mitclass.hrleave.core.ui.EmptyStateView
 import com.mitclass.hrleave.core.ui.OnResume
+import com.mitclass.hrleave.core.ui.PillTabRow
 import com.mitclass.hrleave.data.remote.dto.LeavePlanRequestDto
 import com.mitclass.hrleave.data.remote.dto.LeaveRequestDto
 
@@ -63,10 +63,12 @@ fun ApprovalsQueueScreen(
     var pendingReject by remember { mutableStateOf<PendingReject?>(null) }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        TabRow(selectedTabIndex = selectedTab) {
-            Tab(selected = selectedTab == 0, onClick = { selectedTab = 0 }, text = { Text("Leave Requests") })
-            Tab(selected = selectedTab == 1, onClick = { selectedTab = 1 }, text = { Text("Leave Plans") })
-        }
+        PillTabRow(
+            titles = listOf("Leave Requests", "Leave Plans"),
+            selectedIndex = selectedTab,
+            onSelect = { selectedTab = it },
+            modifier = Modifier.padding(AppSpacing.lg),
+        )
         actionError?.let {
             Row(
                 modifier = Modifier
@@ -253,7 +255,7 @@ private fun LeaveTypePill(name: String) {
         style = MaterialTheme.typography.labelMedium,
         color = BrandPrimary,
         modifier = Modifier
-            .background(color = BrandPrimary.copy(alpha = 0.12f), shape = RoundedCornerShape(PillCornerRadius))
+            .background(color = BrandPrimary.pastelContainer(), shape = RoundedCornerShape(PillCornerRadius))
             .padding(horizontal = 10.dp, vertical = 4.dp),
     )
 }

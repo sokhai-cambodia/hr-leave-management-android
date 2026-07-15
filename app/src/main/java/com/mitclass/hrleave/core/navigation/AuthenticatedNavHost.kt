@@ -1,7 +1,7 @@
 package com.mitclass.hrleave.core.navigation
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -41,7 +41,7 @@ import com.mitclass.hrleave.feature.schedule.ScheduleScreen
 private val dashboardQuickActions = listOf(
     QuickAction(
         label = "Recommendations",
-        icon = Icons.Filled.AutoAwesome,
+        icon = Icons.Outlined.AutoAwesome,
         route = Destination.Recommendations.route,
     ),
 )

@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -78,7 +78,7 @@ fun DatePickerField(
                     color = if (date != null) LocalContentColor.current else MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.weight(1f),
                 )
-                Icon(Icons.Filled.CalendarMonth, contentDescription = "Pick date")
+                Icon(Icons.Outlined.CalendarMonth, contentDescription = "Pick date")
             }
         }
     }
