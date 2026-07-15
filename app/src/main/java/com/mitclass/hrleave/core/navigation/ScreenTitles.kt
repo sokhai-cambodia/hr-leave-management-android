@@ -23,10 +23,10 @@ fun screenTitle(entry: NavBackStackEntry?): String {
         Destination.AdminLeaveBalances.route -> "Leave Balances"
         Destination.AdminUsers.route -> "Admin Users"
         ProfileRoutes.CHANGE_PASSWORD_ROUTE -> "Change Password"
-        LeaveRequestRoutes.DETAIL_ROUTE -> "Leave Request"
+        LeaveRequestRoutes.DETAIL_ROUTE -> "Request Details"
         LeaveRequestRoutes.FORM_ROUTE ->
             if (entry.arguments?.getString(LeaveRequestRoutes.FORM_ARG).isNullOrBlank()) "New Leave Request" else "Edit Leave Request"
-        LeavePlanRequestRoutes.DETAIL_ROUTE -> "Leave Plan Request"
+        LeavePlanRequestRoutes.DETAIL_ROUTE -> "Plan Details"
         LeavePlanRequestRoutes.FORM_ROUTE ->
             if (entry.arguments?.getString(LeavePlanRequestRoutes.FORM_ARG).isNullOrBlank()) {
                 "New Leave Plan Request"

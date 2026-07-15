@@ -17,21 +17,28 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.AccountBalance
 import androidx.compose.material.icons.filled.AdminPanelSettings
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.Gavel
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -85,6 +92,11 @@ fun ProfileScreen(
     viewModel: ProfileViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsState()
+    var isEditing by remember { mutableStateOf(false) }
+
+    LaunchedEffect(state.savedMessage) {
+        if (state.savedMessage != null) isEditing = false
+    }
 
     Column(
         modifier = Modifier
@@ -107,11 +119,47 @@ fun ProfileScreen(
                 )
             }
             Spacer(Modifier.width(AppSpacing.md))
-            Column {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(text = user.fullName ?: user.email, style = MaterialTheme.typography.titleLarge)
                 Text(text = user.email, style = MaterialTheme.typography.bodyMedium)
             }
+            IconButton(onClick = { isEditing = !isEditing }) {
+                Icon(imageVector = Icons.Filled.Edit, contentDescription = "Edit profile")
+            }
         }
+
+        if (isEditing) {
+            Spacer(Modifier.height(AppSpacing.md))
+            AppTextField(
+                value = state.fullName,
+                onValueChange = viewModel::onFullNameChange,
+                label = "Full name",
+                singleLine = true,
+                enabled = !state.isSaving,
+            )
+            Spacer(Modifier.height(AppSpacing.md))
+            AppTextField(
+                value = state.email,
+                onValueChange = viewModel::onEmailChange,
+                label = "Email",
+                singleLine = true,
+                enabled = !state.isSaving,
+            )
+            state.errorMessage?.let {
+                ErrorBanner(message = it, modifier = Modifier.padding(top = AppSpacing.md))
+            }
+            state.savedMessage?.let {
+                Text(text = it, color = SuccessColor, modifier = Modifier.padding(top = AppSpacing.md))
+            }
+            Spacer(Modifier.height(AppSpacing.md))
+            AppButton(
+                text = "Save",
+                onClick = viewModel::save,
+                enabled = !state.isSaving && state.fullName.isNotBlank() && state.email.isNotBlank(),
+                loading = state.isSaving,
+            )
+        }
+
         Spacer(Modifier.height(AppSpacing.lg))
         InfoRow(label = "Team", value = user.team?.name ?: "No team assigned")
         InfoRow(label = "Role", value = roleLabel(user.isSuperuser, isApprover))
@@ -138,7 +186,11 @@ fun ProfileScreen(
         HorizontalDivider()
 
         Spacer(Modifier.height(AppSpacing.lg))
-        AppOutlinedButton(text = "Log out", onClick = onLogout)
+        AppOutlinedButton(
+            text = "Log out",
+            onClick = onLogout,
+            icon = { Icon(imageVector = Icons.AutoMirrored.Filled.Logout, contentDescription = null) },
+        )
 
         if (user.isSuperuser) {
             Spacer(Modifier.height(AppSpacing.xl))
@@ -151,38 +203,6 @@ fun ProfileScreen(
                 }
             }
         }
-
-        Spacer(Modifier.height(AppSpacing.xl))
-        Text(text = "Edit Profile", style = MaterialTheme.typography.titleMedium)
-        Spacer(Modifier.height(AppSpacing.md))
-        AppTextField(
-            value = state.fullName,
-            onValueChange = viewModel::onFullNameChange,
-            label = "Full name",
-            singleLine = true,
-            enabled = !state.isSaving,
-        )
-        Spacer(Modifier.height(AppSpacing.md))
-        AppTextField(
-            value = state.email,
-            onValueChange = viewModel::onEmailChange,
-            label = "Email",
-            singleLine = true,
-            enabled = !state.isSaving,
-        )
-        state.errorMessage?.let {
-            ErrorBanner(message = it, modifier = Modifier.padding(top = AppSpacing.md))
-        }
-        state.savedMessage?.let {
-            Text(text = it, color = SuccessColor, modifier = Modifier.padding(top = AppSpacing.md))
-        }
-        Spacer(Modifier.height(AppSpacing.lg))
-        AppButton(
-            text = "Save",
-            onClick = viewModel::save,
-            enabled = !state.isSaving && state.fullName.isNotBlank() && state.email.isNotBlank(),
-            loading = state.isSaving,
-        )
     }
 }
 
@@ -192,9 +212,14 @@ private fun InfoRow(label: String, value: String) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = AppSpacing.xs),
-        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(text = label, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.width(80.dp),
+        )
         Text(text = value, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
     }
 }
