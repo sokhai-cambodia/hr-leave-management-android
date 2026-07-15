@@ -2,9 +2,6 @@ package com.mitclass.hrleave.core.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AutoAwesome
-import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.EventNote
-import androidx.compose.material.icons.filled.FactCheck
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -25,11 +22,10 @@ import com.mitclass.hrleave.feature.dashboard.QuickAction
 import com.mitclass.hrleave.feature.leaveplanrequests.LeavePlanRequestDetailScreen
 import com.mitclass.hrleave.feature.leaveplanrequests.LeavePlanRequestFormScreen
 import com.mitclass.hrleave.feature.leaveplanrequests.LeavePlanRequestRoutes
-import com.mitclass.hrleave.feature.leaveplanrequests.LeavePlanRequestsListScreen
 import com.mitclass.hrleave.feature.leaverequests.LeaveRequestDetailScreen
 import com.mitclass.hrleave.feature.leaverequests.LeaveRequestFormScreen
 import com.mitclass.hrleave.feature.leaverequests.LeaveRequestRoutes
-import com.mitclass.hrleave.feature.leaverequests.LeaveRequestsListScreen
+import com.mitclass.hrleave.feature.leaves.LeavesTabScreen
 import com.mitclass.hrleave.feature.notifications.NotificationsListScreen
 import com.mitclass.hrleave.feature.profile.ChangePasswordScreen
 import com.mitclass.hrleave.feature.profile.ProfileRoutes
@@ -38,18 +34,10 @@ import com.mitclass.hrleave.feature.recommendations.RecommendationsScreen
 import com.mitclass.hrleave.feature.schedule.ScheduleScreen
 
 /**
- * Dashboard quick-action tiles — grows one entry per phase as each screen lands (Task 3.1's
- * comment on avoiding permanently-fake placeholders); Profile and Approvals stay drawer-only,
- * per SPEC §8, so they're deliberately absent here.
+ * Dashboard quick actions — Schedule/Leave Requests/Leave Plan Requests moved to bottom tabs
+ * (Task 13.2/13.3), so only Recommendations remains as a dashboard-only entry point.
  */
 private val dashboardQuickActions = listOf(
-    QuickAction(label = "Schedule", icon = Icons.Filled.CalendarMonth, route = Destination.Schedule.route),
-    QuickAction(label = "Leave Requests", icon = Icons.Filled.FactCheck, route = Destination.LeaveRequests.route),
-    QuickAction(
-        label = "Leave Plan Requests",
-        icon = Icons.Filled.EventNote,
-        route = Destination.LeavePlanRequests.route,
-    ),
     QuickAction(
         label = "Recommendations",
         icon = Icons.Filled.AutoAwesome,
@@ -57,7 +45,7 @@ private val dashboardQuickActions = listOf(
     ),
 )
 
-/** Routes reachable from the authenticated shell's drawer (Task 2.1). */
+/** Routes reachable from the authenticated shell's bottom tabs (Task 13.2). */
 @Composable
 fun AuthenticatedNavHost(
     navController: NavHostController,
@@ -76,10 +64,21 @@ fun AuthenticatedNavHost(
             )
         }
         composable(Destination.Schedule.route) { ScheduleScreen() }
-        composable(Destination.LeavePlanRequests.route) {
-            LeavePlanRequestsListScreen(
-                onItemClick = { id -> navController.navigate(LeavePlanRequestRoutes.detail(id)) },
-                onCreateClick = { navController.navigate(LeavePlanRequestRoutes.FORM_CREATE_ROUTE) },
+        composable(
+            route = Destination.Leaves.route,
+            arguments = listOf(
+                navArgument(Destination.Leaves.TAB_ARG) {
+                    type = NavType.StringType
+                    defaultValue = Destination.Leaves.REQUESTS_TAB
+                },
+            ),
+        ) { entry ->
+            LeavesTabScreen(
+                initialTab = entry.arguments?.getString(Destination.Leaves.TAB_ARG) ?: Destination.Leaves.REQUESTS_TAB,
+                onRequestItemClick = { id -> navController.navigate(LeaveRequestRoutes.detail(id)) },
+                onRequestCreateClick = { navController.navigate(LeaveRequestRoutes.FORM_CREATE_ROUTE) },
+                onPlanItemClick = { id -> navController.navigate(LeavePlanRequestRoutes.detail(id)) },
+                onPlanCreateClick = { navController.navigate(LeavePlanRequestRoutes.FORM_CREATE_ROUTE) },
             )
         }
         composable(
@@ -120,12 +119,6 @@ fun AuthenticatedNavHost(
                 },
             )
         }
-        composable(Destination.LeaveRequests.route) {
-            LeaveRequestsListScreen(
-                onItemClick = { id -> navController.navigate(LeaveRequestRoutes.detail(id)) },
-                onCreateClick = { navController.navigate(LeaveRequestRoutes.FORM_CREATE_ROUTE) },
-            )
-        }
         composable(
             route = LeaveRequestRoutes.DETAIL_ROUTE,
             arguments = listOf(navArgument(LeaveRequestRoutes.DETAIL_ARG) { type = NavType.StringType }),
@@ -159,8 +152,8 @@ fun AuthenticatedNavHost(
             NotificationsListScreen(
                 onNavigateToEntity = { entityType ->
                     val target = when (entityType) {
-                        "leave_request" -> Destination.LeaveRequests.route
-                        "leave_plan_request" -> Destination.LeavePlanRequests.route
+                        "leave_request" -> Destination.Leaves.route(Destination.Leaves.REQUESTS_TAB)
+                        "leave_plan_request" -> Destination.Leaves.route(Destination.Leaves.PLANS_TAB)
                         else -> null
                     }
                     target?.let { navController.navigate(it) }
@@ -168,7 +161,11 @@ fun AuthenticatedNavHost(
             )
         }
         composable(Destination.Profile.route) {
-            ProfileScreen(onChangePasswordClick = { navController.navigate(ProfileRoutes.CHANGE_PASSWORD_ROUTE) })
+            ProfileScreen(
+                onChangePasswordClick = { navController.navigate(ProfileRoutes.CHANGE_PASSWORD_ROUTE) },
+                isSuperuser = user.isSuperuser,
+                onAdminEntryClick = { destination -> navController.navigate(destination.route) },
+            )
         }
         composable(ProfileRoutes.CHANGE_PASSWORD_ROUTE) {
             ChangePasswordScreen(onSuccess = { navController.popBackStack() })

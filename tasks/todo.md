@@ -74,7 +74,7 @@ Full detail (acceptance criteria, verify steps) in `tasks/plan.md`.
 Added post-Checkpoint-12 after on-device testing found the UI inconsistent with the Flutter
 sibling app. SPEC.md §7 is stale — ground truth is the Flutter app's actual Dart source.
 - [x] 13.1 Design tokens overhaul (colors, shapes, spacing, filled fields, button height)
-- [ ] 13.2 Navigation shell rewrite (bottom tabs + center FAB + bottom sheet, drop the drawer)
+- [x] 13.2 Navigation shell rewrite (bottom tabs + center FAB + bottom sheet, drop the drawer)
 - [ ] 13.3 Dashboard rebuild (avatar card, pastel action tiles, stat cards, no grid)
 - [ ] 13.4 Shared component library pass (pill StatusChip, StatCard, error/empty states, sticky
       bottom action panel, split action buttons)
