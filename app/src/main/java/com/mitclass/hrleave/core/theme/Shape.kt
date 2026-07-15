@@ -4,16 +4,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Shapes
 import androidx.compose.ui.unit.dp
 
-// SPEC.md §7: buttons/text fields 12dp corners, cards 14dp corners.
+// Verified against the Flutter sibling app (tasks/plan.md Phase 13).
+val ButtonCornerRadius = 14.dp
+val ButtonMinHeight = 54.dp
+val CardCornerRadius = 18.dp
+val TextFieldCornerRadius = 12.dp
+val PillCornerRadius = 999.dp
+
+// Soft, tinted card shadow depth (per ui.webp) instead of a bare 1dp hairline.
+val CardElevation = 3.dp
+
 val HrLeaveShapes = Shapes(
     extraSmall = RoundedCornerShape(8.dp),
-    small = RoundedCornerShape(12.dp),
-    medium = RoundedCornerShape(14.dp),
-    large = RoundedCornerShape(14.dp),
-    extraLarge = RoundedCornerShape(16.dp),
+    small = RoundedCornerShape(TextFieldCornerRadius),
+    medium = RoundedCornerShape(ButtonCornerRadius),
+    large = RoundedCornerShape(CardCornerRadius),
+    extraLarge = RoundedCornerShape(20.dp),
 )
-
-val ButtonCornerRadius = 12.dp
-val ButtonMinHeight = 52.dp
-val CardCornerRadius = 14.dp
-val TextFieldCornerRadius = 12.dp

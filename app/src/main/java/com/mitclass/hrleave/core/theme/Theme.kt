@@ -10,8 +10,11 @@ import androidx.compose.ui.graphics.Color
 private val LightColors = lightColorScheme(
     primary = BrandPrimary,
     onPrimary = Color.White,
+    secondary = InfoColor,
+    tertiary = SuccessColor,
     background = LightBackground,
     surface = LightSurface,
+    surfaceVariant = LightFieldFill,
     outline = LightBorder,
     error = DangerColor,
 )
@@ -19,6 +22,8 @@ private val LightColors = lightColorScheme(
 private val DarkColors = darkColorScheme(
     primary = BrandPrimary,
     onPrimary = Color.White,
+    secondary = InfoColor,
+    tertiary = SuccessColor,
     background = DarkBackground,
     surface = DarkSurface,
     error = DangerColor,
