@@ -14,8 +14,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -29,7 +30,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.mitclass.hrleave.core.theme.AppSpacing
 import com.mitclass.hrleave.core.theme.BrandPrimary
+import com.mitclass.hrleave.core.theme.CardCornerRadius
+import com.mitclass.hrleave.core.theme.CardElevation
+import com.mitclass.hrleave.core.ui.EmptyStateView
+import com.mitclass.hrleave.core.ui.ErrorStateView
 import com.mitclass.hrleave.core.ui.OnResume
 import com.mitclass.hrleave.data.remote.dto.NotificationDto
 
@@ -58,21 +64,11 @@ fun NotificationsListScreen(
                 contentAlignment = Alignment.Center,
             ) { CircularProgressIndicator() }
 
-            is NotificationsListUiState.Error -> Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center,
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(text = current.message, color = MaterialTheme.colorScheme.error)
-                    Button(onClick = viewModel::load, modifier = Modifier.padding(top = 12.dp)) { Text("Retry") }
-                }
-            }
+            is NotificationsListUiState.Error -> ErrorStateView(message = current.message, onRetry = viewModel::load)
 
             is NotificationsListUiState.Loaded -> {
                 if (current.notifications.isEmpty()) {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text(text = "No notifications yet", style = MaterialTheme.typography.bodyLarge)
-                    }
+                    EmptyStateView(message = "No notifications yet")
                 } else {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
@@ -105,11 +101,16 @@ fun NotificationsListScreen(
 
 @Composable
 private fun NotificationRow(notification: NotificationDto, onClick: () -> Unit) {
-    Card(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
+    Card(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(CardCornerRadius),
+        elevation = CardDefaults.cardElevation(defaultElevation = CardElevation),
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(AppSpacing.lg),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             if (!notification.isRead) {

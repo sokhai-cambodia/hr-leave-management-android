@@ -1,19 +1,25 @@
 package com.mitclass.hrleave.feature.approvals
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -30,8 +36,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.mitclass.hrleave.core.theme.AppSpacing
+import com.mitclass.hrleave.core.theme.BrandPrimary
+import com.mitclass.hrleave.core.theme.CardCornerRadius
+import com.mitclass.hrleave.core.theme.CardElevation
+import com.mitclass.hrleave.core.theme.PillCornerRadius
+import com.mitclass.hrleave.core.theme.SuccessColor
+import com.mitclass.hrleave.core.ui.EmptyStateView
 import com.mitclass.hrleave.core.ui.OnResume
 import com.mitclass.hrleave.data.remote.dto.LeavePlanRequestDto
 import com.mitclass.hrleave.data.remote.dto.LeaveRequestDto
@@ -136,20 +150,35 @@ private fun LeaveRequestsTab(
     onReject: (String) -> Unit,
 ) {
     if (requests.isEmpty()) {
-        EmptyBox("No pending leave requests")
+        EmptyStateView(message = "No pending leave requests")
         return
     }
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(AppSpacing.lg),
+        verticalArrangement = Arrangement.spacedBy(AppSpacing.sm),
     ) {
         items(requests, key = { it.id }) { request ->
-            Card(modifier = Modifier.fillMaxWidth()) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(text = request.owner.fullName ?: request.owner.email, style = MaterialTheme.typography.titleMedium)
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(CardCornerRadius),
+                elevation = CardDefaults.cardElevation(defaultElevation = CardElevation),
+            ) {
+                Column(modifier = Modifier.padding(AppSpacing.lg)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = request.owner.fullName ?: request.owner.email,
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+                        LeaveTypePill(name = request.leaveType.name)
+                    }
+                    Spacer(modifier = Modifier.height(AppSpacing.sm))
                     Text(
-                        text = "${request.leaveType.name} · ${request.startDate} → ${request.endDate} · ${request.amount} day(s)",
+                        text = "${request.startDate} → ${request.endDate} · ${request.amount} day(s)",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -172,20 +201,35 @@ private fun LeavePlanRequestsTab(
     onReject: (String) -> Unit,
 ) {
     if (requests.isEmpty()) {
-        EmptyBox("No pending leave plan requests")
+        EmptyStateView(message = "No pending leave plan requests")
         return
     }
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(AppSpacing.lg),
+        verticalArrangement = Arrangement.spacedBy(AppSpacing.sm),
     ) {
         items(requests, key = { it.id }) { request ->
-            Card(modifier = Modifier.fillMaxWidth()) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(text = request.owner.fullName ?: request.owner.email, style = MaterialTheme.typography.titleMedium)
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(CardCornerRadius),
+                elevation = CardDefaults.cardElevation(defaultElevation = CardElevation),
+            ) {
+                Column(modifier = Modifier.padding(AppSpacing.lg)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = request.owner.fullName ?: request.owner.email,
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+                        LeaveTypePill(name = request.leaveType.name)
+                    }
+                    Spacer(modifier = Modifier.height(AppSpacing.sm))
                     Text(
-                        text = "${request.leaveType.name} · ${request.amount.toInt()} date(s)",
+                        text = "${request.amount.toInt()} date(s)",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -200,25 +244,37 @@ private fun LeavePlanRequestsTab(
     }
 }
 
+/** Approvals has no status badge (everything shown is implicitly pending) — a primary-tinted
+ * pill of the leave-type name fills that header slot instead (Task 13.5). */
+@Composable
+private fun LeaveTypePill(name: String) {
+    Text(
+        text = name,
+        style = MaterialTheme.typography.labelMedium,
+        color = BrandPrimary,
+        modifier = Modifier
+            .background(color = BrandPrimary.copy(alpha = 0.12f), shape = RoundedCornerShape(PillCornerRadius))
+            .padding(horizontal = 10.dp, vertical = 4.dp),
+    )
+}
+
 @Composable
 private fun ApprovalActions(isProcessing: Boolean, onApprove: () -> Unit, onReject: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 12.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+            .padding(top = AppSpacing.md),
+        horizontalArrangement = Arrangement.spacedBy(AppSpacing.md),
     ) {
-        Button(onClick = onApprove, enabled = !isProcessing) { Text("Approve") }
+        // The one place the primary brand color is deliberately swapped (Task 13.5).
+        Button(
+            onClick = onApprove,
+            enabled = !isProcessing,
+            colors = ButtonDefaults.buttonColors(containerColor = SuccessColor, contentColor = Color.White),
+        ) { Text("Approve") }
         OutlinedButton(onClick = onReject, enabled = !isProcessing) { Text("Reject") }
         if (isProcessing) {
             CircularProgressIndicator(modifier = Modifier.padding(start = 4.dp).size(20.dp))
         }
-    }
-}
-
-@Composable
-private fun EmptyBox(message: String) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(text = message, style = MaterialTheme.typography.bodyLarge)
     }
 }

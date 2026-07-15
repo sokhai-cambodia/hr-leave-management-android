@@ -5,15 +5,21 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.EventNote
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -28,6 +34,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.mitclass.hrleave.core.theme.AppSpacing
+import com.mitclass.hrleave.core.theme.CardCornerRadius
+import com.mitclass.hrleave.core.theme.CardElevation
+import com.mitclass.hrleave.core.ui.EmptyStateView
+import com.mitclass.hrleave.core.ui.ErrorStateView
 import com.mitclass.hrleave.core.ui.OnResume
 import com.mitclass.hrleave.core.ui.StatusChip
 import com.mitclass.hrleave.data.remote.dto.LeavePlanRequestDto
@@ -55,10 +66,10 @@ fun LeavePlanRequestsListScreen(
         ) {
             when (val current = state) {
                 is LeavePlanRequestsListUiState.Loading -> LoadingBox()
-                is LeavePlanRequestsListUiState.Error -> ErrorBox(message = current.message, onRetry = viewModel::load)
+                is LeavePlanRequestsListUiState.Error -> ErrorStateView(message = current.message, onRetry = viewModel::load)
                 is LeavePlanRequestsListUiState.Loaded -> {
                     if (current.requests.isEmpty()) {
-                        EmptyBox()
+                        EmptyStateView(message = "No leave plan requests yet")
                     } else {
                         LeavePlanRequestsList(
                             requests = current.requests,
@@ -103,22 +114,36 @@ private fun LeavePlanRequestsList(
 
 @Composable
 private fun LeavePlanRequestRow(request: LeavePlanRequestDto, onClick: () -> Unit) {
-    Card(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
+    Card(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(CardCornerRadius),
+        elevation = CardDefaults.cardElevation(defaultElevation = CardElevation),
+    ) {
+        Column(modifier = Modifier.padding(AppSpacing.lg)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
                 Text(text = request.leaveType.name, style = MaterialTheme.typography.titleMedium)
+                StatusChip(status = request.status)
+            }
+            Spacer(modifier = Modifier.height(AppSpacing.sm))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.EventNote,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(16.dp),
+                )
+                Spacer(modifier = Modifier.width(AppSpacing.xs))
                 Text(
                     text = "${request.amount.toInt()} date(s)",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
-            StatusChip(status = request.status)
         }
     }
 }
@@ -127,22 +152,5 @@ private fun LeavePlanRequestRow(request: LeavePlanRequestDto, onClick: () -> Uni
 private fun LoadingBox() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         CircularProgressIndicator()
-    }
-}
-
-@Composable
-private fun EmptyBox() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(text = "No leave plan requests yet", style = MaterialTheme.typography.bodyLarge)
-    }
-}
-
-@Composable
-private fun ErrorBox(message: String, onRetry: () -> Unit) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(text = message, color = MaterialTheme.colorScheme.error)
-            Button(onClick = onRetry, modifier = Modifier.padding(top = 12.dp)) { Text("Retry") }
-        }
     }
 }
