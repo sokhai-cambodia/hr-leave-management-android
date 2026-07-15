@@ -9,7 +9,7 @@ Full detail (acceptance criteria, verify steps) in `tasks/plan.md`.
 
 ## Phase 1 — Auth & Session
 - [x] 1.1 Login + token storage + current-user fetch + minimal authenticated screen
-- [ ] 1.2 Session bootstrap + global 401 handling
+- [x] 1.2 Session bootstrap + global 401 handling
 - [ ] 1.3 Forgot password + reset password
 - [ ] **Checkpoint 1**
 
