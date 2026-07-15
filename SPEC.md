@@ -144,26 +144,33 @@ investment, matching the Flutter client's posture for consistency across both co
 
 ## 7. Design Tokens (shared brand — mirrors the Flutter client for product consistency)
 
-Reused verbatim from `../hr-leave-management-flutter/SPEC.md` §9, which itself was adopted from a
-Figma Community HRMS reference (design direction only, no copied assets):
+Verified directly against the Flutter client's actual implemented Dart source
+(`../hr-leave-management-flutter`, `lib/app/theme/app_theme.dart`) during the Phase 13 UI/UX
+revamp — the client's real UI had drifted from the originally-adopted Figma-reference table below
+it superseded, over a redesign the doc below didn't track. Also informed by `ui.webp`, the
+moodboard the user fed the Flutter assistant when requesting that redesign (a different app's
+screens, used purely for style/feel — warm background undertone, deep card shadows, chunky bold
+numerals, colored circular icon badges — not literal values).
 
 | Token | Value |
 |---|---|
-| Accent/primary | `#CA282C` (brick red) |
+| Primary / primaryDark | `#E23744` / `#C01F2B` |
+| Danger / warning / success / info | `#EF4444` / `#F5A623` / `#22A659` / `#4C8DFF` |
 | Dark background / surface | `#121212` / `#1E1E1E` |
-| Light background / surface | `#F7F7F8` / `#FFFFFF` |
-| Light border | `#E1E1E4` |
-| Danger / warning / success | `#CA282C` / `#FB8C00` / `#2E7D32` |
+| Light background / surface / field fill / border | `#FFFCFA` / `#FFFFFF` / `#F7F7F9` / `#EAEAEE` |
 | Font | Poppins (bundled `.ttf` under `res/font/`, or Downloadable Fonts API) |
-| Button shape | 12dp corner radius (not a full pill), 52dp min height |
-| Card shape | 14dp corner radius, subtle elevation |
-| Text field shape | 12dp corner radius, outlined (`OutlinedTextField`), border from `lightBorder`,
-  primary-colored focus border |
+| Button shape | 14dp corner radius (not a full pill), 54dp min height |
+| Card shape | 18dp corner radius, ~2-3dp elevation (soft depth, not a 1dp hairline) |
+| Text field shape | 12dp corner radius, **filled** (`lightFieldFill` background), border only
+  shown focused/error — not outlined-transparent |
+| Pill shape | 999dp corner radius (status chips, segmented controls, leave-type badges) |
+| Spacing scale | xs 4dp, sm 8dp, md 12dp, lg 16dp, xl 24dp |
 | Default theme mode | Light-first (dark mode available as a toggle) |
-| Icons | Material Symbols "outlined" variant |
-| Dashboard navigation pattern | 2-column `LazyVerticalGrid` of icon+label tiles |
+| Icons | Material Symbols "outlined" variant, filled on selection (bottom tabs) |
+| Navigation pattern | Persistent bottom-tab bar (Home/Leaves/Calendar/Profile) + center-docked
+  FAB opening a bottom sheet (Request Leave/Plan Leave) — **not** a drawer or a quick-actions grid |
 | Choice inputs | Segmented `FilterChip`/`SegmentedButton` toggles for binary/small-set choices
-  (e.g. Full day/AM/PM, Yes/No) |
+  (e.g. Full day/AM/PM, Yes/No, the Leaves tab's Requests/Plans pill) |
 
 ## 8. Feature List (maps to the Flutter client's feature list — see reference doc §17 in that repo)
 
@@ -172,10 +179,11 @@ Figma Community HRMS reference (design direction only, no copied assets):
   — the backend issues only an 8-day access token; re-prompt login on 401.
 - **User Management**: self profile view/edit (`GET/PATCH /users/me`), change password; superuser
   CRUD on all users (`/users`).
-- **Dashboard**: role-adaptive summary — leave balances, and (team owners only) a tappable
-  "Pending Approvals" count opening the Approvals queue directly, entry point to AI
-  recommendations. 2-column quick-actions grid; Profile and Approvals reachable via drawer/nav
-  only, not duplicated as grid tiles.
+- **Dashboard**: role-adaptive summary — avatar profile card, pastel Request Leave/Plan Leave
+  action tiles, an Available Days/Approvals `StatCard` row (Approvals card team-owner-only,
+  tappable straight into the Approvals queue), leave balances, and a single Recommendations
+  quick-action entry. Schedule/Leave Requests/Leave Plan Requests/Profile/Approvals live on the
+  bottom-tab bar or as pushed screens (Task 13.2/13.3), not dashboard tiles.
 - **Master Data** (admin/superuser CRUD, search + pagination): Teams, Leave Types, Public
   Holidays, Policies, Leave Balances (`owner_id` + `leave_type_id` pickers, `year` as 4-digit
   string, `balance` decimal; `taken_balance`/`available_balance` are server-computed).

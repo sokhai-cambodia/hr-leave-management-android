@@ -84,5 +84,5 @@ sibling app. SPEC.md §7 is stale — ground truth is the Flutter app's actual D
       submit-button hierarchy)
 - [x] 13.7 Admin CRUD + Profile hub restyle (admin entries move under Profile tab)
 - [x] 13.8 Auth screens polish (two-tone wordmark, headline, splash)
-- [ ] **Checkpoint 13 (final)** — visual consistency pass complete; SPEC.md §7 updated to the
+- [x] **Checkpoint 13 (final)** — visual consistency pass complete; SPEC.md §7 updated to the
       verified token table

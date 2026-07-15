@@ -11,9 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 /**
- * Defense in depth for admin routes: the drawer already hides these entries for non-superusers
- * (Task 2.1), but a direct navigation (e.g. a stale deep link) must still be rejected here
- * rather than rendering the CRUD screen.
+ * Defense in depth for admin routes: the Profile tab's Admin section already hides these entries
+ * for non-superusers (Task 13.2/13.7), but a direct navigation (e.g. a stale deep link) must
+ * still be rejected here rather than rendering the CRUD screen.
  */
 @Composable
 fun SuperuserGate(isSuperuser: Boolean, content: @Composable () -> Unit) {
