@@ -13,6 +13,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.mitclass.hrleave.data.remote.dto.UserDto
+import com.mitclass.hrleave.feature.admin.holidays.PublicHolidaysAdminScreen
+import com.mitclass.hrleave.feature.admin.leavebalances.LeaveBalancesAdminScreen
+import com.mitclass.hrleave.feature.admin.leavetypes.LeaveTypesAdminScreen
+import com.mitclass.hrleave.feature.admin.policies.PoliciesAdminScreen
+import com.mitclass.hrleave.feature.admin.teams.TeamsAdminScreen
+import com.mitclass.hrleave.feature.admin.users.UsersAdminScreen
 import com.mitclass.hrleave.feature.approvals.ApprovalsQueueScreen
 import com.mitclass.hrleave.feature.dashboard.DashboardScreen
 import com.mitclass.hrleave.feature.dashboard.QuickAction
@@ -159,10 +165,11 @@ fun AuthenticatedNavHost(
             )
         }
         composable(Destination.Profile.route) { ComingSoonScreen("Profile") }
-        composable(Destination.AdminPolicies.route) { ComingSoonScreen("Policies") }
-        composable(Destination.AdminLeaveTypes.route) { ComingSoonScreen("Leave Types") }
-        composable(Destination.AdminTeams.route) { ComingSoonScreen("Teams") }
-        composable(Destination.AdminLeaveBalances.route) { ComingSoonScreen("Leave Balances") }
-        composable(Destination.AdminUsers.route) { ComingSoonScreen("Admin Users") }
+        composable(Destination.AdminPolicies.route) { PoliciesAdminScreen(isSuperuser = user.isSuperuser) }
+        composable(Destination.AdminPublicHolidays.route) { PublicHolidaysAdminScreen(isSuperuser = user.isSuperuser) }
+        composable(Destination.AdminLeaveTypes.route) { LeaveTypesAdminScreen(isSuperuser = user.isSuperuser) }
+        composable(Destination.AdminTeams.route) { TeamsAdminScreen(isSuperuser = user.isSuperuser) }
+        composable(Destination.AdminLeaveBalances.route) { LeaveBalancesAdminScreen(isSuperuser = user.isSuperuser) }
+        composable(Destination.AdminUsers.route) { UsersAdminScreen(isSuperuser = user.isSuperuser) }
     }
 }

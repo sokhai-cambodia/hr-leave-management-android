@@ -13,6 +13,16 @@ data class PublicHolidayDto(
 )
 
 @Serializable
+data class PublicHolidaysResponseDto(val data: List<PublicHolidayDto>, val count: Int)
+
+@Serializable
+data class PublicHolidayUpsertDto(
+    val date: String,
+    val name: String,
+    val description: String? = null,
+)
+
+@Serializable
 data class ScheduleTeamLeaveEntryDto(
     val id: String,
     val source: String,

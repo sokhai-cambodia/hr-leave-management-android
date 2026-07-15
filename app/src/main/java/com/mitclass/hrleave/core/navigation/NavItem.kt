@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.Approval
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Category
+import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.EventNote
 import androidx.compose.material.icons.filled.FactCheck
 import androidx.compose.material.icons.filled.Gavel
@@ -35,6 +36,7 @@ private val approverNavItem =
 
 private val adminNavItems = listOf(
     NavItem(Destination.AdminPolicies, "Policies", Icons.Filled.Gavel),
+    NavItem(Destination.AdminPublicHolidays, "Public Holidays", Icons.Filled.Event),
     NavItem(Destination.AdminLeaveTypes, "Leave Types", Icons.Filled.Category),
     NavItem(Destination.AdminTeams, "Teams", Icons.Filled.Groups),
     NavItem(Destination.AdminLeaveBalances, "Leave Balances", Icons.Filled.AccountBalance),
