@@ -14,6 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.mitclass.hrleave.data.remote.dto.UserDto
 import com.mitclass.hrleave.feature.admin.holidays.PublicHolidaysAdminScreen
+import com.mitclass.hrleave.feature.admin.leavebalances.LeaveBalancesAdminScreen
 import com.mitclass.hrleave.feature.admin.leavetypes.LeaveTypesAdminScreen
 import com.mitclass.hrleave.feature.admin.policies.PoliciesAdminScreen
 import com.mitclass.hrleave.feature.admin.teams.TeamsAdminScreen
@@ -168,7 +169,7 @@ fun AuthenticatedNavHost(
         composable(Destination.AdminPublicHolidays.route) { PublicHolidaysAdminScreen(isSuperuser = user.isSuperuser) }
         composable(Destination.AdminLeaveTypes.route) { LeaveTypesAdminScreen(isSuperuser = user.isSuperuser) }
         composable(Destination.AdminTeams.route) { TeamsAdminScreen(isSuperuser = user.isSuperuser) }
-        composable(Destination.AdminLeaveBalances.route) { ComingSoonScreen("Leave Balances") }
+        composable(Destination.AdminLeaveBalances.route) { LeaveBalancesAdminScreen(isSuperuser = user.isSuperuser) }
         composable(Destination.AdminUsers.route) { UsersAdminScreen(isSuperuser = user.isSuperuser) }
     }
 }

@@ -1,5 +1,6 @@
 package com.mitclass.hrleave.data.repository
 
+import com.mitclass.hrleave.core.admin.PickerOption
 import com.mitclass.hrleave.core.network.AppResult
 import com.mitclass.hrleave.core.network.safeApiCall
 import com.mitclass.hrleave.data.remote.api.LeaveTypesApi
@@ -40,6 +41,13 @@ class LeaveTypesRepository @Inject constructor(
     suspend fun delete(id: String): AppResult<Unit> =
         when (val result = safeApiCall { leaveTypesApi.delete(id) }) {
             is AppResult.Success -> AppResult.Success(Unit)
+            is AppResult.Failure -> result
+        }
+
+    /** For the Leave Balances admin form's leave_type_id relational picker (Task 10.4). */
+    suspend fun listForPicker(): AppResult<List<PickerOption>> =
+        when (val result = listAll(0, 100)) {
+            is AppResult.Success -> AppResult.Success(result.data.first.map { PickerOption(it.id, it.name) })
             is AppResult.Failure -> result
         }
 }

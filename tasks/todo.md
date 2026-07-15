@@ -56,7 +56,7 @@ Full detail (acceptance criteria, verify steps) in `tasks/plan.md`.
 - [x] 10.1 Generic CRUD scaffold, proven on Leave Types
 - [x] 10.2 Apply pattern: Public Holidays, Policies
 - [x] 10.3 Apply pattern: Teams, Users (relational pickers)
-- [ ] 10.4 Apply pattern: Leave Balances (admin)
+- [x] 10.4 Apply pattern: Leave Balances (admin)
 - [ ] **Checkpoint 10**
 
 ## Phase 11 — Profile & Identity

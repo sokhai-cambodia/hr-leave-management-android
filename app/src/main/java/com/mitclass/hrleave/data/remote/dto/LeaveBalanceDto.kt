@@ -13,7 +13,16 @@ data class LeaveBalanceDto(
     @SerialName("leave_type_id") val leaveTypeId: String,
     @SerialName("leave_type") val leaveType: LeaveTypePresentableDto,
     @SerialName("owner_id") val ownerId: String,
+    val owner: UserPresentableDto? = null,
 )
 
 @Serializable
 data class LeaveBalancesResponseDto(val data: List<LeaveBalanceDto>, val count: Int)
+
+@Serializable
+data class LeaveBalanceUpsertDto(
+    @SerialName("owner_id") val ownerId: String,
+    @SerialName("leave_type_id") val leaveTypeId: String,
+    val year: String,
+    val balance: Double,
+)
