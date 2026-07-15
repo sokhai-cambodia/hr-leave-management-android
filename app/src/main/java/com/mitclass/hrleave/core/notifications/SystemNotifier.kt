@@ -1,6 +1,7 @@
 package com.mitclass.hrleave.core.notifications
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -36,6 +37,8 @@ class SystemNotifier @Inject constructor(
         }
     }
 
+    @SuppressLint("MissingPermission") // guarded by hasPostNotificationsPermission() below, which
+    // lint's static check can't see through since it isn't an inline ActivityCompat call.
     fun notifyUnreadCountIncreased(unreadCount: Int) {
         if (!hasPostNotificationsPermission()) return
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)

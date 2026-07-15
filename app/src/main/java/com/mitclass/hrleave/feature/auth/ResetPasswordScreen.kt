@@ -4,18 +4,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -30,6 +26,10 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.mitclass.hrleave.core.theme.AppSpacing
+import com.mitclass.hrleave.core.ui.AppButton
+import com.mitclass.hrleave.core.ui.AppTextField
+import com.mitclass.hrleave.core.ui.ErrorBanner
 
 private const val MIN_PASSWORD_LENGTH = 8
 
@@ -62,18 +62,17 @@ fun ResetPasswordScreen(
             style = MaterialTheme.typography.bodyMedium,
         )
         Spacer(Modifier.height(24.dp))
-        OutlinedTextField(
+        AppTextField(
             value = token,
             onValueChange = { token = it },
-            label = { Text("Reset token") },
+            label = "Reset token",
             enabled = !isLoading,
-            modifier = Modifier.fillMaxWidth(),
         )
-        Spacer(Modifier.height(16.dp))
-        OutlinedTextField(
+        Spacer(Modifier.height(AppSpacing.md))
+        AppTextField(
             value = newPassword,
             onValueChange = { newPassword = it },
-            label = { Text("New password") },
+            label = "New password",
             singleLine = true,
             enabled = !isLoading,
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
@@ -85,33 +84,21 @@ fun ResetPasswordScreen(
                     )
                 }
             },
-            modifier = Modifier.fillMaxWidth(),
         )
         if (uiState is ResetPasswordUiState.Error) {
-            Text(
-                text = (uiState as ResetPasswordUiState.Error).message,
-                color = MaterialTheme.colorScheme.error,
-                modifier = Modifier.padding(top = 8.dp),
+            ErrorBanner(
+                message = (uiState as ResetPasswordUiState.Error).message,
+                modifier = Modifier.padding(top = AppSpacing.sm),
             )
         }
-        Spacer(Modifier.height(16.dp))
-        Button(
+        Spacer(Modifier.height(AppSpacing.lg))
+        AppButton(
+            text = "Reset password",
             onClick = { viewModel.submit(token.trim(), newPassword) },
             enabled = !isLoading && token.isNotBlank() && newPassword.length >= MIN_PASSWORD_LENGTH,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp),
-        ) {
-            if (isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.height(20.dp),
-                    color = MaterialTheme.colorScheme.onPrimary,
-                )
-            } else {
-                Text("Reset password")
-            }
-        }
-        Spacer(Modifier.height(8.dp))
+            loading = isLoading,
+        )
+        Spacer(Modifier.height(AppSpacing.sm))
         TextButton(onClick = onBack) {
             Text("Back to login")
         }

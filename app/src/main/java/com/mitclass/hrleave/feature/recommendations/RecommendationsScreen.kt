@@ -10,12 +10,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.AssistChip
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -30,6 +31,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.mitclass.hrleave.core.theme.AppSpacing
+import com.mitclass.hrleave.core.theme.CardCornerRadius
+import com.mitclass.hrleave.core.theme.CardElevation
+import com.mitclass.hrleave.core.ui.AppButton
+import com.mitclass.hrleave.core.ui.EmptyStateView
+import com.mitclass.hrleave.core.ui.ErrorStateView
 import com.mitclass.hrleave.data.remote.dto.LeaveRecommendationDto
 import java.time.LocalDate
 import java.util.Locale
@@ -47,16 +54,13 @@ fun RecommendationsScreen(
         bottomBar = {
             val loaded = state as? RecommendationsUiState.Loaded
             if (loaded != null && selectedDates.isNotEmpty()) {
-                Button(
+                AppButton(
+                    text = "Use ${selectedDates.size} selected date(s)",
                     onClick = {
                         onUseSelectedDates(loaded.leaveTypeId, selectedDates.map(LocalDate::parse).sorted())
                     },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                ) {
-                    Text("Use ${selectedDates.size} selected date(s)")
-                }
+                    modifier = Modifier.padding(AppSpacing.lg),
+                )
             }
         },
     ) { paddingValues ->
@@ -72,21 +76,11 @@ fun RecommendationsScreen(
                     contentAlignment = Alignment.Center,
                 ) { CircularProgressIndicator() }
 
-                is RecommendationsUiState.Error -> Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(text = current.message, color = MaterialTheme.colorScheme.error)
-                        Button(onClick = viewModel::load, modifier = Modifier.padding(top = 12.dp)) { Text("Retry") }
-                    }
-                }
+                is RecommendationsUiState.Error -> ErrorStateView(message = current.message, onRetry = viewModel::load)
 
                 is RecommendationsUiState.Loaded -> {
                     if (current.items.isEmpty()) {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            Text(text = "No recommendations for $year", style = MaterialTheme.typography.bodyLarge)
-                        }
+                        EmptyStateView(message = "No recommendations for $year")
                     } else {
                         val allDates = current.items.map { it.leaveDate }
                         SelectAllRow(
@@ -147,7 +141,12 @@ private fun SelectAllRow(allSelected: Boolean, onToggleAll: () -> Unit) {
 
 @Composable
 private fun RecommendationRow(item: LeaveRecommendationDto, selected: Boolean, onToggle: () -> Unit) {
-    Card(onClick = onToggle, modifier = Modifier.fillMaxWidth()) {
+    Card(
+        onClick = onToggle,
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(CardCornerRadius),
+        elevation = CardDefaults.cardElevation(defaultElevation = CardElevation),
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()

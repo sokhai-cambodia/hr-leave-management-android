@@ -73,16 +73,16 @@ Full detail (acceptance criteria, verify steps) in `tasks/plan.md`.
 ## Phase 13 — UI/UX Consistency Revamp (match the Flutter client's actual design system)
 Added post-Checkpoint-12 after on-device testing found the UI inconsistent with the Flutter
 sibling app. SPEC.md §7 is stale — ground truth is the Flutter app's actual Dart source.
-- [ ] 13.1 Design tokens overhaul (colors, shapes, spacing, filled fields, button height)
-- [ ] 13.2 Navigation shell rewrite (bottom tabs + center FAB + bottom sheet, drop the drawer)
-- [ ] 13.3 Dashboard rebuild (avatar card, pastel action tiles, stat cards, no grid)
-- [ ] 13.4 Shared component library pass (pill StatusChip, StatCard, error/empty states, sticky
+- [x] 13.1 Design tokens overhaul (colors, shapes, spacing, filled fields, button height)
+- [x] 13.2 Navigation shell rewrite (bottom tabs + center FAB + bottom sheet, drop the drawer)
+- [x] 13.3 Dashboard rebuild (avatar card, pastel action tiles, stat cards, no grid)
+- [x] 13.4 Shared component library pass (pill StatusChip, StatCard, error/empty states, sticky
       bottom action panel, split action buttons)
-- [ ] 13.5 List/detail screen polish (Leave Requests, Leave Plan Requests, Approvals,
+- [x] 13.5 List/detail screen polish (Leave Requests, Leave Plan Requests, Approvals,
       Notifications, Schedule)
-- [ ] 13.6 Form screen polish (bold-label fields, error banner, styled date field, chip picker,
+- [x] 13.6 Form screen polish (bold-label fields, error banner, styled date field, chip picker,
       submit-button hierarchy)
-- [ ] 13.7 Admin CRUD + Profile hub restyle (admin entries move under Profile tab)
-- [ ] 13.8 Auth screens polish (two-tone wordmark, headline, splash)
-- [ ] **Checkpoint 13 (final)** — visual consistency pass complete; SPEC.md §7 updated to the
+- [x] 13.7 Admin CRUD + Profile hub restyle (admin entries move under Profile tab)
+- [x] 13.8 Auth screens polish (two-tone wordmark, headline, splash)
+- [x] **Checkpoint 13 (final)** — visual consistency pass complete; SPEC.md §7 updated to the
       verified token table

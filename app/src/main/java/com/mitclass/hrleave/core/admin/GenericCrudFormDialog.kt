@@ -18,7 +18,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -35,7 +34,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import com.mitclass.hrleave.core.theme.AppSpacing
+import com.mitclass.hrleave.core.ui.AppTextField
 import com.mitclass.hrleave.core.ui.DatePickerField
+import com.mitclass.hrleave.core.ui.ErrorBanner
 import java.time.LocalDate
 
 @Composable
@@ -59,9 +61,9 @@ fun <T> GenericCrudFormDialog(engine: CrudEngine<T>) {
                         value = values[field.key].orEmpty(),
                         onValueChange = { engine.onFieldChange(field.key, it) },
                     )
-                    Spacer(Modifier.height(12.dp))
+                    Spacer(Modifier.height(AppSpacing.md))
                 }
-                error?.let { Text(text = it, color = MaterialTheme.colorScheme.error) }
+                error?.let { ErrorBanner(message = it) }
             }
         },
         confirmButton = {
@@ -82,45 +84,42 @@ fun <T> GenericCrudFormDialog(engine: CrudEngine<T>) {
 @Composable
 private fun FieldEditor(field: FieldSpec, value: String, onValueChange: (String) -> Unit) {
     when (field.type) {
-        FieldType.TEXT -> OutlinedTextField(
+        FieldType.TEXT -> AppTextField(
             value = value,
             onValueChange = onValueChange,
-            label = { Text(field.label) },
+            label = field.label,
             singleLine = true,
-            modifier = Modifier.fillMaxWidth(),
         )
 
-        FieldType.MULTILINE_TEXT -> OutlinedTextField(
+        FieldType.MULTILINE_TEXT -> AppTextField(
             value = value,
             onValueChange = onValueChange,
-            label = { Text(field.label) },
-            modifier = Modifier.fillMaxWidth(),
+            label = field.label,
+            singleLine = false,
         )
 
-        FieldType.INTEGER -> OutlinedTextField(
+        FieldType.INTEGER -> AppTextField(
             value = value,
             onValueChange = { if (it.isEmpty() || it.toIntOrNull() != null || it == "-") onValueChange(it) },
-            label = { Text(field.label) },
+            label = field.label,
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.fillMaxWidth(),
         )
 
-        FieldType.DECIMAL -> OutlinedTextField(
+        FieldType.DECIMAL -> AppTextField(
             value = value,
             onValueChange = { if (it.isEmpty() || it.toDoubleOrNull() != null || it.endsWith(".")) onValueChange(it) },
-            label = { Text(field.label) },
+            label = field.label,
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-            modifier = Modifier.fillMaxWidth(),
         )
 
         FieldType.PASSWORD -> {
             var visible by remember { mutableStateOf(false) }
-            OutlinedTextField(
+            AppTextField(
                 value = value,
                 onValueChange = onValueChange,
-                label = { Text(field.label) },
+                label = field.label,
                 singleLine = true,
                 visualTransformation = if (visible) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
@@ -131,7 +130,6 @@ private fun FieldEditor(field: FieldSpec, value: String, onValueChange: (String)
                         )
                     }
                 },
-                modifier = Modifier.fillMaxWidth(),
             )
         }
 

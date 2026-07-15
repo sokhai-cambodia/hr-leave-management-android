@@ -1,18 +1,28 @@
 package com.mitclass.hrleave.feature.dashboard
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.EventNote
+import androidx.compose.material.icons.automirrored.filled.FactCheck
 import androidx.compose.material.icons.filled.Approval
-import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -25,9 +35,19 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.mitclass.hrleave.core.theme.AppSpacing
+import com.mitclass.hrleave.core.theme.BrandPrimary
+import com.mitclass.hrleave.core.theme.CardCornerRadius
+import com.mitclass.hrleave.core.theme.CardElevation
+import com.mitclass.hrleave.core.theme.InfoColor
+import com.mitclass.hrleave.core.theme.WarningColor
+import com.mitclass.hrleave.core.ui.EmptyStateView
 import com.mitclass.hrleave.core.ui.OnResume
+import com.mitclass.hrleave.core.ui.PastelActionTile
+import com.mitclass.hrleave.core.ui.StatCard
 import com.mitclass.hrleave.data.remote.dto.LeaveBalanceDto
 import com.mitclass.hrleave.data.remote.dto.UserDto
 import java.util.Locale
@@ -39,6 +59,8 @@ fun DashboardScreen(
     quickActions: List<QuickAction> = emptyList(),
     onQuickActionClick: (QuickAction) -> Unit = {},
     onPendingApprovalsClick: () -> Unit = {},
+    onRequestLeaveClick: () -> Unit = {},
+    onPlanLeaveClick: () -> Unit = {},
     pendingApprovalsViewModel: PendingApprovalsViewModel = hiltViewModel(),
     leaveBalancesViewModel: LeaveBalancesViewModel = hiltViewModel(),
 ) {
@@ -53,75 +75,113 @@ fun DashboardScreen(
         modifier = Modifier
             .fillMaxWidth()
             .verticalScroll(rememberScrollState())
-            .padding(16.dp),
+            .padding(AppSpacing.lg),
     ) {
         ProfileCard(user = user)
-        if (isApprover) {
-            val approvalsState by pendingApprovalsViewModel.uiState.collectAsState()
-            PendingApprovalsCard(state = approvalsState, onClick = onPendingApprovalsClick)
+        Spacer(Modifier.height(AppSpacing.lg))
+        Row(horizontalArrangement = Arrangement.spacedBy(AppSpacing.md)) {
+            PastelActionTile(
+                icon = Icons.AutoMirrored.Filled.FactCheck,
+                label = "Request Leave",
+                tint = BrandPrimary,
+                onClick = onRequestLeaveClick,
+                modifier = Modifier.weight(1f),
+            )
+            PastelActionTile(
+                icon = Icons.AutoMirrored.Filled.EventNote,
+                label = "Plan Leave",
+                tint = WarningColor,
+                onClick = onPlanLeaveClick,
+                modifier = Modifier.weight(1f),
+            )
         }
+        Spacer(Modifier.height(AppSpacing.md))
         val balancesState by leaveBalancesViewModel.uiState.collectAsState()
+        Row(horizontalArrangement = Arrangement.spacedBy(AppSpacing.md)) {
+            StatCard(
+                icon = Icons.Filled.CalendarToday,
+                label = "Available Days",
+                value = availableDaysValue(balancesState),
+                tint = InfoColor,
+                modifier = Modifier.weight(1f),
+            )
+            if (isApprover) {
+                val approvalsState by pendingApprovalsViewModel.uiState.collectAsState()
+                StatCard(
+                    icon = Icons.Filled.Approval,
+                    label = "Approvals",
+                    value = approvalsValue(approvalsState),
+                    tint = WarningColor,
+                    onClick = onPendingApprovalsClick,
+                    modifier = Modifier.weight(1f),
+                )
+            }
+        }
         LeaveBalancesSection(state = balancesState, onRetry = { leaveBalancesViewModel.load() })
         if (quickActions.isNotEmpty()) {
             Text(
                 text = "Quick actions",
                 style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(top = 24.dp, bottom = 12.dp),
+                modifier = Modifier.padding(top = AppSpacing.xl, bottom = AppSpacing.md),
             )
             QuickActionsGrid(quickActions = quickActions, onClick = onQuickActionClick)
         }
     }
 }
 
-@Composable
-private fun ProfileCard(user: UserDto) {
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = user.fullName ?: user.email, style = MaterialTheme.typography.titleLarge)
-            Text(text = user.email, style = MaterialTheme.typography.bodyMedium)
-            Text(
-                text = user.team?.name ?: "No team assigned",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
+private fun availableDaysValue(state: LeaveBalancesUiState): String = when (state) {
+    is LeaveBalancesUiState.Loaded -> formatBalance(state.balances.sumOf { it.availableBalance })
+    else -> "–"
+}
+
+private fun approvalsValue(state: PendingApprovalsUiState): String = when (state) {
+    is PendingApprovalsUiState.Loaded -> state.total.toString()
+    else -> "–"
+}
+
+private fun initials(fullName: String?, email: String): String {
+    val source = fullName?.takeIf { it.isNotBlank() } ?: email
+    val parts = source.trim().split(Regex("\\s+")).filter { it.isNotBlank() }
+    return when {
+        parts.size >= 2 -> "${parts[0].first()}${parts[1].first()}".uppercase()
+        parts.size == 1 -> parts[0].take(2).uppercase()
+        else -> "?"
     }
 }
 
 @Composable
-private fun PendingApprovalsCard(state: PendingApprovalsUiState, onClick: () -> Unit) {
-    if (state is PendingApprovalsUiState.Error) return
+private fun ProfileCard(user: UserDto) {
     Card(
-        onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 12.dp),
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(CardCornerRadius),
+        elevation = CardDefaults.cardElevation(defaultElevation = CardElevation),
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier = Modifier.padding(AppSpacing.lg),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(imageVector = Icons.Filled.Approval, contentDescription = null)
-            Column(
+            Box(
                 modifier = Modifier
-                    .padding(start = 12.dp)
-                    .weight(1f),
+                    .size(56.dp)
+                    .background(color = BrandPrimary.copy(alpha = 0.15f), shape = CircleShape),
+                contentAlignment = Alignment.Center,
             ) {
-                Text(text = "Pending Approvals", style = MaterialTheme.typography.titleMedium)
-                when (state) {
-                    is PendingApprovalsUiState.Loaded -> Text(
-                        text = "${state.total} awaiting your review",
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                    else -> Unit
-                }
+                Text(
+                    text = initials(user.fullName, user.email),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = BrandPrimary,
+                    fontWeight = FontWeight.Bold,
+                )
             }
-            if (state is PendingApprovalsUiState.Loading) {
-                CircularProgressIndicator(modifier = Modifier.padding(end = 8.dp))
-            } else {
-                Icon(imageVector = Icons.Filled.ChevronRight, contentDescription = null)
+            Spacer(Modifier.width(AppSpacing.md))
+            Column {
+                Text(text = user.fullName ?: user.email, style = MaterialTheme.typography.titleLarge)
+                Text(text = user.email, style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    text = user.team?.name ?: "No team assigned",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
         }
     }
@@ -132,7 +192,7 @@ private fun LeaveBalancesSection(state: LeaveBalancesUiState, onRetry: () -> Uni
     Text(
         text = "Leave Balances",
         style = MaterialTheme.typography.titleMedium,
-        modifier = Modifier.padding(top = 24.dp, bottom = 12.dp),
+        modifier = Modifier.padding(top = AppSpacing.xl, bottom = AppSpacing.md),
     )
     when (state) {
         is LeaveBalancesUiState.Loading -> CircularProgressIndicator(modifier = Modifier.padding(8.dp))
@@ -142,13 +202,13 @@ private fun LeaveBalancesSection(state: LeaveBalancesUiState, onRetry: () -> Uni
         }
         is LeaveBalancesUiState.Loaded -> {
             if (state.balances.isEmpty()) {
-                Text(
-                    text = "No leave balances yet",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+                EmptyStateView(message = "No leave balances yet")
             } else {
-                Card(modifier = Modifier.fillMaxWidth()) {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(CardCornerRadius),
+                    elevation = CardDefaults.cardElevation(defaultElevation = CardElevation),
+                ) {
                     Column(modifier = Modifier.padding(vertical = 4.dp)) {
                         state.balances.forEachIndexed { index, balance ->
                             LeaveBalanceRow(balance)
@@ -166,7 +226,7 @@ private fun LeaveBalanceRow(balance: LeaveBalanceDto) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+            .padding(horizontal = AppSpacing.lg, vertical = AppSpacing.md),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f)) {
@@ -194,10 +254,10 @@ private fun formatBalance(value: Double): String =
 
 @Composable
 private fun QuickActionsGrid(quickActions: List<QuickAction>, onClick: (QuickAction) -> Unit) {
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(AppSpacing.md)) {
         quickActions.chunked(2).forEach { rowActions ->
             Row(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(AppSpacing.md),
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 rowActions.forEach { action ->
@@ -215,12 +275,14 @@ private fun QuickActionsGrid(quickActions: List<QuickAction>, onClick: (QuickAct
 private fun QuickActionTile(action: QuickAction, onClick: () -> Unit) {
     Card(
         onClick = onClick,
+        shape = RoundedCornerShape(CardCornerRadius),
+        elevation = CardDefaults.cardElevation(defaultElevation = CardElevation),
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(1.4f),
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(AppSpacing.lg),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {

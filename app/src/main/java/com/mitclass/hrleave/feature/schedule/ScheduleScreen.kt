@@ -15,11 +15,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,8 +37,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.mitclass.hrleave.core.theme.AppSpacing
+import com.mitclass.hrleave.core.theme.CardCornerRadius
+import com.mitclass.hrleave.core.theme.CardElevation
 import com.mitclass.hrleave.core.theme.SuccessColor
 import com.mitclass.hrleave.core.theme.WarningColor
+import com.mitclass.hrleave.core.ui.ErrorStateView
 import com.mitclass.hrleave.data.remote.dto.PublicHolidayDto
 import com.mitclass.hrleave.data.remote.dto.ScheduleTeamLeaveEntryDto
 import java.time.LocalDate
@@ -63,15 +68,7 @@ fun ScheduleScreen(
                 contentAlignment = Alignment.Center,
             ) { CircularProgressIndicator() }
 
-            is ScheduleUiState.Error -> Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center,
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(text = current.message, color = MaterialTheme.colorScheme.error)
-                    Button(onClick = viewModel::load, modifier = Modifier.padding(top = 12.dp)) { Text("Retry") }
-                }
-            }
+            is ScheduleUiState.Error -> ErrorStateView(message = current.message, onRetry = viewModel::load)
 
             is ScheduleUiState.Loaded -> ScheduleContent(yearMonth = yearMonth, holidays = current.holidays, teamLeave = current.teamLeave)
         }
@@ -137,8 +134,12 @@ private fun ScheduleContent(
             item { EmptyRow("No holidays this month") }
         } else {
             items(holidaysThisMonth, key = { "h-${it.id}" }) { holiday ->
-                Card(modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp).fillMaxWidth()) {
-                    Column(modifier = Modifier.padding(12.dp)) {
+                Card(
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp).fillMaxWidth(),
+                    shape = RoundedCornerShape(CardCornerRadius),
+                    elevation = CardDefaults.cardElevation(defaultElevation = CardElevation),
+                ) {
+                    Column(modifier = Modifier.padding(AppSpacing.md)) {
                         Text(text = holiday.name, style = MaterialTheme.typography.titleSmall)
                         Text(text = holiday.date, style = MaterialTheme.typography.bodySmall)
                     }
@@ -152,8 +153,12 @@ private fun ScheduleContent(
             item { EmptyRow("No team leave this month") }
         } else {
             items(teamLeaveThisMonth, key = { "t-${it.id}-${it.startDate}" }) { entry ->
-                Card(modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp).fillMaxWidth()) {
-                    Column(modifier = Modifier.padding(12.dp)) {
+                Card(
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp).fillMaxWidth(),
+                    shape = RoundedCornerShape(CardCornerRadius),
+                    elevation = CardDefaults.cardElevation(defaultElevation = CardElevation),
+                ) {
+                    Column(modifier = Modifier.padding(AppSpacing.md)) {
                         Text(
                             text = entry.owner.fullName ?: entry.owner.email,
                             style = MaterialTheme.typography.titleSmall,

@@ -1,7 +1,10 @@
 package com.mitclass.hrleave.core.navigation
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -9,6 +12,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.mitclass.hrleave.core.theme.AppSpacing
+import com.mitclass.hrleave.core.ui.TwoToneWordmark
 import com.mitclass.hrleave.feature.auth.AuthViewModel
 import com.mitclass.hrleave.feature.auth.SessionState
 
@@ -32,9 +37,16 @@ fun AppRoot(authViewModel: AuthViewModel = hiltViewModel()) {
     }
 }
 
+/** Bootstrap wait (Task 1.2), now showing the two-tone wordmark above the spinner (Task 13.8). */
 @Composable
 private fun LoadingSplash() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        TwoToneWordmark()
+        Spacer(Modifier.height(AppSpacing.xl))
         CircularProgressIndicator()
     }
 }

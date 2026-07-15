@@ -9,8 +9,17 @@ sealed class Destination(val route: String) {
     // Authenticated shell — baseline (every role)
     data object Dashboard : Destination("dashboard")
     data object Schedule : Destination("schedule")
-    data object LeavePlanRequests : Destination("leave_plan_requests")
-    data object LeaveRequests : Destination("leave_requests")
+
+    /**
+     * The Leaves bottom tab hosts a pill toggle between the Requests/Plans lists in place
+     * (Task 13.2) rather than two separate nav destinations.
+     */
+    data object Leaves : Destination("leaves?tab={tab}") {
+        const val TAB_ARG = "tab"
+        const val REQUESTS_TAB = "requests"
+        const val PLANS_TAB = "plans"
+        fun route(tab: String = REQUESTS_TAB) = "leaves?tab=$tab"
+    }
     data object Recommendations : Destination("recommendations")
     data object Approvals : Destination("approvals")
     data object Notifications : Destination("notifications")
