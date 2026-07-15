@@ -28,6 +28,13 @@ data class TeamPresentableDto(
 )
 
 @Serializable
+data class LeaveTypePresentableDto(
+    val id: String,
+    val code: String,
+    val name: String,
+)
+
+@Serializable
 data class TokenDto(
     @SerialName("access_token") val accessToken: String,
     @SerialName("token_type") val tokenType: String,
