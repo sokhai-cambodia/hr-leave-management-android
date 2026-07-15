@@ -24,6 +24,7 @@ import com.mitclass.hrleave.feature.leaverequests.LeaveRequestDetailScreen
 import com.mitclass.hrleave.feature.leaverequests.LeaveRequestFormScreen
 import com.mitclass.hrleave.feature.leaverequests.LeaveRequestRoutes
 import com.mitclass.hrleave.feature.leaverequests.LeaveRequestsListScreen
+import com.mitclass.hrleave.feature.notifications.NotificationsListScreen
 import com.mitclass.hrleave.feature.recommendations.RecommendationsScreen
 import com.mitclass.hrleave.feature.schedule.ScheduleScreen
 
@@ -145,7 +146,18 @@ fun AuthenticatedNavHost(
             )
         }
         composable(Destination.Approvals.route) { ApprovalsQueueScreen() }
-        composable(Destination.Notifications.route) { ComingSoonScreen("Notifications") }
+        composable(Destination.Notifications.route) {
+            NotificationsListScreen(
+                onNavigateToEntity = { entityType ->
+                    val target = when (entityType) {
+                        "leave_request" -> Destination.LeaveRequests.route
+                        "leave_plan_request" -> Destination.LeavePlanRequests.route
+                        else -> null
+                    }
+                    target?.let { navController.navigate(it) }
+                },
+            )
+        }
         composable(Destination.Profile.route) { ComingSoonScreen("Profile") }
         composable(Destination.AdminPolicies.route) { ComingSoonScreen("Policies") }
         composable(Destination.AdminLeaveTypes.route) { ComingSoonScreen("Leave Types") }

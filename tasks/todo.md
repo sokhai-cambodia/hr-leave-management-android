@@ -49,7 +49,7 @@ Full detail (acceptance criteria, verify steps) in `tasks/plan.md`.
 - [ ] **Checkpoint 8**
 
 ## Phase 9 — Notifications
-- [ ] 9.1 Notifications data layer, global unread badge, list screen
+- [x] 9.1 Notifications data layer, global unread badge, list screen
 - [ ] **Checkpoint 9**
 
 ## Phase 10 — Admin/Superuser Master Data CRUD
