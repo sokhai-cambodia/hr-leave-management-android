@@ -1,6 +1,7 @@
 package com.mitclass.hrleave.core.navigation
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.EventNote
 import androidx.compose.material.icons.filled.FactCheck
 import androidx.compose.runtime.Composable
@@ -21,6 +22,7 @@ import com.mitclass.hrleave.feature.leaverequests.LeaveRequestDetailScreen
 import com.mitclass.hrleave.feature.leaverequests.LeaveRequestFormScreen
 import com.mitclass.hrleave.feature.leaverequests.LeaveRequestRoutes
 import com.mitclass.hrleave.feature.leaverequests.LeaveRequestsListScreen
+import com.mitclass.hrleave.feature.recommendations.RecommendationsScreen
 
 /**
  * Dashboard quick-action tiles — grows one entry per phase as each screen lands (Task 3.1's
@@ -33,6 +35,11 @@ private val dashboardQuickActions = listOf(
         label = "Leave Plan Requests",
         icon = Icons.Filled.EventNote,
         route = Destination.LeavePlanRequests.route,
+    ),
+    QuickAction(
+        label = "Recommendations",
+        icon = Icons.Filled.AutoAwesome,
+        route = Destination.Recommendations.route,
     ),
 )
 
@@ -109,7 +116,7 @@ fun AuthenticatedNavHost(
         ) {
             LeaveRequestFormScreen(onSaved = { navController.popBackStack() })
         }
-        composable(Destination.Recommendations.route) { ComingSoonScreen("Recommendations") }
+        composable(Destination.Recommendations.route) { RecommendationsScreen() }
         composable(Destination.Approvals.route) { ComingSoonScreen("Approvals") }
         composable(Destination.Notifications.route) { ComingSoonScreen("Notifications") }
         composable(Destination.Profile.route) { ComingSoonScreen("Profile") }
