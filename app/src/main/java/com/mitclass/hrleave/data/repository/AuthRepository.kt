@@ -6,7 +6,9 @@ import com.mitclass.hrleave.data.remote.api.AuthApi
 import com.mitclass.hrleave.core.network.safeApiCall
 import com.mitclass.hrleave.data.remote.dto.MessageDto
 import com.mitclass.hrleave.data.remote.dto.NewPasswordDto
+import com.mitclass.hrleave.data.remote.dto.UpdatePasswordDto
 import com.mitclass.hrleave.data.remote.dto.UserDto
+import com.mitclass.hrleave.data.remote.dto.UserUpdateMeDto
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -62,4 +64,17 @@ class AuthRepository @Inject constructor(
 
     suspend fun resetPassword(token: String, newPassword: String): AppResult<MessageDto> =
         safeApiCall { authApi.resetPassword(NewPasswordDto(token = token, newPassword = newPassword)) }
+
+    /** Updates and reflects immediately: the cached currentUser drives every screen that reads it. */
+    suspend fun updateProfile(fullName: String?, email: String?): AppResult<UserDto> {
+        val result = safeApiCall { authApi.updateMe(UserUpdateMeDto(fullName = fullName, email = email)) }
+        if (result is AppResult.Success) _currentUser.value = result.data
+        return result
+    }
+
+    suspend fun updatePassword(currentPassword: String, newPassword: String): AppResult<Unit> =
+        when (val result = safeApiCall { authApi.updatePassword(UpdatePasswordDto(currentPassword, newPassword)) }) {
+            is AppResult.Success -> AppResult.Success(Unit)
+            is AppResult.Failure -> result
+        }
 }

@@ -43,6 +43,12 @@ data class TokenDto(
 @Serializable
 data class UsersResponseDto(val data: List<UserDto>, val count: Int)
 
+@Serializable
+data class UserUpdateMeDto(
+    @SerialName("full_name") val fullName: String? = null,
+    val email: String? = null,
+)
+
 /** Password is required here — create-only, per the backend's UserCreate model. */
 @Serializable
 data class UserCreateUpsertDto(
