@@ -554,6 +554,21 @@ for every task below is a fork analysis of the actual Flutter Dart source
 (`lib/app/theme/app_theme.dart`, `lib/widgets/`, and one representative screen per archetype),
 not SPEC.md.
 
+**Secondary reference: `ui.webp`** (repo root of both `hr-leave-management-android` and
+`hr-leave-management-flutter`, untracked, identical copy in both) — the moodboard the user fed to
+the Flutter assistant when requesting the redesign. It's a different app's screens ("actionaid
+ERP" — check-in/check-out, a "Modules" tab), used purely as style inspiration, not literal HR
+Leave content — don't copy its screen content/flows, only its visual language, which agrees with
+the Dart-source tokens above: red/coral primary, bottom nav with icon+label (active = filled red),
+bold rounded buttons/cards, label-above-field inputs with an obscure-password toggle, avatar +
+wordmark + bell top bar. It also shows things the Dart source alone doesn't fully capture: a
+subtle warm/cream undertone to backgrounds rather than flat pure white, bold chunky numerals for
+key headline values (e.g. a big time-of-day readout), soft card shadows with real depth (not a
+1dp hairline), colored circular icon-badge treatment, and a glowing ring around the primary
+circular action affordance. Treat these as directional "feel" cues to lean into where a token
+value is ambiguous — not exact hex/dp values to extract (it's a compressed screenshot mockup of a
+different app, not a spec).
+
 **Verified Flutter design tokens** (supersede SPEC.md §7 for this phase and should be written back
 into SPEC.md §7 once this phase lands):
 
@@ -591,7 +606,10 @@ settings/admin hub), not a drawer section.
   the global `OutlinedTextField`→filled-field default (via a shared `TextFieldDefaults` object or
   a small `AppTextField` wrapper composable used everywhere instead of raw `OutlinedTextField`).
   Update every button usage's min height to 54dp (a shared `AppButton`/`AppOutlinedButton`
-  wrapper, or a `ButtonDefaults` object, so this isn't hand-applied per call site).
+  wrapper, or a `ButtonDefaults` object, so this isn't hand-applied per call site). Per `ui.webp`:
+  give card shadows real depth (elevation ~2-3dp with a soft tinted shadow color, not a bare 1dp
+  hairline) and check whether a very slightly warm-tinted background (vs. flat `#FFFFFF`) reads
+  closer to the moodboard — pick a value, don't over-index on exact-matching a compressed image.
 - **Acceptance:** one source of truth for every token; no screen references a raw hex or
   ad-hoc corner-radius value; `./gradlew lint`/`assembleDebug` clean.
 
@@ -625,7 +643,9 @@ settings/admin hub), not a drawer section.
   tappable → Approvals) — as equal-height cards, (4) "Leave Balances" section title + the existing
   balance rows, (5) a single "Quick actions" section with one row linking to Recommendations only
   (Schedule/Leave Requests/Leave Plan Requests quick-action tiles are removed — those are now
-  bottom-tab destinations, not dashboard tiles).
+  bottom-tab destinations, not dashboard tiles). Per `ui.webp`: give the `StatCard` values (e.g.
+  "Available Days" count) bold, large numeral treatment like the moodboard's big time readout, and
+  a colored circular icon badge (tinted background, not a bare icon) rather than a flat icon.
 - **Acceptance:** dashboard visually matches Flutter's structure; no leftover grid tiles for
   destinations that are now bottom tabs.
 
@@ -637,7 +657,10 @@ settings/admin hub), not a drawer section.
   `PastelActionTile` composable (tinted background + icon + label); an `ErrorStateView`/
   `EmptyStateView` pair used consistently instead of ad-hoc `Column`+`Text`+`Button` per screen;
   a `StickyBottomActionPanel` (top shadow, `SafeArea`-equivalent padding) for draft-only actions
-  on detail screens; a `SplitActionButtons` composable (primary + outlined pair, equal width).
+  on detail screens; a `SplitActionButtons` composable (primary + outlined pair, equal width). Per
+  `ui.webp`: `StatCard`'s icon gets a tinted circular badge background (matches the moodboard's
+  colored icon-badge treatment), and the notification bell badge should read as a small solid
+  filled dot/count on the bell chip, not an outlined counter.
 - **Acceptance:** these replace the inline per-screen state-handling code built across Phases
   3-11 without changing any ViewModel/UiState contracts — pure UI-layer swap.
 
