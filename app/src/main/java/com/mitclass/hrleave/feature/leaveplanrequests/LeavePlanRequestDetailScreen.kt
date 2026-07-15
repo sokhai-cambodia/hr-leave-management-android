@@ -44,6 +44,7 @@ fun LeavePlanRequestDetailScreen(
     val state by viewModel.uiState.collectAsState()
     OnResume(onResume = viewModel::load)
     val deleteState by viewModel.deleteState.collectAsState()
+    val submitState by viewModel.submitState.collectAsState()
     var showDeleteConfirm by remember { mutableStateOf(false) }
 
     LaunchedEffect(deleteState) {
@@ -70,8 +71,10 @@ fun LeavePlanRequestDetailScreen(
             is LeavePlanRequestDetailUiState.Loaded -> LeavePlanRequestDetailContent(
                 request = current.request,
                 deleteState = deleteState,
+                submitState = submitState,
                 onEdit = { onEdit(current.request.id) },
                 onDeleteClick = { showDeleteConfirm = true },
+                onSubmitClick = viewModel::submit,
             )
         }
     }
@@ -99,8 +102,10 @@ fun LeavePlanRequestDetailScreen(
 private fun LeavePlanRequestDetailContent(
     request: LeavePlanRequestDto,
     deleteState: PlanDeleteState,
+    submitState: PlanSubmitState,
     onEdit: () -> Unit,
     onDeleteClick: () -> Unit,
+    onSubmitClick: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -142,11 +147,30 @@ private fun LeavePlanRequestDetailContent(
                 modifier = Modifier.padding(top = 12.dp),
             )
         }
+        if (submitState is PlanSubmitState.Error) {
+            Text(
+                text = submitState.message,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(top = 12.dp),
+            )
+        }
 
         if (request.status == "draft") {
             Spacer(modifier = Modifier.height(24.dp))
+            Button(
+                onClick = onSubmitClick,
+                enabled = submitState !is PlanSubmitState.Submitting,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                if (submitState is PlanSubmitState.Submitting) {
+                    CircularProgressIndicator(modifier = Modifier.height(20.dp), color = MaterialTheme.colorScheme.onPrimary)
+                } else {
+                    Text("Submit")
+                }
+            }
+            Spacer(modifier = Modifier.height(12.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Button(onClick = onEdit) { Text("Edit") }
+                OutlinedButton(onClick = onEdit) { Text("Edit") }
                 OutlinedButton(onClick = onDeleteClick, enabled = deleteState !is PlanDeleteState.Deleting) {
                     if (deleteState is PlanDeleteState.Deleting) {
                         CircularProgressIndicator(modifier = Modifier.height(20.dp))

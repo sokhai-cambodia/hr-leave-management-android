@@ -33,4 +33,15 @@ class LeavePlanRequestsRepository @Inject constructor(
             is AppResult.Success -> AppResult.Success(Unit)
             is AppResult.Failure -> result
         }
+
+    /** No balance debit here (unlike Leave Requests) — plan requests don't touch balances on submit. */
+    suspend fun submit(id: String): AppResult<LeavePlanRequestDto> =
+        when (val result = safeApiCall { leavePlanRequestsApi.submit(id) }) {
+            is AppResult.Success -> result
+            is AppResult.Failure -> if (result.httpCode == 422) {
+                AppResult.Failure("You don't have a line approver assigned yet, contact an admin.", result.httpCode)
+            } else {
+                result
+            }
+        }
 }

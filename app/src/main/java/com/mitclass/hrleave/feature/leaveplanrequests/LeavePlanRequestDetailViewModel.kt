@@ -26,6 +26,12 @@ sealed interface PlanDeleteState {
     data class Error(val message: String) : PlanDeleteState
 }
 
+sealed interface PlanSubmitState {
+    data object Idle : PlanSubmitState
+    data object Submitting : PlanSubmitState
+    data class Error(val message: String) : PlanSubmitState
+}
+
 @HiltViewModel
 class LeavePlanRequestDetailViewModel @Inject constructor(
     private val leavePlanRequestsRepository: LeavePlanRequestsRepository,
@@ -38,6 +44,9 @@ class LeavePlanRequestDetailViewModel @Inject constructor(
 
     private val _deleteState = MutableStateFlow<PlanDeleteState>(PlanDeleteState.Idle)
     val deleteState: StateFlow<PlanDeleteState> = _deleteState.asStateFlow()
+
+    private val _submitState = MutableStateFlow<PlanSubmitState>(PlanSubmitState.Idle)
+    val submitState: StateFlow<PlanSubmitState> = _submitState.asStateFlow()
 
     init {
         load()
@@ -60,6 +69,20 @@ class LeavePlanRequestDetailViewModel @Inject constructor(
             _deleteState.value = when (val result = leavePlanRequestsRepository.delete(requestId)) {
                 is AppResult.Success -> PlanDeleteState.Deleted
                 is AppResult.Failure -> PlanDeleteState.Error(result.message)
+            }
+        }
+    }
+
+    fun submit() {
+        if (_submitState.value is PlanSubmitState.Submitting) return
+        viewModelScope.launch {
+            _submitState.value = PlanSubmitState.Submitting
+            when (val result = leavePlanRequestsRepository.submit(requestId)) {
+                is AppResult.Success -> {
+                    _submitState.value = PlanSubmitState.Idle
+                    _uiState.value = LeavePlanRequestDetailUiState.Loaded(result.data)
+                }
+                is AppResult.Failure -> _submitState.value = PlanSubmitState.Error(result.message)
             }
         }
     }

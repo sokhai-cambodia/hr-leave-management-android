@@ -32,4 +32,7 @@ interface LeavePlanRequestsApi {
 
     @DELETE("leave-plan-requests/{id}")
     suspend fun delete(@Path("id") id: String): MessageDto
+
+    @PUT("leave-plan-requests/{id}/submit")
+    suspend fun submit(@Path("id") id: String): LeavePlanRequestDto
 }
