@@ -4,6 +4,7 @@ import com.mitclass.hrleave.core.network.AppResult
 import com.mitclass.hrleave.core.network.safeApiCall
 import com.mitclass.hrleave.data.remote.api.LeavePlanRequestsApi
 import com.mitclass.hrleave.data.remote.dto.LeavePlanRequestDto
+import com.mitclass.hrleave.data.remote.dto.LeavePlanRequestUpsertDto
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,4 +20,17 @@ class LeavePlanRequestsRepository @Inject constructor(
         }
 
     suspend fun get(id: String): AppResult<LeavePlanRequestDto> = safeApiCall { leavePlanRequestsApi.get(id) }
+
+    suspend fun create(body: LeavePlanRequestUpsertDto): AppResult<LeavePlanRequestDto> =
+        safeApiCall { leavePlanRequestsApi.create(body) }
+
+    /** Backend replaces the full date set on update — callers must send the complete current list. */
+    suspend fun update(id: String, body: LeavePlanRequestUpsertDto): AppResult<LeavePlanRequestDto> =
+        safeApiCall { leavePlanRequestsApi.update(id, body) }
+
+    suspend fun delete(id: String): AppResult<Unit> =
+        when (val result = safeApiCall { leavePlanRequestsApi.delete(id) }) {
+            is AppResult.Success -> AppResult.Success(Unit)
+            is AppResult.Failure -> result
+        }
 }

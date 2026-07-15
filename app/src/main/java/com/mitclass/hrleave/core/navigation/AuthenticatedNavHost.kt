@@ -14,6 +14,7 @@ import com.mitclass.hrleave.data.remote.dto.UserDto
 import com.mitclass.hrleave.feature.dashboard.DashboardScreen
 import com.mitclass.hrleave.feature.dashboard.QuickAction
 import com.mitclass.hrleave.feature.leaveplanrequests.LeavePlanRequestDetailScreen
+import com.mitclass.hrleave.feature.leaveplanrequests.LeavePlanRequestFormScreen
 import com.mitclass.hrleave.feature.leaveplanrequests.LeavePlanRequestRoutes
 import com.mitclass.hrleave.feature.leaveplanrequests.LeavePlanRequestsListScreen
 import com.mitclass.hrleave.feature.leaverequests.LeaveRequestDetailScreen
@@ -64,7 +65,22 @@ fun AuthenticatedNavHost(
             route = LeavePlanRequestRoutes.DETAIL_ROUTE,
             arguments = listOf(navArgument(LeavePlanRequestRoutes.DETAIL_ARG) { type = NavType.StringType }),
         ) {
-            LeavePlanRequestDetailScreen()
+            LeavePlanRequestDetailScreen(
+                onEdit = { id -> navController.navigate(LeavePlanRequestRoutes.formEdit(id)) },
+                onDeleted = { navController.popBackStack() },
+            )
+        }
+        composable(
+            route = LeavePlanRequestRoutes.FORM_ROUTE,
+            arguments = listOf(
+                navArgument(LeavePlanRequestRoutes.FORM_ARG) {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                },
+            ),
+        ) {
+            LeavePlanRequestFormScreen(onSaved = { navController.popBackStack() })
         }
         composable(Destination.LeaveRequests.route) {
             LeaveRequestsListScreen(
