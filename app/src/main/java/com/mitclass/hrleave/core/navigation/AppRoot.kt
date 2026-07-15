@@ -25,6 +25,7 @@ fun AppRoot(authViewModel: AuthViewModel = hiltViewModel()) {
         is SessionState.Unauthenticated -> AuthNavHost()
         is SessionState.Authenticated -> AuthenticatedShell(
             user = state.user,
+            isApprover = authViewModel.isApprover.collectAsState().value,
             onLogout = { authViewModel.logout() },
         )
     }

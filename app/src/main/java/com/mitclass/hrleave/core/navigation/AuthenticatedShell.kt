@@ -96,6 +96,7 @@ fun AuthenticatedShell(user: UserDto, isApprover: Boolean = false, onLogout: () 
             AuthenticatedNavHost(
                 navController = navController,
                 user = user,
+                isApprover = isApprover,
                 modifier = Modifier.padding(paddingValues),
             )
         }

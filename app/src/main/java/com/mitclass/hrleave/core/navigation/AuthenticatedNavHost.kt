@@ -13,11 +13,16 @@ import com.mitclass.hrleave.feature.dashboard.DashboardScreen
 fun AuthenticatedNavHost(
     navController: NavHostController,
     user: UserDto,
+    isApprover: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
     NavHost(navController = navController, startDestination = Destination.Dashboard.route, modifier = modifier) {
         composable(Destination.Dashboard.route) {
-            DashboardScreen(user = user)
+            DashboardScreen(
+                user = user,
+                isApprover = isApprover,
+                onPendingApprovalsClick = { navController.navigate(Destination.Approvals.route) },
+            )
         }
         composable(Destination.Schedule.route) { ComingSoonScreen("Schedule") }
         composable(Destination.LeavePlanRequests.route) { ComingSoonScreen("Leave Plan Requests") }

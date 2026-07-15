@@ -15,7 +15,7 @@ Full detail (acceptance criteria, verify steps) in `tasks/plan.md`.
 
 ## Phase 2 — App Shell, Role-Adaptive Navigation, Dashboard
 - [x] 2.1 App shell + Navigation-Compose graph + static role-based nav (superuser branch)
-- [ ] 2.2 Team-owner detection + Approvals nav entry + Pending Approvals card
+- [x] 2.2 Team-owner detection + Approvals nav entry + Pending Approvals card
 - [ ] **Checkpoint 2**
 
 ## Phase 3 — Leave Balances
