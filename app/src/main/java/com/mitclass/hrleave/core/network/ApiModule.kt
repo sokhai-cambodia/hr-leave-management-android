@@ -2,6 +2,7 @@ package com.mitclass.hrleave.core.network
 
 import com.mitclass.hrleave.data.remote.api.ApprovalsApi
 import com.mitclass.hrleave.data.remote.api.AuthApi
+import com.mitclass.hrleave.data.remote.api.LeaveBalancesApi
 import com.mitclass.hrleave.data.remote.api.TeamsApi
 import dagger.Module
 import dagger.Provides
@@ -25,4 +26,9 @@ object ApiModule {
     @Provides
     @Singleton
     fun provideApprovalsApi(retrofit: Retrofit): ApprovalsApi = retrofit.create(ApprovalsApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideLeaveBalancesApi(retrofit: Retrofit): LeaveBalancesApi =
+        retrofit.create(LeaveBalancesApi::class.java)
 }
