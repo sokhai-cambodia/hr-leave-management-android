@@ -41,6 +41,10 @@ class LeavePlanRequestFormViewModel @Inject constructor(
     private val existingId: String? = savedStateHandle[LeavePlanRequestRoutes.FORM_ARG]
     val isEditMode: Boolean get() = existingId != null
 
+    // Task 6.2: pre-populate from a recommendation selection (only meaningful when existingId is null).
+    private val prefillLeaveTypeId: String? = savedStateHandle[LeavePlanRequestRoutes.PREFILL_LEAVE_TYPE_ARG]
+    private val prefillDates: String? = savedStateHandle[LeavePlanRequestRoutes.PREFILL_DATES_ARG]
+
     private val _uiState = MutableStateFlow(LeavePlanRequestFormUiState())
     val uiState: StateFlow<LeavePlanRequestFormUiState> = _uiState.asStateFlow()
 
@@ -56,7 +60,17 @@ class LeavePlanRequestFormViewModel @Inject constructor(
             }
             val id = existingId
             if (id == null) {
-                _uiState.value = _uiState.value.copy(isLoading = false, leaveTypes = leaveTypes)
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    leaveTypes = leaveTypes,
+                    selectedLeaveTypeId = prefillLeaveTypeId,
+                    dates = prefillDates
+                        ?.split(",")
+                        ?.filter { it.isNotBlank() }
+                        ?.map(LocalDate::parse)
+                        ?.sorted()
+                        ?: emptyList(),
+                )
                 return@launch
             }
             when (val result = leavePlanRequestsRepository.get(id)) {

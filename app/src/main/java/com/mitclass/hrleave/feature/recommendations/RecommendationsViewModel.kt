@@ -19,7 +19,6 @@ sealed interface RecommendationsUiState {
     data class Error(val message: String) : RecommendationsUiState
 }
 
-/** Fetch & display only (Task 6.1) — selection lands in Task 6.2. */
 @HiltViewModel
 class RecommendationsViewModel @Inject constructor(
     private val recommendsRepository: RecommendsRepository,
@@ -30,6 +29,9 @@ class RecommendationsViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<RecommendationsUiState>(RecommendationsUiState.Loading)
     val uiState: StateFlow<RecommendationsUiState> = _uiState.asStateFlow()
 
+    private val _selectedDates = MutableStateFlow<Set<String>>(emptySet())
+    val selectedDates: StateFlow<Set<String>> = _selectedDates.asStateFlow()
+
     init {
         load()
     }
@@ -37,6 +39,7 @@ class RecommendationsViewModel @Inject constructor(
     fun load() {
         viewModelScope.launch {
             _uiState.value = RecommendationsUiState.Loading
+            _selectedDates.value = emptySet()
             // Server already returns entries in chronological (day_of_year) order — pass
             // `data` straight through, no client re-sort that could corrupt that order.
             _uiState.value = when (val result = recommendsRepository.recommendLeavePlan(_selectedYear.value)) {
@@ -49,5 +52,17 @@ class RecommendationsViewModel @Inject constructor(
     fun onYearSelected(year: Int) {
         _selectedYear.value = year
         load()
+    }
+
+    fun toggleDateSelection(date: String) {
+        _selectedDates.value = if (date in _selectedDates.value) {
+            _selectedDates.value - date
+        } else {
+            _selectedDates.value + date
+        }
+    }
+
+    fun toggleSelectAll(allDates: List<String>) {
+        _selectedDates.value = if (_selectedDates.value.size == allDates.size) emptySet() else allDates.toSet()
     }
 }

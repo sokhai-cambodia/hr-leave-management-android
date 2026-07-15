@@ -85,6 +85,16 @@ fun AuthenticatedNavHost(
                     nullable = true
                     defaultValue = null
                 },
+                navArgument(LeavePlanRequestRoutes.PREFILL_LEAVE_TYPE_ARG) {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                },
+                navArgument(LeavePlanRequestRoutes.PREFILL_DATES_ARG) {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                },
             ),
         ) {
             LeavePlanRequestFormScreen(onSaved = { navController.popBackStack() })
@@ -116,7 +126,13 @@ fun AuthenticatedNavHost(
         ) {
             LeaveRequestFormScreen(onSaved = { navController.popBackStack() })
         }
-        composable(Destination.Recommendations.route) { RecommendationsScreen() }
+        composable(Destination.Recommendations.route) {
+            RecommendationsScreen(
+                onUseSelectedDates = { leaveTypeId, dates ->
+                    navController.navigate(LeavePlanRequestRoutes.formPrefill(leaveTypeId, dates))
+                },
+            )
+        }
         composable(Destination.Approvals.route) { ComingSoonScreen("Approvals") }
         composable(Destination.Notifications.route) { ComingSoonScreen("Notifications") }
         composable(Destination.Profile.route) { ComingSoonScreen("Profile") }

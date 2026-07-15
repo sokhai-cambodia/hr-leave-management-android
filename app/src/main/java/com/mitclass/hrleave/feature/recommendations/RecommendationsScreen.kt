@@ -16,10 +16,12 @@ import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -29,46 +31,80 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mitclass.hrleave.data.remote.dto.LeaveRecommendationDto
+import java.time.LocalDate
 import java.util.Locale
 
 @Composable
 fun RecommendationsScreen(
+    onUseSelectedDates: (leaveTypeId: String, dates: List<LocalDate>) -> Unit,
     viewModel: RecommendationsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsState()
     val year by viewModel.selectedYear.collectAsState()
+    val selectedDates by viewModel.selectedDates.collectAsState()
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        YearSelector(year = year, onYearChange = viewModel::onYearSelected)
-        when (val current = state) {
-            is RecommendationsUiState.Loading -> Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center,
-            ) { CircularProgressIndicator() }
-
-            is RecommendationsUiState.Error -> Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center,
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(text = current.message, color = MaterialTheme.colorScheme.error)
-                    Button(onClick = viewModel::load, modifier = Modifier.padding(top = 12.dp)) { Text("Retry") }
+    Scaffold(
+        bottomBar = {
+            val loaded = state as? RecommendationsUiState.Loaded
+            if (loaded != null && selectedDates.isNotEmpty()) {
+                Button(
+                    onClick = {
+                        onUseSelectedDates(loaded.leaveTypeId, selectedDates.map(LocalDate::parse).sorted())
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                ) {
+                    Text("Use ${selectedDates.size} selected date(s)")
                 }
             }
+        },
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+        ) {
+            YearSelector(year = year, onYearChange = viewModel::onYearSelected)
+            when (val current = state) {
+                is RecommendationsUiState.Loading -> Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center,
+                ) { CircularProgressIndicator() }
 
-            is RecommendationsUiState.Loaded -> {
-                if (current.items.isEmpty()) {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text(text = "No recommendations for $year", style = MaterialTheme.typography.bodyLarge)
+                is RecommendationsUiState.Error -> Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(text = current.message, color = MaterialTheme.colorScheme.error)
+                        Button(onClick = viewModel::load, modifier = Modifier.padding(top = 12.dp)) { Text("Retry") }
                     }
-                } else {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        items(current.items, key = { it.leaveDate }) { item ->
-                            RecommendationRow(item)
+                }
+
+                is RecommendationsUiState.Loaded -> {
+                    if (current.items.isEmpty()) {
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Text(text = "No recommendations for $year", style = MaterialTheme.typography.bodyLarge)
+                        }
+                    } else {
+                        val allDates = current.items.map { it.leaveDate }
+                        SelectAllRow(
+                            allSelected = selectedDates.size == allDates.size,
+                            onToggleAll = { viewModel.toggleSelectAll(allDates) },
+                        )
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            items(current.items, key = { it.leaveDate }) { item ->
+                                RecommendationRow(
+                                    item = item,
+                                    selected = item.leaveDate in selectedDates,
+                                    onToggle = { viewModel.toggleDateSelection(item.leaveDate) },
+                                )
+                            }
                         }
                     }
                 }
@@ -97,14 +133,28 @@ private fun YearSelector(year: Int, onYearChange: (Int) -> Unit) {
 }
 
 @Composable
-private fun RecommendationRow(item: LeaveRecommendationDto) {
-    Card(modifier = Modifier.fillMaxWidth()) {
+private fun SelectAllRow(allSelected: Boolean, onToggleAll: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Checkbox(checked = allSelected, onCheckedChange = { onToggleAll() })
+        Text(text = "Select all")
+    }
+}
+
+@Composable
+private fun RecommendationRow(item: LeaveRecommendationDto, selected: Boolean, onToggle: () -> Unit) {
+    Card(onClick = onToggle, modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(end = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            Checkbox(checked = selected, onCheckedChange = { onToggle() })
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = item.leaveDate, style = MaterialTheme.typography.titleMedium)
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
