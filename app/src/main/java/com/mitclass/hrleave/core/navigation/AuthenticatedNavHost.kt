@@ -1,6 +1,7 @@
 package com.mitclass.hrleave.core.navigation
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.EventNote
 import androidx.compose.material.icons.filled.FactCheck
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -12,6 +13,10 @@ import androidx.navigation.navArgument
 import com.mitclass.hrleave.data.remote.dto.UserDto
 import com.mitclass.hrleave.feature.dashboard.DashboardScreen
 import com.mitclass.hrleave.feature.dashboard.QuickAction
+import com.mitclass.hrleave.feature.leaveplanrequests.LeavePlanRequestDetailScreen
+import com.mitclass.hrleave.feature.leaveplanrequests.LeavePlanRequestFormScreen
+import com.mitclass.hrleave.feature.leaveplanrequests.LeavePlanRequestRoutes
+import com.mitclass.hrleave.feature.leaveplanrequests.LeavePlanRequestsListScreen
 import com.mitclass.hrleave.feature.leaverequests.LeaveRequestDetailScreen
 import com.mitclass.hrleave.feature.leaverequests.LeaveRequestFormScreen
 import com.mitclass.hrleave.feature.leaverequests.LeaveRequestRoutes
@@ -24,6 +29,11 @@ import com.mitclass.hrleave.feature.leaverequests.LeaveRequestsListScreen
  */
 private val dashboardQuickActions = listOf(
     QuickAction(label = "Leave Requests", icon = Icons.Filled.FactCheck, route = Destination.LeaveRequests.route),
+    QuickAction(
+        label = "Leave Plan Requests",
+        icon = Icons.Filled.EventNote,
+        route = Destination.LeavePlanRequests.route,
+    ),
 )
 
 /** Routes reachable from the authenticated shell's drawer (Task 2.1). */
@@ -45,7 +55,33 @@ fun AuthenticatedNavHost(
             )
         }
         composable(Destination.Schedule.route) { ComingSoonScreen("Schedule") }
-        composable(Destination.LeavePlanRequests.route) { ComingSoonScreen("Leave Plan Requests") }
+        composable(Destination.LeavePlanRequests.route) {
+            LeavePlanRequestsListScreen(
+                onItemClick = { id -> navController.navigate(LeavePlanRequestRoutes.detail(id)) },
+                onCreateClick = { navController.navigate(LeavePlanRequestRoutes.FORM_CREATE_ROUTE) },
+            )
+        }
+        composable(
+            route = LeavePlanRequestRoutes.DETAIL_ROUTE,
+            arguments = listOf(navArgument(LeavePlanRequestRoutes.DETAIL_ARG) { type = NavType.StringType }),
+        ) {
+            LeavePlanRequestDetailScreen(
+                onEdit = { id -> navController.navigate(LeavePlanRequestRoutes.formEdit(id)) },
+                onDeleted = { navController.popBackStack() },
+            )
+        }
+        composable(
+            route = LeavePlanRequestRoutes.FORM_ROUTE,
+            arguments = listOf(
+                navArgument(LeavePlanRequestRoutes.FORM_ARG) {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                },
+            ),
+        ) {
+            LeavePlanRequestFormScreen(onSaved = { navController.popBackStack() })
+        }
         composable(Destination.LeaveRequests.route) {
             LeaveRequestsListScreen(
                 onItemClick = { id -> navController.navigate(LeaveRequestRoutes.detail(id)) },

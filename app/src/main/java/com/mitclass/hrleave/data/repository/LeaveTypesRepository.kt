@@ -16,4 +16,11 @@ class LeaveTypesRepository @Inject constructor(
             is AppResult.Success -> AppResult.Success(result.data.data.filter { it.isActive })
             is AppResult.Failure -> result
         }
+
+    /** Leave Plan Requests only allow leave types flagged `is_allow_plan` (Task 5.2). */
+    suspend fun listAllowPlan(): AppResult<List<LeaveTypeDto>> =
+        when (val result = listActive()) {
+            is AppResult.Success -> AppResult.Success(result.data.filter { it.isAllowPlan })
+            is AppResult.Failure -> result
+        }
 }

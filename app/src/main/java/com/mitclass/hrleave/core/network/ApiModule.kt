@@ -3,6 +3,7 @@ package com.mitclass.hrleave.core.network
 import com.mitclass.hrleave.data.remote.api.ApprovalsApi
 import com.mitclass.hrleave.data.remote.api.AuthApi
 import com.mitclass.hrleave.data.remote.api.LeaveBalancesApi
+import com.mitclass.hrleave.data.remote.api.LeavePlanRequestsApi
 import com.mitclass.hrleave.data.remote.api.LeaveRequestsApi
 import com.mitclass.hrleave.data.remote.api.LeaveTypesApi
 import com.mitclass.hrleave.data.remote.api.TeamsApi
@@ -43,4 +44,9 @@ object ApiModule {
     @Singleton
     fun provideLeaveTypesApi(retrofit: Retrofit): LeaveTypesApi =
         retrofit.create(LeaveTypesApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideLeavePlanRequestsApi(retrofit: Retrofit): LeavePlanRequestsApi =
+        retrofit.create(LeavePlanRequestsApi::class.java)
 }
