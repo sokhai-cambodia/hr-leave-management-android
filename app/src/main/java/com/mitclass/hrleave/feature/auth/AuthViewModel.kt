@@ -6,11 +6,15 @@ import com.mitclass.hrleave.core.network.AppResult
 import com.mitclass.hrleave.core.network.AuthEventBus
 import com.mitclass.hrleave.data.remote.dto.UserDto
 import com.mitclass.hrleave.data.repository.AuthRepository
+import com.mitclass.hrleave.data.repository.NotificationsRepository
 import com.mitclass.hrleave.data.repository.TeamsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,6 +24,8 @@ sealed interface SessionState {
     data object Unauthenticated : SessionState
 }
 
+private const val UNREAD_COUNT_POLL_INTERVAL_MS = 30_000L
+
 /**
  * Shared session state holder — the canonical place other features read the current user
  * from for role/owner-id checks, and where app-start bootstrap and forced-logout (any 401,
@@ -27,13 +33,17 @@ sealed interface SessionState {
  *
  * Also owns the team-owner ("approver") detection heuristic: there's no `is_team_owner` flag
  * on `User`, so this fetches `GET /teams` once per session and checks whether any team's
- * `team_owner.id` matches the current user — not re-run per screen.
+ * `team_owner.id` matches the current user — not re-run per screen. And owns the
+ * session-lifecycle-tied notifications badge poll (Task 9.1): starts a 30s
+ * `GET /notifications/unread-count` loop on login/session-bootstrap, stops it on logout.
+ * Poll failures are silent — a badge that's briefly stale isn't worth an error toast every 30s.
  */
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val authEventBus: AuthEventBus,
     private val teamsRepository: TeamsRepository,
+    private val notificationsRepository: NotificationsRepository,
 ) : ViewModel() {
 
     private val _sessionState = MutableStateFlow<SessionState>(SessionState.Loading)
@@ -42,7 +52,11 @@ class AuthViewModel @Inject constructor(
     private val _isApprover = MutableStateFlow(false)
     val isApprover: StateFlow<Boolean> = _isApprover.asStateFlow()
 
+    private val _unreadNotificationCount = MutableStateFlow(0)
+    val unreadNotificationCount: StateFlow<Int> = _unreadNotificationCount.asStateFlow()
+
     private var teamOwnerCheckDone = false
+    private var pollingJob: Job? = null
 
     init {
         viewModelScope.launch {
@@ -56,10 +70,12 @@ class AuthViewModel @Inject constructor(
                         teamOwnerCheckDone = true
                         refreshIsApprover(user.id)
                     }
+                    startNotificationPolling()
                 } else {
                     _sessionState.value = SessionState.Unauthenticated
                     teamOwnerCheckDone = false
                     _isApprover.value = false
+                    stopNotificationPolling()
                 }
             }
         }
@@ -90,6 +106,25 @@ class AuthViewModel @Inject constructor(
             is AppResult.Success -> result.data.any { it.teamOwner?.id == userId }
             is AppResult.Failure -> false
         }
+    }
+
+    private fun startNotificationPolling() {
+        if (pollingJob?.isActive == true) return
+        pollingJob = viewModelScope.launch {
+            while (isActive) {
+                when (val result = notificationsRepository.fetchUnreadCount()) {
+                    is AppResult.Success -> _unreadNotificationCount.value = result.data
+                    is AppResult.Failure -> Unit
+                }
+                delay(UNREAD_COUNT_POLL_INTERVAL_MS)
+            }
+        }
+    }
+
+    private fun stopNotificationPolling() {
+        pollingJob?.cancel()
+        pollingJob = null
+        _unreadNotificationCount.value = 0
     }
 
     fun logout() {

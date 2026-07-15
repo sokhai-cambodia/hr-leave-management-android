@@ -26,6 +26,7 @@ fun AppRoot(authViewModel: AuthViewModel = hiltViewModel()) {
         is SessionState.Authenticated -> AuthenticatedShell(
             user = state.user,
             isApprover = authViewModel.isApprover.collectAsState().value,
+            unreadNotificationCount = authViewModel.unreadNotificationCount.collectAsState().value,
             onLogout = { authViewModel.logout() },
         )
     }

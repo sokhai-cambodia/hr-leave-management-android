@@ -4,6 +4,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.Badge
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -30,7 +33,12 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AuthenticatedShell(user: UserDto, isApprover: Boolean = false, onLogout: () -> Unit) {
+fun AuthenticatedShell(
+    user: UserDto,
+    isApprover: Boolean = false,
+    unreadNotificationCount: Int = 0,
+    onLogout: () -> Unit,
+) {
     val navController = rememberNavController()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -88,6 +96,25 @@ fun AuthenticatedShell(user: UserDto, isApprover: Boolean = false, onLogout: () 
                     navigationIcon = {
                         IconButton(onClick = { scope.launch { drawerState.open() } }) {
                             Icon(Icons.Filled.Menu, contentDescription = "Open menu")
+                        }
+                    },
+                    actions = {
+                        IconButton(
+                            onClick = {
+                                if (currentRoute != Destination.Notifications.route) {
+                                    navController.navigate(Destination.Notifications.route)
+                                }
+                            },
+                        ) {
+                            BadgedBox(
+                                badge = {
+                                    if (unreadNotificationCount > 0) {
+                                        Badge { Text(unreadNotificationCount.coerceAtMost(99).toString()) }
+                                    }
+                                },
+                            ) {
+                                Icon(Icons.Filled.Notifications, contentDescription = "Notifications")
+                            }
                         }
                     },
                 )
