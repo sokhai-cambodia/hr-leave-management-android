@@ -76,7 +76,7 @@ sibling app. SPEC.md §7 is stale — ground truth is the Flutter app's actual D
 - [x] 13.1 Design tokens overhaul (colors, shapes, spacing, filled fields, button height)
 - [x] 13.2 Navigation shell rewrite (bottom tabs + center FAB + bottom sheet, drop the drawer)
 - [ ] 13.3 Dashboard rebuild (avatar card, pastel action tiles, stat cards, no grid)
-- [ ] 13.4 Shared component library pass (pill StatusChip, StatCard, error/empty states, sticky
+- [x] 13.4 Shared component library pass (pill StatusChip, StatCard, error/empty states, sticky
       bottom action panel, split action buttons)
 - [ ] 13.5 List/detail screen polish (Leave Requests, Leave Plan Requests, Approvals,
       Notifications, Schedule)

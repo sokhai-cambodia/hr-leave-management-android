@@ -10,10 +10,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.mitclass.hrleave.core.theme.DangerColor
+import com.mitclass.hrleave.core.theme.PillCornerRadius
 import com.mitclass.hrleave.core.theme.SuccessColor
 import com.mitclass.hrleave.core.theme.WarningColor
 
-/** Renders a leave-request/leave-plan-request status ("draft"|"pending"|"approved"|"rejected") as a colored chip. */
+/**
+ * Renders a leave-request/leave-plan-request status ("draft"|"pending"|"approved"|"rejected") as
+ * a colored pill chip — standardized on the pill shape everywhere (Task 13.4), rather than
+ * replicating the Flutter client's own inconsistent radius-8-vs-pill split.
+ */
 @Composable
 fun StatusChip(status: String, modifier: Modifier = Modifier) {
     val color = statusColor(status)
@@ -22,7 +27,7 @@ fun StatusChip(status: String, modifier: Modifier = Modifier) {
         style = MaterialTheme.typography.labelMedium,
         color = color,
         modifier = modifier
-            .background(color = color.copy(alpha = 0.12f), shape = RoundedCornerShape(8.dp))
+            .background(color = color.copy(alpha = 0.12f), shape = RoundedCornerShape(PillCornerRadius))
             .padding(horizontal = 10.dp, vertical = 4.dp),
     )
 }
