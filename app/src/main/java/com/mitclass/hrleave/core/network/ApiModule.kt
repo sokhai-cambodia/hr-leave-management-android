@@ -12,6 +12,7 @@ import com.mitclass.hrleave.data.remote.api.PublicHolidaysApi
 import com.mitclass.hrleave.data.remote.api.RecommendsApi
 import com.mitclass.hrleave.data.remote.api.ScheduleApi
 import com.mitclass.hrleave.data.remote.api.TeamsApi
+import com.mitclass.hrleave.data.remote.api.UsersApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -77,4 +78,8 @@ object ApiModule {
     @Provides
     @Singleton
     fun providePoliciesApi(retrofit: Retrofit): PoliciesApi = retrofit.create(PoliciesApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideUsersApi(retrofit: Retrofit): UsersApi = retrofit.create(UsersApi::class.java)
 }

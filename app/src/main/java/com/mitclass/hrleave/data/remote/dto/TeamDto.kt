@@ -15,3 +15,11 @@ data class TeamDto(
 
 @Serializable
 data class TeamsResponseDto(val data: List<TeamDto>, val count: Int)
+
+@Serializable
+data class TeamUpsertDto(
+    val name: String,
+    val description: String? = null,
+    @SerialName("team_owner_id") val teamOwnerId: String,
+    @SerialName("is_active") val isActive: Boolean,
+)
