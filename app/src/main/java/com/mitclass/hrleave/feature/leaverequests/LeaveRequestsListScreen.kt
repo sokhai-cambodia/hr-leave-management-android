@@ -1,5 +1,6 @@
 package com.mitclass.hrleave.feature.leaverequests
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -101,6 +102,7 @@ private fun LeaveRequestRow(request: LeaveRequestDto, onClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable(onClick = onClick)
             .padding(vertical = AppSpacing.md),
     ) {
         Row(
