@@ -544,6 +544,165 @@ feature list, architecture explanation, installation instructions) ready per rub
 
 ---
 
+## Phase 13 — UI/UX Consistency Revamp (match the Flutter client's actual design system)
+
+Added post-Checkpoint-12, after the user tested the app on a physical device and found the UI
+inconsistent with the Flutter sibling app. SPEC.md §7's design tokens are **stale** — the Flutter
+app's implemented UI (`../hr-leave-management-flutter`) has drifted from that doc over a
+redesign, and the Flutter app is the real consistency target now, not the spec doc. Ground truth
+for every task below is a fork analysis of the actual Flutter Dart source
+(`lib/app/theme/app_theme.dart`, `lib/widgets/`, and one representative screen per archetype),
+not SPEC.md.
+
+**Verified Flutter design tokens** (supersede SPEC.md §7 for this phase and should be written back
+into SPEC.md §7 once this phase lands):
+
+| Token | Value |
+|---|---|
+| Primary / primaryDark | `#E23744` / `#C01F2B` |
+| Danger / warning / success / info | `#EF4444` / `#F5A623` / `#22A659` / `#4C8DFF` |
+| Light background / surface / field fill / border | `#FFFFFF` / `#FFFFFF` / `#F7F7F9` / `#EAEAEE` |
+| Dark background / surface | `#121212` / `#1E1E1E` (unchanged from SPEC) |
+| Button / card / field / pill radius | 14dp / 18dp / 12dp / 999dp (full pill) |
+| Spacing scale | xs 4, sm 8, md 12, lg 16, xl 24 |
+| Button min height | 54dp |
+| Font | Poppins (unchanged from SPEC) |
+| Text fields | **filled** (`lightFieldFill` bg), not outlined-transparent; border only up/focused |
+| AppBar | flat, elevation 0, `centerTitle:false`, no drawer hamburger |
+
+**Navigation shell** (replaces the drawer entirely): persistent bottom-tab bar — **Home, Leaves,
+Calendar, Profile** — with per-tab state preserved across switches (Flutter uses `IndexedStack`;
+Android equivalent is a saveable nested nav-graph per tab or manual state hoisting, not literal
+`IndexedStack`). Center-docked FAB (+, opens a bottom sheet: "Request Leave" / "Plan Leave").
+Notification bell = circular chip icon button with a small badge, top-right of the app bar. The
+**Leaves** tab hosts a pill-shaped segmented control switching **Requests / Plans** (not two
+separate nav destinations). Approvals, Notifications, all 6 Admin resources, Recommendations, and
+every detail/create/edit form are pushed as back-arrow secondary screens *outside* the 4 tabs.
+Approvals is reached only via a dashboard stat card (isApprover-gated) — no drawer/menu entry.
+**Admin CRUD entries and Change Password move under the Profile tab** (Profile becomes the
+settings/admin hub), not a drawer section.
+
+### Task 13.1 — Design tokens overhaul
+- **Depends on:** nothing (foundational; everything else in this phase builds on it)
+- Rewrite `core/theme/Color.kt` to the verified token table above (add `LightFieldFill`,
+  `InfoColor`; correct `BrandPrimary`/`DangerColor`/`WarningColor`/`SuccessColor`/`LightBorder`).
+  `core/theme/Shape.kt`: button/card/field/pill radii (14/18/12/999). Add an `AppSpacing` object
+  (xs/sm/md/lg/xl) alongside `Type.kt`. Update `Theme.kt`'s Material3 `ColorScheme` mapping and
+  the global `OutlinedTextField`→filled-field default (via a shared `TextFieldDefaults` object or
+  a small `AppTextField` wrapper composable used everywhere instead of raw `OutlinedTextField`).
+  Update every button usage's min height to 54dp (a shared `AppButton`/`AppOutlinedButton`
+  wrapper, or a `ButtonDefaults` object, so this isn't hand-applied per call site).
+- **Acceptance:** one source of truth for every token; no screen references a raw hex or
+  ad-hoc corner-radius value; `./gradlew lint`/`assembleDebug` clean.
+
+### Task 13.2 — Navigation shell rewrite (bottom tabs + center FAB + bottom sheet)
+- **Depends on:** 13.1
+- Replace `AuthenticatedShell`'s `ModalNavigationDrawer` with a `Scaffold` using
+  `NavigationBar`/`BottomAppBar` + `FloatingActionButton` (`centerDocked` equivalent — Compose
+  `FabPosition.Center` with a cutout `BottomAppBar`), 4 items (Home/Leaves/Calendar/Profile) with
+  outlined↔filled icon swap on selection. Each tab's own back stack survives tab switches (nested
+  `NavHost` per tab, or `rememberSaveable`-backed state — pick one approach and document it).
+  FAB opens a `ModalBottomSheet` with 2 options routing into the Leave Request / Leave Plan
+  Request create forms. Notification bell moves into the flat AppBar's actions as a circular chip
+  IconButton + badge. Build the **Leaves** tab as a pill `TabRow`/`SegmentedButton` switching
+  between the existing `LeaveRequestsListScreen`/`LeavePlanRequestsListScreen` (reuse those
+  screens unmodified — only the container around them changes). Move Approvals/Notifications/all
+  6 Admin routes/Recommendations/every detail+form route to back-arrow-pushed screens reachable
+  only via their existing entry points (dashboard stat card, Profile tab list, FAB sheet, list-row
+  taps) — none of them get a persistent nav-bar slot.
+- **Acceptance:** no drawer anywhere in the app; 4 bottom tabs preserve scroll/state across
+  switches; FAB → bottom sheet → correct create form; Leaves tab's pill toggles Requests/Plans in
+  place; every previously-drawer-only route (admin, approvals, notifications, recommendations) is
+  still reachable, just relocated.
+
+### Task 13.3 — Dashboard rebuild
+- **Depends on:** 13.2
+- Replace the `LazyVerticalGrid`/chunked-row quick-actions grid with Flutter's actual layout: a
+  `LazyColumn` of (1) profile card with a pastel-primary circular avatar (initials) + name/email/
+  team, (2) a 2-up row of pastel action tiles ("Request Leave" tinted primary, "Plan Leave" tinted
+  warning) linking straight to the create forms, (3) a `StatCard` row — "Available Days" (info
+  color, always visible, sum of available balances) + "Approvals" (warning color, isApprover-only,
+  tappable → Approvals) — as equal-height cards, (4) "Leave Balances" section title + the existing
+  balance rows, (5) a single "Quick actions" section with one row linking to Recommendations only
+  (Schedule/Leave Requests/Leave Plan Requests quick-action tiles are removed — those are now
+  bottom-tab destinations, not dashboard tiles).
+- **Acceptance:** dashboard visually matches Flutter's structure; no leftover grid tiles for
+  destinations that are now bottom tabs.
+
+### Task 13.4 — Shared component library pass
+- **Depends on:** 13.1
+- New/updated `core/ui` components mirroring Flutter's `lib/widgets/`: `StatusChip` → pill shape
+  everywhere (standardize on the pill, not Flutter's own inconsistent radius-8-vs-pill split —
+  don't replicate that bug); a `StatCard` composable (icon, label, value, tint color); a
+  `PastelActionTile` composable (tinted background + icon + label); an `ErrorStateView`/
+  `EmptyStateView` pair used consistently instead of ad-hoc `Column`+`Text`+`Button` per screen;
+  a `StickyBottomActionPanel` (top shadow, `SafeArea`-equivalent padding) for draft-only actions
+  on detail screens; a `SplitActionButtons` composable (primary + outlined pair, equal width).
+- **Acceptance:** these replace the inline per-screen state-handling code built across Phases
+  3-11 without changing any ViewModel/UiState contracts — pure UI-layer swap.
+
+### Task 13.5 — List/detail screen polish
+- **Depends on:** 13.4
+- Apply the Card→InkWell(clickable)→Padding(16)→header-row(title+badge)+icon-detail-rows pattern
+  to Leave Requests, Leave Plan Requests, Approvals, Notifications, and Schedule's list sections.
+  Detail screens (`LeaveRequestDetailScreen`, `LeavePlanRequestDetailScreen`) get the sectioned-
+  card layout (info card, optional description card, timeline/workflow card with dot markers) and
+  the sticky bottom action panel for draft actions (Submit primary, Edit/Delete outlined pair).
+  Approvals gets pill type badges (leave-type name, primary-tinted) instead of a status badge
+  (everything there is implicitly pending), and the Approve button explicitly overridden to
+  `SuccessColor` (the one place the primary brand color is deliberately swapped).
+- **Acceptance:** visually consistent card/badge/detail-row language across every list and detail
+  screen; sticky action panel present on both Leave Request and Leave Plan Request detail screens.
+
+### Task 13.6 — Form screen polish
+- **Depends on:** 13.4
+- Apply the bold-label-above-field convention (replace `OutlinedTextField`'s built-in floating
+  label with a `Text` label + 8dp gap + filled field) across every form (Login, Forgot/Reset
+  Password, Change Password, Leave Request form, Leave Plan Request form). Forms reached as a
+  create/edit modal get a close "X" icon instead of a back arrow; read-only pushed screens keep
+  the back arrow. Error banner: tinted danger container (10% bg, 30% border, `error_outline` icon
+  + text) instead of a plain red `Text`. Date fields become a custom `InkWell`+`Container` styled
+  like the filled input decoration (not a raw `DatePickerField` `OutlinedTextField`) — keep the
+  existing `DatePickerField`'s dialog logic, only restyle the trigger surface. Leave Plan form's
+  date chips: bordered container (min-height 80dp) holding a `FlowRow` of `InputChip`s with a
+  calendar-icon avatar + delete icon, empty-state hint text when no dates added yet. Submit-button
+  hierarchy: create mode = full-width primary "Submit" + outlined "Save as Draft" beneath it;
+  edit mode = single full-width primary "Update".
+- **Acceptance:** every form uses the same label/field/error/button conventions; no screen still
+  uses a bare `OutlinedTextField` with a floating label.
+
+### Task 13.7 — Admin CRUD + Profile hub restyle
+- **Depends on:** 13.2, 13.4
+- Move all 6 admin entries and Change Password out of the drawer (already gone per 13.2) and into
+  a Profile-tab "Admin" section (superuser-only, bold section label + `ListTile`-style rows with
+  leading icon + chevron), matching Flutter's Profile-as-settings-hub structure. Restyle
+  `GenericCrudListScreen`/`GenericCrudFormDialog` with the new tokens (filled search field, pill
+  row badges where applicable, 18dp card radius). **Keep** Android's search+sort toggle — Flutter
+  has no sort control; that's a legitimate improvement over the Flutter client, not a
+  divergence to fix. Leave `FieldSpec.required` defaulting as-is (Android defaults `true`,
+  Flutter defaults `false`) — not a visual concern, no behavior change needed.
+- **Acceptance:** Profile tab is the sole entry point for admin resources and Change Password;
+  admin screens visually match the new token set; search+sort both still work.
+
+### Task 13.8 — Auth screens polish
+- **Depends on:** 13.6
+- Two-tone wordmark (`Text` with two `TextSpan`-equivalent styles: "HR" bold primary + " Leave"
+  bold default-color) replacing the current single-style "HR Leave" title on Login and a
+  standalone splash/bootstrap screen (34dp, static, no spinner — distinct from the existing
+  `LoadingSplash` which can keep its spinner for the actual bootstrap wait). Login headline:
+  two-tone "Log In to your " + "Account" (primary), 28dp bold. Apply Task 13.6's label/field/
+  button conventions to Login/Forgot/Reset Password (already covered by 13.6 but called out here
+  as this task's specific verify target).
+- **Acceptance:** Login/Forgot/Reset Password visually match Flutter's auth screens' branding and
+  field conventions.
+
+**Checkpoint 13 (final)** — every screen reviewed against the Flutter app's actual UI for visual
+consistency (colors, shapes, spacing, nav shell, component patterns); `./gradlew lint` clean,
+`./gradlew assembleDebug` clean; SPEC.md §7 updated to the verified token table so it stops being
+stale for future work.
+
+---
+
 ## Sequencing
 
 ```
