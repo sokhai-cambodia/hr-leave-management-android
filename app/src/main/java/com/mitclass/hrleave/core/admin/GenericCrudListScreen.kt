@@ -10,20 +10,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -37,6 +38,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.mitclass.hrleave.core.theme.AppSpacing
+import com.mitclass.hrleave.core.theme.CardCornerRadius
+import com.mitclass.hrleave.core.theme.CardElevation
+import com.mitclass.hrleave.core.ui.AppTextField
+import com.mitclass.hrleave.core.ui.EmptyStateView
+import com.mitclass.hrleave.core.ui.ErrorStateView
 import com.mitclass.hrleave.core.ui.OnResume
 
 /** Generic paged/searchable list + create/edit/delete UI, unmodified across every resource (Task 10.1). */
@@ -64,14 +71,15 @@ fun <T> GenericCrudListScreen(engine: CrudEngine<T>) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(AppSpacing.lg),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                OutlinedTextField(
+                AppTextField(
                     value = searchQuery,
                     onValueChange = engine::onSearchQueryChange,
-                    label = { Text("Search") },
+                    label = "Search",
                     singleLine = true,
+                    leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
                     modifier = Modifier.weight(1f),
                 )
                 IconButton(onClick = engine::toggleSortDirection) {
@@ -87,22 +95,12 @@ fun <T> GenericCrudListScreen(engine: CrudEngine<T>) {
                     contentAlignment = Alignment.Center,
                 ) { CircularProgressIndicator() }
 
-                is CrudListUiState.Error -> Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(text = current.message, color = MaterialTheme.colorScheme.error)
-                        Button(onClick = engine::load, modifier = Modifier.padding(top = 12.dp)) { Text("Retry") }
-                    }
-                }
+                is CrudListUiState.Error -> ErrorStateView(message = current.message, onRetry = engine::load)
 
                 is CrudListUiState.Loaded -> {
                     val visible = engine.visibleItems()
                     if (visible.isEmpty()) {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            Text(text = "Nothing here yet", style = MaterialTheme.typography.bodyLarge)
-                        }
+                        EmptyStateView(message = "Nothing here yet")
                     } else {
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
@@ -161,11 +159,16 @@ private fun CrudRow(
     onClick: () -> Unit,
     onDeleteClick: () -> Unit,
 ) {
-    Card(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
+    Card(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(CardCornerRadius),
+        elevation = CardDefaults.cardElevation(defaultElevation = CardElevation),
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(AppSpacing.lg),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(modifier = Modifier.weight(1f)) {

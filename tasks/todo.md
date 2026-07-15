@@ -82,7 +82,7 @@ sibling app. SPEC.md §7 is stale — ground truth is the Flutter app's actual D
       Notifications, Schedule)
 - [x] 13.6 Form screen polish (bold-label fields, error banner, styled date field, chip picker,
       submit-button hierarchy)
-- [ ] 13.7 Admin CRUD + Profile hub restyle (admin entries move under Profile tab)
+- [x] 13.7 Admin CRUD + Profile hub restyle (admin entries move under Profile tab)
 - [ ] 13.8 Auth screens polish (two-tone wordmark, headline, splash)
 - [ ] **Checkpoint 13 (final)** — visual consistency pass complete; SPEC.md §7 updated to the
       verified token table
