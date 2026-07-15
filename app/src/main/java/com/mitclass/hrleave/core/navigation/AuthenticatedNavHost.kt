@@ -13,6 +13,7 @@ import com.mitclass.hrleave.data.remote.dto.UserDto
 import com.mitclass.hrleave.feature.dashboard.DashboardScreen
 import com.mitclass.hrleave.feature.dashboard.QuickAction
 import com.mitclass.hrleave.feature.leaverequests.LeaveRequestDetailScreen
+import com.mitclass.hrleave.feature.leaverequests.LeaveRequestFormScreen
 import com.mitclass.hrleave.feature.leaverequests.LeaveRequestRoutes
 import com.mitclass.hrleave.feature.leaverequests.LeaveRequestsListScreen
 
@@ -48,13 +49,29 @@ fun AuthenticatedNavHost(
         composable(Destination.LeaveRequests.route) {
             LeaveRequestsListScreen(
                 onItemClick = { id -> navController.navigate(LeaveRequestRoutes.detail(id)) },
+                onCreateClick = { navController.navigate(LeaveRequestRoutes.FORM_CREATE_ROUTE) },
             )
         }
         composable(
             route = LeaveRequestRoutes.DETAIL_ROUTE,
             arguments = listOf(navArgument(LeaveRequestRoutes.DETAIL_ARG) { type = NavType.StringType }),
         ) {
-            LeaveRequestDetailScreen()
+            LeaveRequestDetailScreen(
+                onEdit = { id -> navController.navigate(LeaveRequestRoutes.formEdit(id)) },
+                onDeleted = { navController.popBackStack() },
+            )
+        }
+        composable(
+            route = LeaveRequestRoutes.FORM_ROUTE,
+            arguments = listOf(
+                navArgument(LeaveRequestRoutes.FORM_ARG) {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                },
+            ),
+        ) {
+            LeaveRequestFormScreen(onSaved = { navController.popBackStack() })
         }
         composable(Destination.Recommendations.route) { ComingSoonScreen("Recommendations") }
         composable(Destination.Approvals.route) { ComingSoonScreen("Approvals") }

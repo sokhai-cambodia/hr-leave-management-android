@@ -10,10 +10,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -23,31 +28,46 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.mitclass.hrleave.core.ui.OnResume
 import com.mitclass.hrleave.core.ui.StatusChip
 import com.mitclass.hrleave.data.remote.dto.LeaveRequestDto
 
 @Composable
 fun LeaveRequestsListScreen(
     onItemClick: (String) -> Unit,
+    onCreateClick: () -> Unit,
     viewModel: LeaveRequestsListViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsState()
+    OnResume(onResume = viewModel::load)
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        when (val current = state) {
-            is LeaveRequestsListUiState.Loading -> LoadingBox()
-            is LeaveRequestsListUiState.Error -> ErrorBox(message = current.message, onRetry = viewModel::load)
-            is LeaveRequestsListUiState.Loaded -> {
-                if (current.requests.isEmpty()) {
-                    EmptyBox()
-                } else {
-                    LeaveRequestsList(
-                        requests = current.requests,
-                        canLoadMore = current.canLoadMore,
-                        isLoadingMore = current.isLoadingMore,
-                        onItemClick = onItemClick,
-                        onLoadMore = viewModel::loadMore,
-                    )
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(onClick = onCreateClick) {
+                Icon(Icons.Filled.Add, contentDescription = "New leave request")
+            }
+        },
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+        ) {
+            when (val current = state) {
+                is LeaveRequestsListUiState.Loading -> LoadingBox()
+                is LeaveRequestsListUiState.Error -> ErrorBox(message = current.message, onRetry = viewModel::load)
+                is LeaveRequestsListUiState.Loaded -> {
+                    if (current.requests.isEmpty()) {
+                        EmptyBox()
+                    } else {
+                        LeaveRequestsList(
+                            requests = current.requests,
+                            canLoadMore = current.canLoadMore,
+                            isLoadingMore = current.isLoadingMore,
+                            onItemClick = onItemClick,
+                            onLoadMore = viewModel::loadMore,
+                        )
+                    }
                 }
             }
         }

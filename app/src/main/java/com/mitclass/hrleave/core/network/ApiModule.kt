@@ -4,6 +4,7 @@ import com.mitclass.hrleave.data.remote.api.ApprovalsApi
 import com.mitclass.hrleave.data.remote.api.AuthApi
 import com.mitclass.hrleave.data.remote.api.LeaveBalancesApi
 import com.mitclass.hrleave.data.remote.api.LeaveRequestsApi
+import com.mitclass.hrleave.data.remote.api.LeaveTypesApi
 import com.mitclass.hrleave.data.remote.api.TeamsApi
 import dagger.Module
 import dagger.Provides
@@ -37,4 +38,9 @@ object ApiModule {
     @Singleton
     fun provideLeaveRequestsApi(retrofit: Retrofit): LeaveRequestsApi =
         retrofit.create(LeaveRequestsApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideLeaveTypesApi(retrofit: Retrofit): LeaveTypesApi =
+        retrofit.create(LeaveTypesApi::class.java)
 }
