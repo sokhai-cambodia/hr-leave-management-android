@@ -26,6 +26,12 @@ sealed interface DeleteState {
     data class Error(val message: String) : DeleteState
 }
 
+sealed interface SubmitState {
+    data object Idle : SubmitState
+    data object Submitting : SubmitState
+    data class Error(val message: String) : SubmitState
+}
+
 @HiltViewModel
 class LeaveRequestDetailViewModel @Inject constructor(
     private val leaveRequestsRepository: LeaveRequestsRepository,
@@ -38,6 +44,9 @@ class LeaveRequestDetailViewModel @Inject constructor(
 
     private val _deleteState = MutableStateFlow<DeleteState>(DeleteState.Idle)
     val deleteState: StateFlow<DeleteState> = _deleteState.asStateFlow()
+
+    private val _submitState = MutableStateFlow<SubmitState>(SubmitState.Idle)
+    val submitState: StateFlow<SubmitState> = _submitState.asStateFlow()
 
     init {
         load()
@@ -60,6 +69,20 @@ class LeaveRequestDetailViewModel @Inject constructor(
             _deleteState.value = when (val result = leaveRequestsRepository.delete(requestId)) {
                 is AppResult.Success -> DeleteState.Deleted
                 is AppResult.Failure -> DeleteState.Error(result.message)
+            }
+        }
+    }
+
+    fun submit() {
+        if (_submitState.value is SubmitState.Submitting) return
+        viewModelScope.launch {
+            _submitState.value = SubmitState.Submitting
+            when (val result = leaveRequestsRepository.submit(requestId)) {
+                is AppResult.Success -> {
+                    _submitState.value = SubmitState.Idle
+                    _uiState.value = LeaveRequestDetailUiState.Loaded(result.data)
+                }
+                is AppResult.Failure -> _submitState.value = SubmitState.Error(result.message)
             }
         }
     }

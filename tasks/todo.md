@@ -25,7 +25,7 @@ Full detail (acceptance criteria, verify steps) in `tasks/plan.md`.
 ## Phase 4 — Leave Requests
 - [x] 4.1 List + detail (read-only), owner-scoped from the start
 - [x] 4.2 Create draft, edit, delete (draft-only)
-- [ ] 4.3 Submit action + balance-debit visibility
+- [x] 4.3 Submit action + balance-debit visibility
 - [ ] **Checkpoint 4**
 
 ## Phase 5 — Leave Plan Requests

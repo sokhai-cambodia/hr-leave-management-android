@@ -32,4 +32,15 @@ class LeaveRequestsRepository @Inject constructor(
             is AppResult.Success -> AppResult.Success(Unit)
             is AppResult.Failure -> result
         }
+
+    /** Backend returns 422 "No approver found." when the owner has no line approver — surfaced as a friendly message. */
+    suspend fun submit(id: String): AppResult<LeaveRequestDto> =
+        when (val result = safeApiCall { leaveRequestsApi.submit(id) }) {
+            is AppResult.Success -> result
+            is AppResult.Failure -> if (result.httpCode == 422) {
+                AppResult.Failure("You don't have a line approver assigned yet, contact an admin.", result.httpCode)
+            } else {
+                result
+            }
+        }
 }
