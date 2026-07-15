@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mitclass.hrleave.core.network.AppResult
 import com.mitclass.hrleave.core.network.AuthEventBus
+import com.mitclass.hrleave.core.notifications.SystemNotifier
 import com.mitclass.hrleave.data.remote.dto.UserDto
 import com.mitclass.hrleave.data.repository.AuthRepository
 import com.mitclass.hrleave.data.repository.NotificationsRepository
@@ -37,6 +38,8 @@ private const val UNREAD_COUNT_POLL_INTERVAL_MS = 30_000L
  * session-lifecycle-tied notifications badge poll (Task 9.1): starts a 30s
  * `GET /notifications/unread-count` loop on login/session-bootstrap, stops it on logout.
  * Poll failures are silent — a badge that's briefly stale isn't worth an error toast every 30s.
+ * When the count increases, also posts a local system notification via [SystemNotifier] — the
+ * app's `POST_NOTIFICATIONS` runtime-permission demonstration (SPEC §8/§11, rubric §9).
  */
 @HiltViewModel
 class AuthViewModel @Inject constructor(
@@ -44,6 +47,7 @@ class AuthViewModel @Inject constructor(
     private val authEventBus: AuthEventBus,
     private val teamsRepository: TeamsRepository,
     private val notificationsRepository: NotificationsRepository,
+    private val systemNotifier: SystemNotifier,
 ) : ViewModel() {
 
     private val _sessionState = MutableStateFlow<SessionState>(SessionState.Loading)
@@ -111,9 +115,18 @@ class AuthViewModel @Inject constructor(
     private fun startNotificationPolling() {
         if (pollingJob?.isActive == true) return
         pollingJob = viewModelScope.launch {
+            var previousCount: Int? = null
             while (isActive) {
                 when (val result = notificationsRepository.fetchUnreadCount()) {
-                    is AppResult.Success -> _unreadNotificationCount.value = result.data
+                    is AppResult.Success -> {
+                        val newCount = result.data
+                        val previous = previousCount
+                        if (previous != null && newCount > previous) {
+                            systemNotifier.notifyUnreadCountIncreased(newCount)
+                        }
+                        previousCount = newCount
+                        _unreadNotificationCount.value = newCount
+                    }
                     is AppResult.Failure -> Unit
                 }
                 delay(UNREAD_COUNT_POLL_INTERVAL_MS)

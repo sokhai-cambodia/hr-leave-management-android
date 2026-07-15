@@ -12,6 +12,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -42,6 +44,7 @@ import com.mitclass.hrleave.core.ui.OnResume
 fun <T> GenericCrudListScreen(engine: CrudEngine<T>) {
     val listState by engine.listState.collectAsState()
     val searchQuery by engine.searchQuery.collectAsState()
+    val sortAscending by engine.sortAscending.collectAsState()
     val deletingIds by engine.deletingIds.collectAsState()
     var pendingDelete by remember { mutableStateOf<T?>(null) }
     OnResume(onResume = engine::load)
@@ -58,15 +61,26 @@ fun <T> GenericCrudListScreen(engine: CrudEngine<T>) {
                 .fillMaxSize()
                 .padding(paddingValues),
         ) {
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = engine::onSearchQueryChange,
-                label = { Text("Search") },
-                singleLine = true,
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-            )
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = engine::onSearchQueryChange,
+                    label = { Text("Search") },
+                    singleLine = true,
+                    modifier = Modifier.weight(1f),
+                )
+                IconButton(onClick = engine::toggleSortDirection) {
+                    Icon(
+                        imageVector = if (sortAscending) Icons.Filled.ArrowUpward else Icons.Filled.ArrowDownward,
+                        contentDescription = if (sortAscending) "Sorted A to Z, tap to reverse" else "Sorted Z to A, tap to reverse",
+                    )
+                }
+            }
             when (val current = listState) {
                 is CrudListUiState.Loading -> Box(
                     modifier = Modifier.fillMaxSize(),

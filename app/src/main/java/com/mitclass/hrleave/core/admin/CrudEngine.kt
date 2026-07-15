@@ -37,6 +37,9 @@ class CrudEngine<T>(
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
+    private val _sortAscending = MutableStateFlow(true)
+    val sortAscending: StateFlow<Boolean> = _sortAscending.asStateFlow()
+
     private val _formMode = MutableStateFlow<CrudFormMode<T>>(CrudFormMode.Hidden)
     val formMode: StateFlow<CrudFormMode<T>> = _formMode.asStateFlow()
 
@@ -88,14 +91,26 @@ class CrudEngine<T>(
         _searchQuery.value = query
     }
 
-    /** Client-side filter over currently-loaded pages — none of these resources' list endpoints support server search. */
+    fun toggleSortDirection() {
+        _sortAscending.value = !_sortAscending.value
+    }
+
+    /**
+     * Client-side filter + sort over currently-loaded pages — none of these resources' list
+     * endpoints support a server-side search or sort parameter. Sorted by [CrudResourceAdapter.title].
+     */
     fun visibleItems(): List<T> {
         val loaded = (_listState.value as? CrudListUiState.Loaded)?.items ?: return emptyList()
         val query = _searchQuery.value.trim()
-        if (query.isBlank()) return loaded
-        return loaded.filter {
-            adapter.title(it).contains(query, ignoreCase = true) || adapter.subtitle(it).contains(query, ignoreCase = true)
+        val filtered = if (query.isBlank()) {
+            loaded
+        } else {
+            loaded.filter {
+                adapter.title(it).contains(query, ignoreCase = true) || adapter.subtitle(it).contains(query, ignoreCase = true)
+            }
         }
+        val sorted = filtered.sortedBy { adapter.title(it) }
+        return if (_sortAscending.value) sorted else sorted.asReversed()
     }
 
     fun startCreate() {
