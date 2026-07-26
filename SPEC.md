@@ -207,7 +207,7 @@ numerals, colored circular icon badges — not literal values).
 
 | Rubric requirement | This app's approach | Decision |
 |---|---|---|
-| RecyclerView (mandatory) + custom Adapters/ViewHolders | Jetpack Compose `LazyColumn`/`LazyVerticalGrid` with keyed item composables | Compose is the modern Android-recommended replacement for RecyclerView; it satisfies the same underlying intent (efficient, recycled list rendering) without the literal `RecyclerView.Adapter`/`ViewHolder` classes. Documented explicitly in the submitted report's Architecture section, same pattern as the Flutter client's documented Spring Boot→FastAPI substitution. |
+| RecyclerView (mandatory) + custom Adapters/ViewHolders | Jetpack Compose `LazyColumn`/`LazyVerticalGrid` with keyed item composables | Compose is the modern Android-recommended replacement for RecyclerView; it satisfies the same underlying intent (efficient, recycled list rendering) without the literal `RecyclerView.Adapter`/`ViewHolder` classes. Documented explicitly in `README.md`'s Architecture section ("On RecyclerView"), same pattern as the Flutter client's documented Spring Boot→FastAPI substitution. |
 | Refresh Token flow (implied by "session handling" best practice) | None — backend has no refresh endpoint | Same as Flutter client: treat the 8-day access token as the session lifetime, re-prompt login on 401. |
 | Room / SQLite local storage | Not implemented in v1 (REST-only satisfies rubric §7's "at least ONE advanced data source") | Deferred as a stretch item; would need a repository-level cache + sync strategy if pursued later for the "Offline support" bonus line. |
 
