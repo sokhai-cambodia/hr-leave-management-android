@@ -147,6 +147,14 @@ fun ProfileScreen(
                 singleLine = true,
                 enabled = !state.isSaving,
             )
+            Spacer(Modifier.height(AppSpacing.md))
+            AppTextField(
+                value = state.phoneNumber,
+                onValueChange = viewModel::onPhoneNumberChange,
+                label = "Phone",
+                singleLine = true,
+                enabled = !state.isSaving,
+            )
             state.errorMessage?.let {
                 ErrorBanner(message = it, modifier = Modifier.padding(top = AppSpacing.md))
             }
@@ -163,6 +171,10 @@ fun ProfileScreen(
         }
 
         Spacer(Modifier.height(AppSpacing.lg))
+        user.username?.takeIf { it.isNotBlank() }?.let {
+            InfoRow(label = "Username", value = it)
+        }
+        InfoRow(label = "Phone", value = user.phoneNumber?.takeIf { it.isNotBlank() } ?: "Not set")
         InfoRow(label = "Team", value = user.team?.name ?: "No team assigned")
         InfoRow(label = "Role", value = roleLabel(user.isSuperuser, isApprover))
 
@@ -238,7 +250,7 @@ private fun InfoRow(label: String, value: String) {
             text = label,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.width(80.dp),
+            modifier = Modifier.width(90.dp),
         )
         Text(text = value, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
     }

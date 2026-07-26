@@ -66,8 +66,8 @@ class AuthRepository @Inject constructor(
         safeApiCall { authApi.resetPassword(NewPasswordDto(token = token, newPassword = newPassword)) }
 
     /** Updates and reflects immediately: the cached currentUser drives every screen that reads it. */
-    suspend fun updateProfile(fullName: String?, email: String?): AppResult<UserDto> {
-        val result = safeApiCall { authApi.updateMe(UserUpdateMeDto(fullName = fullName, email = email)) }
+    suspend fun updateProfile(fullName: String?, email: String?, phoneNumber: String?): AppResult<UserDto> {
+        val result = safeApiCall { authApi.updateMe(UserUpdateMeDto(fullName = fullName, email = email, phoneNumber = phoneNumber)) }
         if (result is AppResult.Success) _currentUser.value = result.data
         return result
     }

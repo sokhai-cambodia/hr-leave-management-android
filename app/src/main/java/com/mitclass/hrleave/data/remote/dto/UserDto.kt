@@ -10,6 +10,7 @@ data class UserDto(
     @SerialName("is_active") val isActive: Boolean = true,
     @SerialName("is_superuser") val isSuperuser: Boolean = false,
     @SerialName("full_name") val fullName: String? = null,
+    val username: String? = null,
     @SerialName("phone_number") val phoneNumber: String? = null,
     val team: TeamPresentableDto? = null,
 )
@@ -48,6 +49,7 @@ data class UsersResponseDto(val data: List<UserDto>, val count: Int)
 data class UserUpdateMeDto(
     @SerialName("full_name") val fullName: String? = null,
     val email: String? = null,
+    @SerialName("phone_number") val phoneNumber: String? = null,
 )
 
 /** Password is required here — create-only, per the backend's UserCreate model. */

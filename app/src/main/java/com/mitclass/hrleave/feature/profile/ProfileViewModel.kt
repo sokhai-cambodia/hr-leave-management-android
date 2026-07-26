@@ -14,6 +14,7 @@ import javax.inject.Inject
 data class ProfileUiState(
     val fullName: String = "",
     val email: String = "",
+    val phoneNumber: String = "",
     val isSaving: Boolean = false,
     val errorMessage: String? = null,
     val savedMessage: String? = null,
@@ -28,7 +29,11 @@ class ProfileViewModel @Inject constructor(
 
     private fun initialState(): ProfileUiState {
         val user = authRepository.currentUser.value
-        return ProfileUiState(fullName = user?.fullName.orEmpty(), email = user?.email.orEmpty())
+        return ProfileUiState(
+            fullName = user?.fullName.orEmpty(),
+            email = user?.email.orEmpty(),
+            phoneNumber = user?.phoneNumber.orEmpty(),
+        )
     }
 
     fun onFullNameChange(value: String) {
@@ -37,6 +42,10 @@ class ProfileViewModel @Inject constructor(
 
     fun onEmailChange(value: String) {
         _uiState.value = _uiState.value.copy(email = value, savedMessage = null)
+    }
+
+    fun onPhoneNumberChange(value: String) {
+        _uiState.value = _uiState.value.copy(phoneNumber = value, savedMessage = null)
     }
 
     fun save() {
@@ -48,12 +57,14 @@ class ProfileViewModel @Inject constructor(
                 val result = authRepository.updateProfile(
                     fullName = state.fullName.trim().ifBlank { null },
                     email = state.email.trim().ifBlank { null },
+                    phoneNumber = state.phoneNumber.trim().ifBlank { null },
                 )
             ) {
                 is AppResult.Success -> _uiState.value = _uiState.value.copy(
                     isSaving = false,
                     fullName = result.data.fullName.orEmpty(),
                     email = result.data.email,
+                    phoneNumber = result.data.phoneNumber.orEmpty(),
                     savedMessage = "Profile updated",
                 )
                 is AppResult.Failure -> _uiState.value = _uiState.value.copy(isSaving = false, errorMessage = result.message)
