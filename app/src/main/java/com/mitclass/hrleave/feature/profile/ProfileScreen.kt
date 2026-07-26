@@ -1,9 +1,7 @@
 package com.mitclass.hrleave.feature.profile
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,10 +9,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Logout
@@ -48,12 +44,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mitclass.hrleave.core.navigation.Destination
 import com.mitclass.hrleave.core.theme.AppSpacing
-import com.mitclass.hrleave.core.theme.BrandPrimary
 import com.mitclass.hrleave.core.theme.SuccessColor
 import com.mitclass.hrleave.core.ui.AppButton
 import com.mitclass.hrleave.core.ui.AppOutlinedButton
 import com.mitclass.hrleave.core.ui.AppTextField
 import com.mitclass.hrleave.core.ui.ErrorBanner
+import com.mitclass.hrleave.core.ui.UserAvatar
 import com.mitclass.hrleave.data.remote.dto.UserDto
 
 private data class AdminEntry(val label: String, val icon: ImageVector, val destination: Destination)
@@ -66,16 +62,6 @@ private val adminEntries = listOf(
     AdminEntry("Leave Balances", Icons.Outlined.AccountBalance, Destination.AdminLeaveBalances),
     AdminEntry("Admin Users", Icons.Outlined.AdminPanelSettings, Destination.AdminUsers),
 )
-
-private fun initials(fullName: String?, email: String): String {
-    val source = fullName?.takeIf { it.isNotBlank() } ?: email
-    val parts = source.trim().split(Regex("\\s+")).filter { it.isNotBlank() }
-    return when {
-        parts.size >= 2 -> "${parts[0].first()}${parts[1].first()}".uppercase()
-        parts.size == 1 -> parts[0].take(2).uppercase()
-        else -> "?"
-    }
-}
 
 private fun roleLabel(isSuperuser: Boolean, isApprover: Boolean): String = when {
     isSuperuser -> "Superuser"
@@ -107,19 +93,7 @@ fun ProfileScreen(
             .padding(AppSpacing.lg),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(
-                modifier = Modifier
-                    .size(56.dp)
-                    .background(color = BrandPrimary.copy(alpha = 0.15f), shape = CircleShape),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    text = initials(user.fullName, user.email),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = BrandPrimary,
-                    fontWeight = FontWeight.Bold,
-                )
-            }
+            UserAvatar(fullName = user.fullName, email = user.email, size = 56.dp)
             Spacer(Modifier.width(AppSpacing.md))
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = user.fullName ?: user.email, style = MaterialTheme.typography.titleLarge)
