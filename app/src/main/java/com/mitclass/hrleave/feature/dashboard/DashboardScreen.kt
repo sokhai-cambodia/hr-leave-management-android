@@ -21,21 +21,29 @@ import androidx.compose.material.icons.outlined.QrCode2
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
 import com.mitclass.hrleave.core.theme.AppSpacing
 import com.mitclass.hrleave.core.theme.BrandPrimary
 import com.mitclass.hrleave.core.theme.CardCornerRadius
@@ -56,6 +64,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
     user: UserDto,
@@ -78,66 +87,83 @@ fun DashboardScreen(
     OnResume(onResume = leaveBalancesViewModel::load)
     OnResume(onResume = upcomingHolidayViewModel::load)
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .verticalScroll(rememberScrollState())
-            .padding(AppSpacing.lg),
-    ) {
-        ProfileHeader(user = user, onBusinessCardClick = onBusinessCardClick)
-        Spacer(Modifier.height(AppSpacing.lg))
-        Row(horizontalArrangement = Arrangement.spacedBy(AppSpacing.md)) {
-            PastelActionTile(
-                icon = Icons.AutoMirrored.Outlined.FactCheck,
-                label = "Request Leave",
-                tint = BrandPrimary,
-                onClick = onRequestLeaveClick,
-                modifier = Modifier.weight(1f),
-            )
-            PastelActionTile(
-                icon = Icons.AutoMirrored.Outlined.EventNote,
-                label = "Plan Leave",
-                tint = WarningColor,
-                onClick = onPlanLeaveClick,
-                modifier = Modifier.weight(1f),
-            )
+    val coroutineScope = rememberCoroutineScope()
+    var isRefreshing by remember { mutableStateOf(false) }
+    val onPullRefresh: () -> Unit = {
+        coroutineScope.launch {
+            isRefreshing = true
+            val jobs = buildList {
+                add(launch { leaveBalancesViewModel.refresh() })
+                add(launch { upcomingHolidayViewModel.refresh() })
+                if (isApprover) add(launch { pendingApprovalsViewModel.refresh() })
+            }
+            jobs.joinAll()
+            isRefreshing = false
         }
-        Spacer(Modifier.height(AppSpacing.md))
-        val balancesState by leaveBalancesViewModel.uiState.collectAsState()
-        Row(horizontalArrangement = Arrangement.spacedBy(AppSpacing.md)) {
-            StatCard(
-                label = "Available Days",
-                value = availableDaysValue(balancesState),
-                tint = InfoColor,
-                modifier = Modifier.weight(1f),
-            )
-            if (isApprover) {
-                val approvalsState by pendingApprovalsViewModel.uiState.collectAsState()
-                StatCard(
-                    label = "Approvals",
-                    value = approvalsValue(approvalsState),
+    }
+
+    PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = onPullRefresh) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+                .padding(AppSpacing.lg),
+        ) {
+            ProfileHeader(user = user, onBusinessCardClick = onBusinessCardClick)
+            Spacer(Modifier.height(AppSpacing.lg))
+            Row(horizontalArrangement = Arrangement.spacedBy(AppSpacing.md)) {
+                PastelActionTile(
+                    icon = Icons.AutoMirrored.Outlined.FactCheck,
+                    label = "Request Leave",
+                    tint = BrandPrimary,
+                    onClick = onRequestLeaveClick,
+                    modifier = Modifier.weight(1f),
+                )
+                PastelActionTile(
+                    icon = Icons.AutoMirrored.Outlined.EventNote,
+                    label = "Plan Leave",
                     tint = WarningColor,
-                    onClick = onPendingApprovalsClick,
+                    onClick = onPlanLeaveClick,
                     modifier = Modifier.weight(1f),
                 )
             }
-        }
-        val holidayState by upcomingHolidayViewModel.uiState.collectAsState()
-        (holidayState as? UpcomingHolidayUiState.Loaded)?.holiday?.let { holiday ->
             Spacer(Modifier.height(AppSpacing.md))
-            UpcomingHolidayCard(holiday = holiday, modifier = Modifier.fillMaxWidth())
-        }
-        LeaveBalancesSection(state = balancesState, onRetry = { leaveBalancesViewModel.load() })
-        if (quickActions.isNotEmpty()) {
-            Text(
-                text = "Quick actions",
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(top = AppSpacing.xl, bottom = AppSpacing.sm),
-            )
-            Column {
-                quickActions.forEachIndexed { index, action ->
-                    QuickActionRow(action = action, onClick = { onQuickActionClick(action) })
-                    if (index != quickActions.lastIndex) HorizontalDivider()
+            val balancesState by leaveBalancesViewModel.uiState.collectAsState()
+            Row(horizontalArrangement = Arrangement.spacedBy(AppSpacing.md)) {
+                StatCard(
+                    label = "Available Days",
+                    value = availableDaysValue(balancesState),
+                    tint = InfoColor,
+                    modifier = Modifier.weight(1f),
+                )
+                if (isApprover) {
+                    val approvalsState by pendingApprovalsViewModel.uiState.collectAsState()
+                    StatCard(
+                        label = "Approvals",
+                        value = approvalsValue(approvalsState),
+                        tint = WarningColor,
+                        onClick = onPendingApprovalsClick,
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+            }
+            val holidayState by upcomingHolidayViewModel.uiState.collectAsState()
+            (holidayState as? UpcomingHolidayUiState.Loaded)?.holiday?.let { holiday ->
+                Spacer(Modifier.height(AppSpacing.md))
+                UpcomingHolidayCard(holiday = holiday, modifier = Modifier.fillMaxWidth())
+            }
+            LeaveBalancesSection(state = balancesState, onRetry = { leaveBalancesViewModel.load() })
+            if (quickActions.isNotEmpty()) {
+                Text(
+                    text = "Quick actions",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(top = AppSpacing.xl, bottom = AppSpacing.sm),
+                )
+                Column {
+                    quickActions.forEachIndexed { index, action ->
+                        QuickActionRow(action = action, onClick = { onQuickActionClick(action) })
+                        if (index != quickActions.lastIndex) HorizontalDivider()
+                    }
                 }
             }
         }

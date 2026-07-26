@@ -30,11 +30,14 @@ class PendingApprovalsViewModel @Inject constructor(
     fun loadIfNeeded() {
         if (loaded) return
         loaded = true
-        viewModelScope.launch {
-            _uiState.value = when (val result = approvalsRepository.pendingCount()) {
-                is AppResult.Success -> PendingApprovalsUiState.Loaded(result.data.total)
-                is AppResult.Failure -> PendingApprovalsUiState.Error
-            }
+        viewModelScope.launch { refresh() }
+    }
+
+    /** Suspends until the fetch completes, so pull-to-refresh can await it before hiding its indicator. */
+    suspend fun refresh() {
+        _uiState.value = when (val result = approvalsRepository.pendingCount()) {
+            is AppResult.Success -> PendingApprovalsUiState.Loaded(result.data.total)
+            is AppResult.Failure -> PendingApprovalsUiState.Error
         }
     }
 }
