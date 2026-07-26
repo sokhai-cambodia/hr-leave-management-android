@@ -41,7 +41,7 @@ fundamentals rather than a straight transliteration of the Flutter codebase.
   documented rationale)
 - **Auth**: OAuth2 password flow against `POST /api/v1/login/access-token` (form-encoded body,
   same as Flutter client)
-- Min SDK 21, target SDK latest stable, per rubric §1
+- Min SDK 26, target SDK 35, per rubric §1
 
 Backend base URL is configurable per build variant/environment (e.g. `http://10.0.2.2:8000` for the
 Android emulator talking to a backend on the host machine); default local backend runs on port 8000
@@ -240,10 +240,12 @@ numerals, colored circular icon badges — not literal values).
 - Report/README includes app overview, feature list, architecture explanation, screenshots of all
   major screens, and installation instructions (rubric §13).
 
-## 12. Open Questions
+## 12. Resolved Questions
 
-- Exact final package name (`com.mitclass.hrleave` assumed — confirm or change before scaffolding
-  the Gradle project).
-- Whether ktlint/detekt get added for automated formatting/lint beyond Android Studio's built-in
-  formatter and `./gradlew lint`.
-- Whether screenshots for the report are captured against the emulator or a physical device.
+- Package name: `com.mitclass.hrleave` (final, in use throughout).
+- ktlint/detekt: not added — Android Studio's built-in Kotlin formatter and `./gradlew lint` are
+  the only formatting/lint tools in this project.
+- Screenshots for the report: will be captured on a physical device (matches how the app has
+  actually been verified throughout — see CLAUDE.md's no-emulator policy). Not yet captured as of
+  this writing; README.md's Screenshots section currently shows the Flutter reference design
+  instead and says so explicitly.
