@@ -84,6 +84,10 @@ Living reference docs — read these instead of asking, they're kept current:
   screen.
 - [`tasks/plan.md`](./tasks/plan.md) — the phase-by-phase build plan and status. Check here first
   for "is this already built, and if so, where" before starting something that sounds new.
+- [`ui/`](./ui/) — real screenshots of the **Flutter** sibling app (login, home, leave list/form,
+  notifications, profile, schedule, business card), used as the ground-truth design reference for
+  the Phase 13/14 visual-parity work. These are the other app, not this one — don't mistake them
+  for screenshots of this Android client.
 
 ## Workflow
 
