@@ -17,8 +17,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.mitclass.hrleave.R
 import com.mitclass.hrleave.core.theme.AppSpacing
 import com.mitclass.hrleave.core.theme.DangerColor
 
@@ -37,7 +39,7 @@ fun ErrorStateView(message: String, onRetry: () -> Unit, modifier: Modifier = Mo
             Spacer(Modifier.height(AppSpacing.sm))
             Text(text = message, color = DangerColor, textAlign = TextAlign.Center)
             Spacer(Modifier.height(AppSpacing.md))
-            AppOutlinedButton(text = "Retry", onClick = onRetry, contentColor = DangerColor)
+            AppOutlinedButton(text = stringResource(R.string.common_action_retry), onClick = onRetry, contentColor = DangerColor)
         }
     }
 }

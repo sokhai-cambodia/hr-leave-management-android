@@ -1,3 +1,211 @@
 <resources>
     <string name="app_name">HR Leave</string>
+
+    <!-- Auth -->
+    <string name="login_headline_prefix">"Log In to your "</string>
+    <string name="login_headline_suffix">Account</string>
+    <string name="login_subtitle">Please take a moment to log in to your account when you\'re ready.</string>
+    <string name="login_email_label">Email or Username</string>
+    <string name="login_email_placeholder">Email or username</string>
+    <string name="login_password_label">Password</string>
+    <string name="login_password_placeholder">Password</string>
+    <string name="login_forgot_password">Forgot password?</string>
+    <string name="login_button">Log In</string>
+
+    <string name="forgot_password_title">Reset your password</string>
+    <string name="forgot_password_subtitle">Enter your account email and we\'ll send you a password reset link.</string>
+    <string name="forgot_password_send_button">Send reset email</string>
+    <string name="forgot_password_have_token">I already have a reset token</string>
+    <string name="auth_back_to_login">Back to login</string>
+
+    <string name="reset_password_title">Enter your reset token</string>
+    <string name="reset_password_subtitle">Paste the token from the reset email, then choose a new password.</string>
+    <string name="reset_password_token_label">Reset token</string>
+    <string name="reset_password_button">Reset password</string>
+
+    <string name="password_new_label">New password</string>
+
+    <string name="change_password_headline">Change password</string>
+    <string name="change_password_current_label">Current password</string>
+    <string name="change_password_confirm_label">Confirm new password</string>
+    <string name="change_password_submit_button">Update password</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_action_request_leave">Request Leave</string>
+    <string name="dashboard_action_plan_leave">Plan Leave</string>
+    <string name="dashboard_stat_available_days">Available Days</string>
+    <string name="dashboard_stat_approvals">Approvals</string>
+    <string name="dashboard_quick_actions_title">Quick actions</string>
+    <string name="dashboard_leave_balances_title">Leave Balances</string>
+    <string name="dashboard_no_leave_balances">No leave balances yet</string>
+    <string name="dashboard_balance_summary">Balance %1$s · Taken %2$s</string>
+    <string name="dashboard_available_label">available</string>
+    <string name="dashboard_upcoming_holiday_title">Upcoming Holiday</string>
+
+    <!-- Leave Requests -->
+    <string name="leave_requests_empty">No leave requests yet</string>
+    <string name="leave_form_type_label">Leave Type</string>
+    <string name="leave_form_select_type_placeholder">Select a leave type</string>
+    <string name="leave_form_start_date_label">Start Date</string>
+    <string name="leave_form_end_date_label">End Date</string>
+    <string name="leave_form_description_placeholder">Enter reason or extra notes (optional)...</string>
+    <string name="leave_detail_dialog_delete_request_title">Delete leave request?</string>
+    <string name="leave_detail_duration_label">Duration</string>
+    <string name="leave_detail_duration_value">%1$s to %2$s</string>
+    <string name="leave_common_requested_days_label">Requested Days</string>
+    <string name="leave_common_days_value">%1$s Days</string>
+
+    <!-- Leave Plan Requests -->
+    <string name="leaveplan_requests_empty">No leave plan requests yet</string>
+    <string name="leaveplan_form_type_label">Leave type</string>
+    <string name="leaveplan_form_add_date_label">Add a date</string>
+    <string name="leaveplan_form_selected_dates_label">Selected dates</string>
+    <string name="leaveplan_form_no_dates_yet">No dates added yet</string>
+    <string name="leaveplan_form_remove_date_content_desc">Remove %1$s</string>
+    <string name="leave_common_dates_count">%1$d date(s)</string>
+    <string name="leave_detail_dialog_delete_plan_request_title">Delete leave plan request?</string>
+    <string name="leaveplan_detail_dates_label">Dates</string>
+    <string name="leave_common_description_label">Description</string>
+    <string name="leave_common_timeline_title">Request Timeline &amp; Workflow</string>
+    <string name="leave_common_timeline_created_by">Created by</string>
+    <string name="leave_common_timeline_created_at">Created at</string>
+    <string name="leave_common_timeline_submitted_at">Submitted at</string>
+    <string name="leave_common_timeline_line_approver">Line approver</string>
+    <string name="leave_common_timeline_approved_at">Approved at</string>
+
+    <!-- Recommendations -->
+    <string name="recommendations_use_selected_dates">Use %1$d selected date(s)</string>
+    <string name="recommendations_empty_for_year">No recommendations for %1$d</string>
+    <string name="recommendations_previous_year_content_desc">Previous year</string>
+    <string name="recommendations_next_year_content_desc">Next year</string>
+    <string name="recommendations_select_all">Select all</string>
+    <string name="recommendations_bridge_holiday_chip">Bridge holiday</string>
+    <string name="recommendations_team_workload_chip">Team workload: %1$s</string>
+
+    <!-- Approvals -->
+    <string name="approvals_tab_leave_requests">Leave Requests</string>
+    <string name="approvals_tab_leave_plans">Leave Plans</string>
+    <string name="approvals_dismiss_action">Dismiss</string>
+    <string name="approvals_dialog_reject_title">Reject this request?</string>
+    <string name="approvals_dialog_reject_message">The submitter will be notified.</string>
+    <string name="approvals_action_reject">Reject</string>
+    <string name="approvals_action_approve">Approve</string>
+    <string name="approvals_empty_leave_requests">No pending leave requests</string>
+    <string name="approvals_empty_leave_plan_requests">No pending leave plan requests</string>
+    <string name="approvals_leave_request_summary">%1$s → %2$s · %3$s day(s)</string>
+
+    <!-- Schedule -->
+    <string name="schedule_previous_month_content_desc">Previous month</string>
+    <string name="schedule_next_month_content_desc">Next month</string>
+    <string name="schedule_holidays_in_month">Holidays in %1$s</string>
+    <string name="schedule_no_public_holidays">No public holidays this month.</string>
+    <string name="schedule_team_leave_in_month">Team Leave in %1$s</string>
+    <string name="schedule_no_team_leave">No team leave this month.</string>
+    <string name="schedule_legend_public_holiday">Public Holiday</string>
+    <string name="schedule_legend_team_leave">Team Leave</string>
+    <string name="schedule_team_leave_date_range">%1$s – %2$s</string>
+    <string-array name="schedule_weekday_labels">
+        <item>Sun</item>
+        <item>Mon</item>
+        <item>Tue</item>
+        <item>Wed</item>
+        <item>Thu</item>
+        <item>Fri</item>
+        <item>Sat</item>
+    </string-array>
+
+    <!-- Leaves tab -->
+    <string name="leaves_tab_requests">Requests</string>
+    <string name="leaves_tab_plans">Plans</string>
+
+    <!-- Notifications -->
+    <string name="notifications_mark_all_read">Mark all read</string>
+    <string name="notifications_empty">No notifications yet</string>
+
+    <!-- Admin -->
+    <string name="admin_form_title_create">Create</string>
+    <string name="admin_form_title_edit">Edit</string>
+    <string name="admin_content_desc_hide">Hide</string>
+    <string name="admin_content_desc_show">Show</string>
+    <string name="admin_sort_ascending_content_desc">Sorted A to Z, tap to reverse</string>
+    <string name="admin_sort_descending_content_desc">Sorted Z to A, tap to reverse</string>
+    <string name="admin_empty_message">Nothing here yet</string>
+    <string name="admin_delete_confirm_title">Delete this record?</string>
+    <string name="admin_select_prefix">Select %1$s</string>
+    <string name="admin_choose_content_desc">Choose %1$s</string>
+    <string name="admin_superuser_gate_message">You don\'t have permission to view this page.</string>
+    <string name="admin_entry_policies">Policies</string>
+    <string name="admin_entry_public_holidays">Public Holidays</string>
+    <string name="admin_entry_leave_types">Leave Types</string>
+    <string name="admin_entry_teams">Teams</string>
+    <string name="admin_entry_leave_balances">Leave Balances</string>
+    <string name="admin_entry_admin_users">Admin Users</string>
+
+    <!-- Profile -->
+    <string name="profile_edit_content_desc">Edit profile</string>
+    <string name="profile_full_name_label">Full name</string>
+    <string name="profile_phone_label">Phone</string>
+    <string name="profile_username_label">Username</string>
+    <string name="profile_not_set">Not set</string>
+    <string name="profile_team_label">Team</string>
+    <string name="profile_role_label">Role</string>
+    <string name="profile_role_superuser">Superuser</string>
+    <string name="profile_role_approver">Team owner / approver</string>
+    <string name="profile_role_employee">Employee</string>
+    <string name="profile_log_out">Log out</string>
+    <string name="profile_admin_section_title">Admin</string>
+    <string name="business_card_title">My Business Card</string>
+    <string name="business_card_qr_content_desc">Business card QR code</string>
+    <string name="business_card_scan_hint">Scan to save contact</string>
+    <string name="business_card_share">Share</string>
+    <string name="business_card_saved_message">Saved to Pictures</string>
+    <string name="business_card_save_failed_message">Couldn\'t save the business card</string>
+    <string name="business_card_share_chooser_title">Share business card</string>
+    <string name="change_password_nav_label">Change Password</string>
+
+    <!-- Navigation -->
+    <string name="nav_tab_home">Home</string>
+    <string name="nav_tab_leaves">Leaves</string>
+    <string name="nav_tab_calendar">Calendar</string>
+    <string name="nav_tab_profile">Profile</string>
+    <string name="nav_title_approvals">Approvals</string>
+    <string name="nav_title_notifications">Notifications</string>
+    <string name="nav_title_recommendations">Recommendations</string>
+    <string name="nav_title_request_details">Request Details</string>
+    <string name="nav_title_new_leave_request">New Leave Request</string>
+    <string name="nav_title_edit_leave_request">Edit Leave Request</string>
+    <string name="nav_title_plan_details">Plan Details</string>
+    <string name="nav_title_new_leave_plan_request">New Leave Plan Request</string>
+    <string name="nav_title_edit_leave_plan_request">Edit Leave Plan Request</string>
+    <string name="nav_close_content_desc">Close</string>
+    <string name="nav_back_content_desc">Back</string>
+    <string name="nav_create_content_desc">Create</string>
+    <string name="nav_notifications_content_desc">Notifications</string>
+    <string name="nav_create_sheet_title">Create</string>
+    <string name="nav_create_sheet_request_leave">Request Leave</string>
+    <string name="nav_create_sheet_plan_leave">Plan Leave</string>
+    <string name="coming_soon_message">%1$s — coming soon</string>
+    <string name="wordmark_prefix">HR</string>
+    <string name="wordmark_suffix">" Leave"</string>
+
+    <!-- Common (shared/reused across screens) -->
+    <string name="common_action_cancel">Cancel</string>
+    <string name="common_action_ok">OK</string>
+    <string name="common_action_save">Save</string>
+    <string name="common_action_save_as_draft">Save as Draft</string>
+    <string name="common_action_update">Update</string>
+    <string name="common_action_submit">Submit</string>
+    <string name="common_action_edit">Edit</string>
+    <string name="common_action_delete">Delete</string>
+    <string name="common_action_close">Close</string>
+    <string name="common_action_retry">Retry</string>
+    <string name="common_label_email">Email</string>
+    <string name="common_label_search">Search</string>
+    <string name="common_no_team_assigned">No team assigned</string>
+    <string name="common_dialog_irreversible_warning">This can\'t be undone.</string>
+    <string name="common_content_desc_hide_password">Hide password</string>
+    <string name="common_content_desc_show_password">Show password</string>
+    <string name="common_select_date_placeholder">Select Date</string>
+    <string name="common_pick_date_content_desc">Pick date</string>
+    <string name="common_placeholder_dash">–</string>
 </resources>

@@ -39,11 +39,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
+import com.mitclass.hrleave.R
 import com.mitclass.hrleave.core.theme.AppSpacing
 import com.mitclass.hrleave.core.theme.BrandPrimary
 import com.mitclass.hrleave.core.theme.CardCornerRadius
@@ -114,14 +116,14 @@ fun DashboardScreen(
             Row(horizontalArrangement = Arrangement.spacedBy(AppSpacing.md)) {
                 PastelActionTile(
                     icon = Icons.AutoMirrored.Outlined.FactCheck,
-                    label = "Request Leave",
+                    label = stringResource(R.string.dashboard_action_request_leave),
                     tint = BrandPrimary,
                     onClick = onRequestLeaveClick,
                     modifier = Modifier.weight(1f),
                 )
                 PastelActionTile(
                     icon = Icons.AutoMirrored.Outlined.EventNote,
-                    label = "Plan Leave",
+                    label = stringResource(R.string.dashboard_action_plan_leave),
                     tint = WarningColor,
                     onClick = onPlanLeaveClick,
                     modifier = Modifier.weight(1f),
@@ -131,7 +133,7 @@ fun DashboardScreen(
             val balancesState by leaveBalancesViewModel.uiState.collectAsState()
             Row(horizontalArrangement = Arrangement.spacedBy(AppSpacing.md)) {
                 StatCard(
-                    label = "Available Days",
+                    label = stringResource(R.string.dashboard_stat_available_days),
                     value = availableDaysValue(balancesState),
                     tint = InfoColor,
                     modifier = Modifier.weight(1f),
@@ -139,7 +141,7 @@ fun DashboardScreen(
                 if (isApprover) {
                     val approvalsState by pendingApprovalsViewModel.uiState.collectAsState()
                     StatCard(
-                        label = "Approvals",
+                        label = stringResource(R.string.dashboard_stat_approvals),
                         value = approvalsValue(approvalsState),
                         tint = WarningColor,
                         onClick = onPendingApprovalsClick,
@@ -155,7 +157,7 @@ fun DashboardScreen(
             LeaveBalancesSection(state = balancesState, onRetry = { leaveBalancesViewModel.load() })
             if (quickActions.isNotEmpty()) {
                 Text(
-                    text = "Quick actions",
+                    text = stringResource(R.string.dashboard_quick_actions_title),
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(top = AppSpacing.xl, bottom = AppSpacing.sm),
                 )
@@ -170,14 +172,16 @@ fun DashboardScreen(
     }
 }
 
+@Composable
 private fun availableDaysValue(state: LeaveBalancesUiState): String = when (state) {
     is LeaveBalancesUiState.Loaded -> formatBalance(state.balances.sumOf { it.availableBalance })
-    else -> "–"
+    else -> stringResource(R.string.common_placeholder_dash)
 }
 
+@Composable
 private fun approvalsValue(state: PendingApprovalsUiState): String = when (state) {
     is PendingApprovalsUiState.Loaded -> state.total.toString()
-    else -> "–"
+    else -> stringResource(R.string.common_placeholder_dash)
 }
 
 @Composable
@@ -192,13 +196,13 @@ private fun ProfileHeader(user: UserDto, onBusinessCardClick: () -> Unit) {
             Text(text = user.fullName ?: user.email, style = MaterialTheme.typography.titleLarge)
             Text(text = user.email, style = MaterialTheme.typography.bodyMedium)
             Text(
-                text = user.team?.name ?: "No team assigned",
+                text = user.team?.name ?: stringResource(R.string.common_no_team_assigned),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
         IconButton(onClick = onBusinessCardClick) {
-            Icon(imageVector = Icons.Outlined.QrCode2, contentDescription = "My Business Card", tint = BrandPrimary)
+            Icon(imageVector = Icons.Outlined.QrCode2, contentDescription = stringResource(R.string.business_card_title), tint = BrandPrimary)
         }
     }
 }
@@ -206,7 +210,7 @@ private fun ProfileHeader(user: UserDto, onBusinessCardClick: () -> Unit) {
 @Composable
 private fun LeaveBalancesSection(state: LeaveBalancesUiState, onRetry: () -> Unit) {
     Text(
-        text = "Leave Balances",
+        text = stringResource(R.string.dashboard_leave_balances_title),
         style = MaterialTheme.typography.titleMedium,
         modifier = Modifier.padding(top = AppSpacing.xl, bottom = AppSpacing.sm),
     )
@@ -214,11 +218,11 @@ private fun LeaveBalancesSection(state: LeaveBalancesUiState, onRetry: () -> Uni
         is LeaveBalancesUiState.Loading -> CircularProgressIndicator(modifier = Modifier.padding(8.dp))
         is LeaveBalancesUiState.Error -> Column {
             Text(text = state.message, color = MaterialTheme.colorScheme.error)
-            TextButton(onClick = onRetry) { Text("Retry") }
+            TextButton(onClick = onRetry) { Text(stringResource(R.string.common_action_retry)) }
         }
         is LeaveBalancesUiState.Loaded -> {
             if (state.balances.isEmpty()) {
-                EmptyStateView(message = "No leave balances yet")
+                EmptyStateView(message = stringResource(R.string.dashboard_no_leave_balances))
             } else {
                 Column {
                     state.balances.forEachIndexed { index, balance ->
@@ -245,7 +249,11 @@ private fun LeaveBalanceRow(balance: LeaveBalanceDto) {
                 style = MaterialTheme.typography.bodyLarge,
             )
             Text(
-                text = "Balance ${formatBalance(balance.balance)} · Taken ${formatBalance(balance.takenBalance)}",
+                text = stringResource(
+                    R.string.dashboard_balance_summary,
+                    formatBalance(balance.balance),
+                    formatBalance(balance.takenBalance),
+                ),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -256,7 +264,7 @@ private fun LeaveBalanceRow(balance: LeaveBalanceDto) {
                 style = MaterialTheme.typography.titleMedium,
             )
             Text(
-                text = "available",
+                text = stringResource(R.string.dashboard_available_label),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -280,7 +288,7 @@ private fun UpcomingHolidayCard(holiday: PublicHolidayDto, modifier: Modifier = 
             Spacer(Modifier.width(AppSpacing.md))
             Column {
                 Text(
-                    text = "Upcoming Holiday",
+                    text = stringResource(R.string.dashboard_upcoming_holiday_title),
                     style = MaterialTheme.typography.bodyMedium,
                     color = SuccessColor,
                     fontWeight = FontWeight.Medium,

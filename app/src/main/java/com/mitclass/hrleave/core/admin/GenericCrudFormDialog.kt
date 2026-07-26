@@ -30,10 +30,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import com.mitclass.hrleave.R
 import com.mitclass.hrleave.core.theme.AppSpacing
 import com.mitclass.hrleave.core.ui.AppTextField
 import com.mitclass.hrleave.core.ui.DatePickerField
@@ -52,7 +54,7 @@ fun <T> GenericCrudFormDialog(engine: CrudEngine<T>) {
 
     AlertDialog(
         onDismissRequest = { if (!saving) engine.dismissForm() },
-        title = { Text(if (isEdit) "Edit" else "Create") },
+        title = { Text(if (isEdit) stringResource(R.string.admin_form_title_edit) else stringResource(R.string.admin_form_title_create)) },
         text = {
             Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                 engine.adapter.fields.forEach { field ->
@@ -71,12 +73,12 @@ fun <T> GenericCrudFormDialog(engine: CrudEngine<T>) {
                 if (saving) {
                     CircularProgressIndicator(modifier = Modifier.size(18.dp), color = MaterialTheme.colorScheme.onPrimary)
                 } else {
-                    Text("Save")
+                    Text(stringResource(R.string.common_action_save))
                 }
             }
         },
         dismissButton = {
-            TextButton(onClick = engine::dismissForm, enabled = !saving) { Text("Cancel") }
+            TextButton(onClick = engine::dismissForm, enabled = !saving) { Text(stringResource(R.string.common_action_cancel)) }
         },
     )
 }
@@ -126,7 +128,11 @@ private fun FieldEditor(field: FieldSpec, value: String, onValueChange: (String)
                     IconButton(onClick = { visible = !visible }) {
                         Icon(
                             imageVector = if (visible) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
-                            contentDescription = if (visible) "Hide" else "Show",
+                            contentDescription = if (visible) {
+                                stringResource(R.string.admin_content_desc_hide)
+                            } else {
+                                stringResource(R.string.admin_content_desc_show)
+                            },
                         )
                     }
                 },

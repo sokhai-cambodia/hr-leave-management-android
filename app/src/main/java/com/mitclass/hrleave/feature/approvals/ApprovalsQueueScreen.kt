@@ -35,8 +35,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.mitclass.hrleave.R
 import com.mitclass.hrleave.core.theme.AppSpacing
 import com.mitclass.hrleave.core.theme.BrandPrimary
 import com.mitclass.hrleave.core.theme.CardCornerRadius
@@ -64,7 +66,10 @@ fun ApprovalsQueueScreen(
 
     Column(modifier = Modifier.fillMaxSize()) {
         PillTabRow(
-            titles = listOf("Leave Requests", "Leave Plans"),
+            titles = listOf(
+                stringResource(R.string.approvals_tab_leave_requests),
+                stringResource(R.string.approvals_tab_leave_plans),
+            ),
             selectedIndex = selectedTab,
             onSelect = { selectedTab = it },
             modifier = Modifier.padding(AppSpacing.lg),
@@ -78,7 +83,7 @@ fun ApprovalsQueueScreen(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(text = it, color = MaterialTheme.colorScheme.error, modifier = Modifier.weight(1f))
-                TextButton(onClick = viewModel::dismissActionError) { Text("Dismiss") }
+                TextButton(onClick = viewModel::dismissActionError) { Text(stringResource(R.string.approvals_dismiss_action)) }
             }
         }
 
@@ -94,7 +99,7 @@ fun ApprovalsQueueScreen(
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(text = current.message, color = MaterialTheme.colorScheme.error)
-                    Button(onClick = viewModel::load, modifier = Modifier.padding(top = 12.dp)) { Text("Retry") }
+                    Button(onClick = viewModel::load, modifier = Modifier.padding(top = 12.dp)) { Text(stringResource(R.string.common_action_retry)) }
                 }
             }
 
@@ -121,8 +126,8 @@ fun ApprovalsQueueScreen(
     pendingReject?.let { reject ->
         AlertDialog(
             onDismissRequest = { pendingReject = null },
-            title = { Text("Reject this request?") },
-            text = { Text("The submitter will be notified.") },
+            title = { Text(stringResource(R.string.approvals_dialog_reject_title)) },
+            text = { Text(stringResource(R.string.approvals_dialog_reject_message)) },
             confirmButton = {
                 TextButton(onClick = {
                     when (reject) {
@@ -130,10 +135,10 @@ fun ApprovalsQueueScreen(
                         is PendingReject.LeavePlanRequest -> viewModel.rejectLeavePlanRequest(reject.id)
                     }
                     pendingReject = null
-                }) { Text("Reject") }
+                }) { Text(stringResource(R.string.approvals_action_reject)) }
             },
             dismissButton = {
-                TextButton(onClick = { pendingReject = null }) { Text("Cancel") }
+                TextButton(onClick = { pendingReject = null }) { Text(stringResource(R.string.common_action_cancel)) }
             },
         )
     }
@@ -152,7 +157,7 @@ private fun LeaveRequestsTab(
     onReject: (String) -> Unit,
 ) {
     if (requests.isEmpty()) {
-        EmptyStateView(message = "No pending leave requests")
+        EmptyStateView(message = stringResource(R.string.approvals_empty_leave_requests))
         return
     }
     LazyColumn(
@@ -180,7 +185,12 @@ private fun LeaveRequestsTab(
                     }
                     Spacer(modifier = Modifier.height(AppSpacing.sm))
                     Text(
-                        text = "${request.startDate} → ${request.endDate} · ${request.amount} day(s)",
+                        text = stringResource(
+                            R.string.approvals_leave_request_summary,
+                            request.startDate,
+                            request.endDate,
+                            request.amount,
+                        ),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -203,7 +213,7 @@ private fun LeavePlanRequestsTab(
     onReject: (String) -> Unit,
 ) {
     if (requests.isEmpty()) {
-        EmptyStateView(message = "No pending leave plan requests")
+        EmptyStateView(message = stringResource(R.string.approvals_empty_leave_plan_requests))
         return
     }
     LazyColumn(
@@ -231,7 +241,7 @@ private fun LeavePlanRequestsTab(
                     }
                     Spacer(modifier = Modifier.height(AppSpacing.sm))
                     Text(
-                        text = "${request.amount.toInt()} date(s)",
+                        text = stringResource(R.string.leave_common_dates_count, request.amount.toInt()),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -273,8 +283,8 @@ private fun ApprovalActions(isProcessing: Boolean, onApprove: () -> Unit, onReje
             onClick = onApprove,
             enabled = !isProcessing,
             colors = ButtonDefaults.buttonColors(containerColor = SuccessColor, contentColor = Color.White),
-        ) { Text("Approve") }
-        OutlinedButton(onClick = onReject, enabled = !isProcessing) { Text("Reject") }
+        ) { Text(stringResource(R.string.approvals_action_approve)) }
+        OutlinedButton(onClick = onReject, enabled = !isProcessing) { Text(stringResource(R.string.approvals_action_reject)) }
         if (isProcessing) {
             CircularProgressIndicator(modifier = Modifier.padding(start = 4.dp).size(20.dp))
         }

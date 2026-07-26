@@ -29,11 +29,13 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.mitclass.hrleave.R
 import com.mitclass.hrleave.core.theme.AppSpacing
 import com.mitclass.hrleave.core.theme.BrandPrimary
 import com.mitclass.hrleave.core.ui.AppButton
@@ -62,14 +64,14 @@ fun LoginScreen(
         Spacer(Modifier.height(AppSpacing.lg))
         Text(
             text = buildAnnotatedString {
-                withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("Log In to your ") }
-                withStyle(SpanStyle(color = BrandPrimary, fontWeight = FontWeight.Bold)) { append("Account") }
+                withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append(stringResource(R.string.login_headline_prefix)) }
+                withStyle(SpanStyle(color = BrandPrimary, fontWeight = FontWeight.Bold)) { append(stringResource(R.string.login_headline_suffix)) }
             },
             fontSize = 28.sp,
         )
         Spacer(Modifier.height(AppSpacing.sm))
         Text(
-            text = "Please take a moment to log in to your account when you're ready.",
+            text = stringResource(R.string.login_subtitle),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -77,8 +79,8 @@ fun LoginScreen(
         AppTextField(
             value = identifier,
             onValueChange = { identifier = it },
-            label = "Email or Username",
-            placeholder = "Email or username",
+            label = stringResource(R.string.login_email_label),
+            placeholder = stringResource(R.string.login_email_placeholder),
             singleLine = true,
             enabled = !isLoading,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
@@ -87,8 +89,8 @@ fun LoginScreen(
         AppTextField(
             value = password,
             onValueChange = { password = it },
-            label = "Password",
-            placeholder = "Password",
+            label = stringResource(R.string.login_password_label),
+            placeholder = stringResource(R.string.login_password_placeholder),
             singleLine = true,
             enabled = !isLoading,
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
@@ -97,7 +99,11 @@ fun LoginScreen(
                 IconButton(onClick = { passwordVisible = !passwordVisible }) {
                     Icon(
                         imageVector = if (passwordVisible) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
-                        contentDescription = if (passwordVisible) "Hide password" else "Show password",
+                        contentDescription = if (passwordVisible) {
+                            stringResource(R.string.common_content_desc_hide_password)
+                        } else {
+                            stringResource(R.string.common_content_desc_show_password)
+                        },
                     )
                 }
             },
@@ -108,7 +114,7 @@ fun LoginScreen(
             enabled = !isLoading,
             modifier = Modifier.align(Alignment.End),
         ) {
-            Text("Forgot password?")
+            Text(stringResource(R.string.login_forgot_password))
         }
         if (uiState is LoginUiState.Error) {
             ErrorBanner(
@@ -118,7 +124,7 @@ fun LoginScreen(
         }
         Spacer(Modifier.height(AppSpacing.lg))
         AppButton(
-            text = "Log In",
+            text = stringResource(R.string.login_button),
             onClick = { viewModel.login(identifier.trim(), password) },
             enabled = !isLoading && identifier.isNotBlank() && password.isNotBlank(),
             loading = isLoading,

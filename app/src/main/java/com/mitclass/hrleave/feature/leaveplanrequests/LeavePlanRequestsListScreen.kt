@@ -28,8 +28,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.mitclass.hrleave.R
 import com.mitclass.hrleave.core.theme.AppSpacing
 import com.mitclass.hrleave.core.ui.EmptyStateView
 import com.mitclass.hrleave.core.ui.ErrorStateView
@@ -52,7 +54,7 @@ fun LeavePlanRequestsListScreen(
             is LeavePlanRequestsListUiState.Error -> ErrorStateView(message = current.message, onRetry = viewModel::load)
             is LeavePlanRequestsListUiState.Loaded -> {
                 if (current.requests.isEmpty()) {
-                    EmptyStateView(message = "No leave plan requests yet")
+                    EmptyStateView(message = stringResource(R.string.leaveplan_requests_empty))
                 } else {
                     LeavePlanRequestsList(
                         requests = current.requests,
@@ -120,7 +122,7 @@ private fun LeavePlanRequestRow(request: LeavePlanRequestDto, onClick: () -> Uni
             )
             Spacer(modifier = Modifier.width(AppSpacing.xs))
             Text(
-                text = "${request.amount.toInt()} date(s)",
+                text = stringResource(R.string.leave_common_dates_count, request.amount.toInt()),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

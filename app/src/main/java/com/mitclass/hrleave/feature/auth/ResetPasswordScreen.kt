@@ -22,10 +22,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.mitclass.hrleave.R
 import com.mitclass.hrleave.core.theme.AppSpacing
 import com.mitclass.hrleave.core.ui.AppButton
 import com.mitclass.hrleave.core.ui.AppTextField
@@ -55,24 +57,24 @@ fun ResetPasswordScreen(
             .padding(24.dp),
         verticalArrangement = Arrangement.Center,
     ) {
-        Text(text = "Enter your reset token", style = MaterialTheme.typography.headlineSmall)
+        Text(text = stringResource(R.string.reset_password_title), style = MaterialTheme.typography.headlineSmall)
         Spacer(Modifier.height(8.dp))
         Text(
-            text = "Paste the token from the reset email, then choose a new password.",
+            text = stringResource(R.string.reset_password_subtitle),
             style = MaterialTheme.typography.bodyMedium,
         )
         Spacer(Modifier.height(24.dp))
         AppTextField(
             value = token,
             onValueChange = { token = it },
-            label = "Reset token",
+            label = stringResource(R.string.reset_password_token_label),
             enabled = !isLoading,
         )
         Spacer(Modifier.height(AppSpacing.md))
         AppTextField(
             value = newPassword,
             onValueChange = { newPassword = it },
-            label = "New password",
+            label = stringResource(R.string.password_new_label),
             singleLine = true,
             enabled = !isLoading,
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
@@ -80,7 +82,11 @@ fun ResetPasswordScreen(
                 IconButton(onClick = { passwordVisible = !passwordVisible }) {
                     Icon(
                         imageVector = if (passwordVisible) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
-                        contentDescription = if (passwordVisible) "Hide password" else "Show password",
+                        contentDescription = if (passwordVisible) {
+                            stringResource(R.string.common_content_desc_hide_password)
+                        } else {
+                            stringResource(R.string.common_content_desc_show_password)
+                        },
                     )
                 }
             },
@@ -93,14 +99,14 @@ fun ResetPasswordScreen(
         }
         Spacer(Modifier.height(AppSpacing.lg))
         AppButton(
-            text = "Reset password",
+            text = stringResource(R.string.reset_password_button),
             onClick = { viewModel.submit(token.trim(), newPassword) },
             enabled = !isLoading && token.isNotBlank() && newPassword.length >= MIN_PASSWORD_LENGTH,
             loading = isLoading,
         )
         Spacer(Modifier.height(AppSpacing.sm))
         TextButton(onClick = onBack) {
-            Text("Back to login")
+            Text(stringResource(R.string.auth_back_to_login))
         }
     }
 }

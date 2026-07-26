@@ -17,9 +17,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.mitclass.hrleave.R
 import com.mitclass.hrleave.core.theme.AppSpacing
 import com.mitclass.hrleave.core.theme.SuccessColor
 import com.mitclass.hrleave.core.ui.AppButton
@@ -42,17 +44,17 @@ fun ForgotPasswordScreen(
             .padding(24.dp),
         verticalArrangement = Arrangement.Center,
     ) {
-        Text(text = "Reset your password", style = MaterialTheme.typography.headlineSmall)
+        Text(text = stringResource(R.string.forgot_password_title), style = MaterialTheme.typography.headlineSmall)
         Spacer(Modifier.height(8.dp))
         Text(
-            text = "Enter your account email and we'll send you a password reset link.",
+            text = stringResource(R.string.forgot_password_subtitle),
             style = MaterialTheme.typography.bodyMedium,
         )
         Spacer(Modifier.height(24.dp))
         AppTextField(
             value = email,
             onValueChange = { email = it },
-            label = "Email",
+            label = stringResource(R.string.common_label_email),
             singleLine = true,
             enabled = !isLoading,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
@@ -71,17 +73,17 @@ fun ForgotPasswordScreen(
         }
         Spacer(Modifier.height(AppSpacing.lg))
         AppButton(
-            text = "Send reset email",
+            text = stringResource(R.string.forgot_password_send_button),
             onClick = { viewModel.submit(email.trim()) },
             enabled = !isLoading && email.isNotBlank(),
             loading = isLoading,
         )
         Spacer(Modifier.height(AppSpacing.sm))
         TextButton(onClick = onHaveResetToken) {
-            Text("I already have a reset token")
+            Text(stringResource(R.string.forgot_password_have_token))
         }
         TextButton(onClick = onBack) {
-            Text("Back to login")
+            Text(stringResource(R.string.auth_back_to_login))
         }
     }
 }

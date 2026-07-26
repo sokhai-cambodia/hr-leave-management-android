@@ -26,9 +26,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.mitclass.hrleave.R
 import com.mitclass.hrleave.core.theme.AppSpacing
 import com.mitclass.hrleave.core.theme.BrandPrimary
 import com.mitclass.hrleave.core.ui.EmptyStateView
@@ -51,7 +53,7 @@ fun NotificationsListScreen(
                 .padding(horizontal = AppSpacing.lg, vertical = AppSpacing.sm),
             horizontalArrangement = Arrangement.End,
         ) {
-            TextButton(onClick = viewModel::markAllRead) { Text("Mark all read") }
+            TextButton(onClick = viewModel::markAllRead) { Text(stringResource(R.string.notifications_mark_all_read)) }
         }
         when (val current = state) {
             is NotificationsListUiState.Loading -> Box(
@@ -63,7 +65,7 @@ fun NotificationsListScreen(
 
             is NotificationsListUiState.Loaded -> {
                 if (current.notifications.isEmpty()) {
-                    EmptyStateView(message = "No notifications yet")
+                    EmptyStateView(message = stringResource(R.string.notifications_empty))
                 } else {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),

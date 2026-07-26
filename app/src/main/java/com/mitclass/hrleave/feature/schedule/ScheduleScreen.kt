@@ -33,10 +33,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.mitclass.hrleave.R
 import com.mitclass.hrleave.core.theme.AppSpacing
 import com.mitclass.hrleave.core.theme.BrandPrimary
 import com.mitclass.hrleave.core.theme.WarningColor
@@ -83,14 +86,14 @@ private fun MonthHeader(yearMonth: YearMonth, onPrevious: () -> Unit, onNext: ()
         verticalAlignment = Alignment.CenterVertically,
     ) {
         IconButton(onClick = onPrevious) {
-            Icon(Icons.Outlined.ChevronLeft, contentDescription = "Previous month")
+            Icon(Icons.Outlined.ChevronLeft, contentDescription = stringResource(R.string.schedule_previous_month_content_desc))
         }
         Text(
             text = "${yearMonth.month.getDisplayName(TextStyle.FULL, Locale.getDefault())} ${yearMonth.year}",
             style = MaterialTheme.typography.titleLarge,
         )
         IconButton(onClick = onNext) {
-            Icon(Icons.Outlined.ChevronRight, contentDescription = "Next month")
+            Icon(Icons.Outlined.ChevronRight, contentDescription = stringResource(R.string.schedule_next_month_content_desc))
         }
     }
 }
@@ -125,11 +128,11 @@ private fun ScheduleContent(
             Column {
                 CalendarGrid(yearMonth = yearMonth, holidaysByDay = holidaysByDay, teamLeaveByDay = teamLeaveByDay)
                 Legend()
-                SectionHeader("Holidays in ${monthLabel(yearMonth)}")
+                SectionHeader(stringResource(R.string.schedule_holidays_in_month, monthLabel(yearMonth)))
             }
         }
         if (holidaysThisMonth.isEmpty()) {
-            item { EmptyRow("No public holidays this month.") }
+            item { EmptyRow(stringResource(R.string.schedule_no_public_holidays)) }
         } else {
             itemsIndexed(holidaysThisMonth, key = { _, item -> "h-${item.id}" }) { index, holiday ->
                 Column(modifier = Modifier.padding(vertical = AppSpacing.sm)) {
@@ -140,10 +143,10 @@ private fun ScheduleContent(
             }
         }
         item {
-            SectionHeader("Team Leave in ${monthLabel(yearMonth)}")
+            SectionHeader(stringResource(R.string.schedule_team_leave_in_month, monthLabel(yearMonth)))
         }
         if (teamLeaveThisMonth.isEmpty()) {
-            item { EmptyRow("No team leave this month.") }
+            item { EmptyRow(stringResource(R.string.schedule_no_team_leave)) }
         } else {
             itemsIndexed(teamLeaveThisMonth, key = { _, item -> "t-${item.id}-${item.startDate}" }) { index, entry ->
                 Row(
@@ -177,7 +180,7 @@ private fun ScheduleContent(
                         )
                     }
                     Text(
-                        text = "${entry.startDate} – ${entry.endDate}",
+                        text = stringResource(R.string.schedule_team_leave_date_range, entry.startDate, entry.endDate),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -212,8 +215,8 @@ private fun EmptyRow(text: String) {
 @Composable
 private fun Legend() {
     Row(modifier = Modifier.padding(vertical = 8.dp), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-        LegendItem(color = HolidayColor, label = "Public Holiday")
-        LegendItem(color = TeamLeaveColor, label = "Team Leave")
+        LegendItem(color = HolidayColor, label = stringResource(R.string.schedule_legend_public_holiday))
+        LegendItem(color = TeamLeaveColor, label = stringResource(R.string.schedule_legend_team_leave))
     }
 }
 
@@ -239,8 +242,9 @@ private fun CalendarGrid(
     val weeks = (totalCells + 6) / 7
 
     Column {
+        val weekdayLabels = stringArrayResource(R.array.schedule_weekday_labels)
         Row(modifier = Modifier.fillMaxWidth()) {
-            listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat").forEach { label ->
+            weekdayLabels.forEach { label ->
                 Text(
                     text = label,
                     style = MaterialTheme.typography.labelSmall,

@@ -37,7 +37,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.mitclass.hrleave.R
 import com.mitclass.hrleave.core.theme.AppSpacing
 import com.mitclass.hrleave.core.theme.CardCornerRadius
 import com.mitclass.hrleave.core.theme.CardElevation
@@ -59,7 +61,7 @@ fun <T> GenericCrudListScreen(engine: CrudEngine<T>) {
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(onClick = engine::startCreate) {
-                Icon(Icons.Outlined.Add, contentDescription = "Create")
+                Icon(Icons.Outlined.Add, contentDescription = stringResource(R.string.admin_form_title_create))
             }
         },
     ) { paddingValues ->
@@ -77,7 +79,7 @@ fun <T> GenericCrudListScreen(engine: CrudEngine<T>) {
                 AppTextField(
                     value = searchQuery,
                     onValueChange = engine::onSearchQueryChange,
-                    label = "Search",
+                    label = stringResource(R.string.common_label_search),
                     singleLine = true,
                     leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = null) },
                     modifier = Modifier.weight(1f),
@@ -85,7 +87,11 @@ fun <T> GenericCrudListScreen(engine: CrudEngine<T>) {
                 IconButton(onClick = engine::toggleSortDirection) {
                     Icon(
                         imageVector = if (sortAscending) Icons.Outlined.ArrowUpward else Icons.Outlined.ArrowDownward,
-                        contentDescription = if (sortAscending) "Sorted A to Z, tap to reverse" else "Sorted Z to A, tap to reverse",
+                        contentDescription = if (sortAscending) {
+                            stringResource(R.string.admin_sort_ascending_content_desc)
+                        } else {
+                            stringResource(R.string.admin_sort_descending_content_desc)
+                        },
                     )
                 }
             }
@@ -100,7 +106,7 @@ fun <T> GenericCrudListScreen(engine: CrudEngine<T>) {
                 is CrudListUiState.Loaded -> {
                     val visible = engine.visibleItems()
                     if (visible.isEmpty()) {
-                        EmptyStateView(message = "Nothing here yet")
+                        EmptyStateView(message = stringResource(R.string.admin_empty_message))
                     } else {
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
@@ -136,16 +142,16 @@ fun <T> GenericCrudListScreen(engine: CrudEngine<T>) {
     pendingDelete?.let { item ->
         AlertDialog(
             onDismissRequest = { pendingDelete = null },
-            title = { Text("Delete this record?") },
-            text = { Text("This can't be undone.") },
+            title = { Text(stringResource(R.string.admin_delete_confirm_title)) },
+            text = { Text(stringResource(R.string.common_dialog_irreversible_warning)) },
             confirmButton = {
                 TextButton(onClick = {
                     engine.delete(item)
                     pendingDelete = null
-                }) { Text("Delete") }
+                }) { Text(stringResource(R.string.common_action_delete)) }
             },
             dismissButton = {
-                TextButton(onClick = { pendingDelete = null }) { Text("Cancel") }
+                TextButton(onClick = { pendingDelete = null }) { Text(stringResource(R.string.common_action_cancel)) }
             },
         )
     }
@@ -185,7 +191,7 @@ private fun CrudRow(
                 CircularProgressIndicator(modifier = Modifier.padding(8.dp))
             } else {
                 IconButton(onClick = onDeleteClick) {
-                    Icon(Icons.Outlined.Delete, contentDescription = "Delete")
+                    Icon(Icons.Outlined.Delete, contentDescription = stringResource(R.string.common_action_delete))
                 }
             }
         }

@@ -28,9 +28,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.mitclass.hrleave.R
 import com.mitclass.hrleave.core.theme.AppSpacing
 import com.mitclass.hrleave.core.theme.BrandPrimary
 import com.mitclass.hrleave.core.theme.LightBorder
@@ -74,14 +76,14 @@ fun LeaveRequestFormScreen(
         var expanded by remember { mutableStateOf(false) }
         val selectedType = state.leaveTypes.firstOrNull { it.id == state.selectedLeaveTypeId }
         Column {
-            Text(text = "Leave Type", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold)
+            Text(text = stringResource(R.string.leave_form_type_label), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold)
             Spacer(Modifier.height(AppSpacing.sm))
             ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }) {
                 OutlinedTextField(
                     value = selectedType?.name ?: "",
                     onValueChange = {},
                     readOnly = true,
-                    placeholder = { Text("Select a leave type") },
+                    placeholder = { Text(stringResource(R.string.leave_form_select_type_placeholder)) },
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                     shape = RoundedCornerShape(TextFieldCornerRadius),
                     colors = OutlinedTextFieldDefaults.colors(
@@ -114,13 +116,13 @@ fun LeaveRequestFormScreen(
 
         Row(horizontalArrangement = Arrangement.spacedBy(AppSpacing.md)) {
             DatePickerField(
-                label = "Start Date",
+                label = stringResource(R.string.leave_form_start_date_label),
                 date = state.startDate,
                 onDateSelected = viewModel::onStartDateSelected,
                 modifier = Modifier.weight(1f),
             )
             DatePickerField(
-                label = "End Date",
+                label = stringResource(R.string.leave_form_end_date_label),
                 date = state.endDate,
                 onDateSelected = viewModel::onEndDateSelected,
                 modifier = Modifier.weight(1f),
@@ -131,8 +133,8 @@ fun LeaveRequestFormScreen(
         AppTextField(
             value = state.description,
             onValueChange = viewModel::onDescriptionChanged,
-            label = "Description",
-            placeholder = "Enter reason or extra notes (optional)...",
+            label = stringResource(R.string.leave_common_description_label),
+            placeholder = stringResource(R.string.leave_form_description_placeholder),
             singleLine = false,
             minLines = 3,
         )
@@ -144,21 +146,21 @@ fun LeaveRequestFormScreen(
         Spacer(Modifier.height(AppSpacing.lg))
         if (viewModel.isEditMode) {
             AppButton(
-                text = "Update",
+                text = stringResource(R.string.common_action_update),
                 onClick = viewModel::save,
                 enabled = state.canSave,
                 loading = state.isSaving,
             )
         } else {
             AppButton(
-                text = "Submit",
+                text = stringResource(R.string.common_action_submit),
                 onClick = viewModel::saveAndSubmit,
                 enabled = state.canSave,
                 loading = state.isSaving,
             )
             Spacer(Modifier.height(AppSpacing.sm))
             AppOutlinedButton(
-                text = "Save as Draft",
+                text = stringResource(R.string.common_action_save_as_draft),
                 onClick = viewModel::save,
                 enabled = state.canSave,
             )

@@ -1,5 +1,6 @@
 package com.mitclass.hrleave.core.navigation
 
+import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Assignment
 import androidx.compose.material.icons.automirrored.outlined.Assignment
@@ -10,6 +11,7 @@ import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.mitclass.hrleave.R
 
 /**
  * The 4 persistent bottom tabs (Task 13.2), replacing the drawer's static role-based nav list.
@@ -20,24 +22,24 @@ import androidx.compose.ui.graphics.vector.ImageVector
 enum class BottomTab(
     val matchRoute: String,
     val navRoute: String,
-    val label: String,
+    @StringRes val labelRes: Int,
     val filledIcon: ImageVector,
     val outlinedIcon: ImageVector,
 ) {
-    HOME(Destination.Dashboard.route, Destination.Dashboard.route, "Home", Icons.Filled.Home, Icons.Outlined.Home),
+    HOME(Destination.Dashboard.route, Destination.Dashboard.route, R.string.nav_tab_home, Icons.Filled.Home, Icons.Outlined.Home),
     LEAVES(
         Destination.Leaves.route,
         Destination.Leaves.route(),
-        "Leaves",
+        R.string.nav_tab_leaves,
         Icons.AutoMirrored.Filled.Assignment,
         Icons.AutoMirrored.Outlined.Assignment,
     ),
     CALENDAR(
         Destination.Schedule.route,
         Destination.Schedule.route,
-        "Calendar",
+        R.string.nav_tab_calendar,
         Icons.Filled.CalendarMonth,
         Icons.Outlined.CalendarMonth,
     ),
-    PROFILE(Destination.Profile.route, Destination.Profile.route, "Profile", Icons.Filled.Person, Icons.Outlined.Person),
+    PROFILE(Destination.Profile.route, Destination.Profile.route, R.string.nav_tab_profile, Icons.Filled.Person, Icons.Outlined.Person),
 }

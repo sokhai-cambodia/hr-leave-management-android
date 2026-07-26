@@ -36,12 +36,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.annotation.StringRes
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.mitclass.hrleave.R
 import com.mitclass.hrleave.core.navigation.Destination
 import com.mitclass.hrleave.core.theme.AppSpacing
 import com.mitclass.hrleave.core.theme.SuccessColor
@@ -52,21 +55,22 @@ import com.mitclass.hrleave.core.ui.ErrorBanner
 import com.mitclass.hrleave.core.ui.UserAvatar
 import com.mitclass.hrleave.data.remote.dto.UserDto
 
-private data class AdminEntry(val label: String, val icon: ImageVector, val destination: Destination)
+private data class AdminEntry(@StringRes val labelRes: Int, val icon: ImageVector, val destination: Destination)
 
 private val adminEntries = listOf(
-    AdminEntry("Policies", Icons.Outlined.Gavel, Destination.AdminPolicies),
-    AdminEntry("Public Holidays", Icons.Outlined.Event, Destination.AdminPublicHolidays),
-    AdminEntry("Leave Types", Icons.Outlined.Category, Destination.AdminLeaveTypes),
-    AdminEntry("Teams", Icons.Outlined.Groups, Destination.AdminTeams),
-    AdminEntry("Leave Balances", Icons.Outlined.AccountBalance, Destination.AdminLeaveBalances),
-    AdminEntry("Admin Users", Icons.Outlined.AdminPanelSettings, Destination.AdminUsers),
+    AdminEntry(R.string.admin_entry_policies, Icons.Outlined.Gavel, Destination.AdminPolicies),
+    AdminEntry(R.string.admin_entry_public_holidays, Icons.Outlined.Event, Destination.AdminPublicHolidays),
+    AdminEntry(R.string.admin_entry_leave_types, Icons.Outlined.Category, Destination.AdminLeaveTypes),
+    AdminEntry(R.string.admin_entry_teams, Icons.Outlined.Groups, Destination.AdminTeams),
+    AdminEntry(R.string.admin_entry_leave_balances, Icons.Outlined.AccountBalance, Destination.AdminLeaveBalances),
+    AdminEntry(R.string.admin_entry_admin_users, Icons.Outlined.AdminPanelSettings, Destination.AdminUsers),
 )
 
+@Composable
 private fun roleLabel(isSuperuser: Boolean, isApprover: Boolean): String = when {
-    isSuperuser -> "Superuser"
-    isApprover -> "Team owner / approver"
-    else -> "Employee"
+    isSuperuser -> stringResource(R.string.profile_role_superuser)
+    isApprover -> stringResource(R.string.profile_role_approver)
+    else -> stringResource(R.string.profile_role_employee)
 }
 
 @Composable
@@ -100,7 +104,7 @@ fun ProfileScreen(
                 Text(text = user.email, style = MaterialTheme.typography.bodyMedium)
             }
             IconButton(onClick = { isEditing = !isEditing }) {
-                Icon(imageVector = Icons.Outlined.Edit, contentDescription = "Edit profile")
+                Icon(imageVector = Icons.Outlined.Edit, contentDescription = stringResource(R.string.profile_edit_content_desc))
             }
         }
 
@@ -109,7 +113,7 @@ fun ProfileScreen(
             AppTextField(
                 value = state.fullName,
                 onValueChange = viewModel::onFullNameChange,
-                label = "Full name",
+                label = stringResource(R.string.profile_full_name_label),
                 singleLine = true,
                 enabled = !state.isSaving,
             )
@@ -117,7 +121,7 @@ fun ProfileScreen(
             AppTextField(
                 value = state.email,
                 onValueChange = viewModel::onEmailChange,
-                label = "Email",
+                label = stringResource(R.string.common_label_email),
                 singleLine = true,
                 enabled = !state.isSaving,
             )
@@ -125,7 +129,7 @@ fun ProfileScreen(
             AppTextField(
                 value = state.phoneNumber,
                 onValueChange = viewModel::onPhoneNumberChange,
-                label = "Phone",
+                label = stringResource(R.string.profile_phone_label),
                 singleLine = true,
                 enabled = !state.isSaving,
             )
@@ -137,7 +141,7 @@ fun ProfileScreen(
             }
             Spacer(Modifier.height(AppSpacing.md))
             AppButton(
-                text = "Save",
+                text = stringResource(R.string.common_action_save),
                 onClick = viewModel::save,
                 enabled = !state.isSaving && state.fullName.isNotBlank() && state.email.isNotBlank(),
                 loading = state.isSaving,
@@ -146,11 +150,17 @@ fun ProfileScreen(
 
         Spacer(Modifier.height(AppSpacing.lg))
         user.username?.takeIf { it.isNotBlank() }?.let {
-            InfoRow(label = "Username", value = it)
+            InfoRow(label = stringResource(R.string.profile_username_label), value = it)
         }
-        InfoRow(label = "Phone", value = user.phoneNumber?.takeIf { it.isNotBlank() } ?: "Not set")
-        InfoRow(label = "Team", value = user.team?.name ?: "No team assigned")
-        InfoRow(label = "Role", value = roleLabel(user.isSuperuser, isApprover))
+        InfoRow(
+            label = stringResource(R.string.profile_phone_label),
+            value = user.phoneNumber?.takeIf { it.isNotBlank() } ?: stringResource(R.string.profile_not_set),
+        )
+        InfoRow(
+            label = stringResource(R.string.profile_team_label),
+            value = user.team?.name ?: stringResource(R.string.common_no_team_assigned),
+        )
+        InfoRow(label = stringResource(R.string.profile_role_label), value = roleLabel(user.isSuperuser, isApprover))
 
         Spacer(Modifier.height(AppSpacing.lg))
         HorizontalDivider()
@@ -163,7 +173,7 @@ fun ProfileScreen(
         ) {
             Icon(imageVector = Icons.Outlined.QrCode2, contentDescription = null)
             Text(
-                text = "My Business Card",
+                text = stringResource(R.string.business_card_title),
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier
                     .weight(1f)
@@ -181,7 +191,7 @@ fun ProfileScreen(
         ) {
             Icon(imageVector = Icons.Outlined.Lock, contentDescription = null)
             Text(
-                text = "Change Password",
+                text = stringResource(R.string.change_password_nav_label),
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier
                     .weight(1f)
@@ -193,14 +203,14 @@ fun ProfileScreen(
 
         Spacer(Modifier.height(AppSpacing.lg))
         AppOutlinedButton(
-            text = "Log out",
+            text = stringResource(R.string.profile_log_out),
             onClick = onLogout,
             icon = { Icon(imageVector = Icons.AutoMirrored.Outlined.Logout, contentDescription = null) },
         )
 
         if (user.isSuperuser) {
             Spacer(Modifier.height(AppSpacing.xl))
-            Text(text = "Admin", style = MaterialTheme.typography.titleMedium)
+            Text(text = stringResource(R.string.profile_admin_section_title), style = MaterialTheme.typography.titleMedium)
             Spacer(Modifier.height(AppSpacing.sm))
             Column {
                 adminEntries.forEachIndexed { index, entry ->
@@ -241,7 +251,7 @@ private fun AdminRow(entry: AdminEntry, onClick: () -> Unit) {
     ) {
         Icon(imageVector = entry.icon, contentDescription = null)
         Text(
-            text = entry.label,
+            text = stringResource(entry.labelRes),
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier
                 .weight(1f)

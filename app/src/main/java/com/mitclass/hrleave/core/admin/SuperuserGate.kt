@@ -8,7 +8,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.mitclass.hrleave.R
 
 /**
  * Defense in depth for admin routes: the Profile tab's Admin section already hides these entries
@@ -27,7 +29,7 @@ fun SuperuserGate(isSuperuser: Boolean, content: @Composable () -> Unit) {
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                text = "You don't have permission to view this page.",
+                text = stringResource(R.string.admin_superuser_gate_message),
                 style = MaterialTheme.typography.bodyLarge,
             )
         }

@@ -29,8 +29,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.mitclass.hrleave.R
 import com.mitclass.hrleave.core.theme.AppSpacing
 import com.mitclass.hrleave.core.theme.CardCornerRadius
 import com.mitclass.hrleave.core.theme.CardElevation
@@ -55,7 +57,7 @@ fun RecommendationsScreen(
             val loaded = state as? RecommendationsUiState.Loaded
             if (loaded != null && selectedDates.isNotEmpty()) {
                 AppButton(
-                    text = "Use ${selectedDates.size} selected date(s)",
+                    text = stringResource(R.string.recommendations_use_selected_dates, selectedDates.size),
                     onClick = {
                         onUseSelectedDates(loaded.leaveTypeId, selectedDates.map(LocalDate::parse).sorted())
                     },
@@ -80,7 +82,7 @@ fun RecommendationsScreen(
 
                 is RecommendationsUiState.Loaded -> {
                     if (current.items.isEmpty()) {
-                        EmptyStateView(message = "No recommendations for $year")
+                        EmptyStateView(message = stringResource(R.string.recommendations_empty_for_year, year))
                     } else {
                         val allDates = current.items.map { it.leaveDate }
                         SelectAllRow(
@@ -117,11 +119,11 @@ private fun YearSelector(year: Int, onYearChange: (Int) -> Unit) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         IconButton(onClick = { onYearChange(year - 1) }) {
-            Icon(Icons.Outlined.ChevronLeft, contentDescription = "Previous year")
+            Icon(Icons.Outlined.ChevronLeft, contentDescription = stringResource(R.string.recommendations_previous_year_content_desc))
         }
         Text(text = year.toString(), style = MaterialTheme.typography.titleLarge)
         IconButton(onClick = { onYearChange(year + 1) }) {
-            Icon(Icons.Outlined.ChevronRight, contentDescription = "Next year")
+            Icon(Icons.Outlined.ChevronRight, contentDescription = stringResource(R.string.recommendations_next_year_content_desc))
         }
     }
 }
@@ -135,7 +137,7 @@ private fun SelectAllRow(allSelected: Boolean, onToggleAll: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Checkbox(checked = allSelected, onCheckedChange = { onToggleAll() })
-        Text(text = "Select all")
+        Text(text = stringResource(R.string.recommendations_select_all))
     }
 }
 
@@ -158,9 +160,9 @@ private fun RecommendationRow(item: LeaveRecommendationDto, selected: Boolean, o
                 Text(text = item.leaveDate, style = MaterialTheme.typography.titleMedium)
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     if (item.bridgeHoliday) {
-                        AssistChip(onClick = {}, label = { Text("Bridge holiday") })
+                        AssistChip(onClick = {}, label = { Text(stringResource(R.string.recommendations_bridge_holiday_chip)) })
                     }
-                    AssistChip(onClick = {}, label = { Text("Team workload: ${item.teamWorkload}") })
+                    AssistChip(onClick = {}, label = { Text(stringResource(R.string.recommendations_team_workload_chip, item.teamWorkload)) })
                 }
             }
             Text(

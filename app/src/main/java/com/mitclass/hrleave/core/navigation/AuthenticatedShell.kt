@@ -44,9 +44,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.mitclass.hrleave.R
 import com.mitclass.hrleave.core.notifications.NotificationPermissionRequester
 import com.mitclass.hrleave.core.theme.AppSpacing
 import com.mitclass.hrleave.core.theme.BrandPrimary
@@ -89,9 +91,9 @@ fun AuthenticatedShell(
                     if (!isTopLevel) {
                         IconButton(onClick = { navController.popBackStack() }) {
                             if (isModalFormRoute(currentRoute)) {
-                                Icon(Icons.Outlined.Close, contentDescription = "Close")
+                                Icon(Icons.Outlined.Close, contentDescription = stringResource(R.string.nav_close_content_desc))
                             } else {
-                                Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "Back")
+                                Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = stringResource(R.string.nav_back_content_desc))
                             }
                         }
                     }
@@ -118,7 +120,7 @@ fun AuthenticatedShell(
                     containerColor = BrandPrimary,
                     contentColor = Color.White,
                 ) {
-                    Icon(Icons.Outlined.Add, contentDescription = "Create")
+                    Icon(Icons.Outlined.Add, contentDescription = stringResource(R.string.nav_create_content_desc))
                 }
             }
         },
@@ -204,8 +206,9 @@ private fun BottomTabButton(
             .padding(horizontal = AppSpacing.md, vertical = AppSpacing.xs),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Icon(imageVector = if (selected) tab.filledIcon else tab.outlinedIcon, contentDescription = tab.label, tint = tint)
-        Text(text = tab.label, style = MaterialTheme.typography.labelSmall, color = tint)
+        val label = stringResource(tab.labelRes)
+        Icon(imageVector = if (selected) tab.filledIcon else tab.outlinedIcon, contentDescription = label, tint = tint)
+        Text(text = label, style = MaterialTheme.typography.labelSmall, color = tint)
     }
 }
 
@@ -226,7 +229,7 @@ private fun NotificationBellChip(unreadCount: Int, onClick: () -> Unit) {
                 }
             },
         ) {
-            Icon(Icons.Outlined.Notifications, contentDescription = "Notifications")
+            Icon(Icons.Outlined.Notifications, contentDescription = stringResource(R.string.nav_notifications_content_desc))
         }
     }
 }
@@ -235,19 +238,19 @@ private fun NotificationBellChip(unreadCount: Int, onClick: () -> Unit) {
 private fun CreateActionSheetContent(onRequestLeave: () -> Unit, onPlanLeave: () -> Unit) {
     Column(modifier = Modifier.padding(bottom = AppSpacing.lg)) {
         Text(
-            text = "Create",
+            text = stringResource(R.string.nav_create_sheet_title),
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(horizontal = AppSpacing.lg, vertical = AppSpacing.sm),
         )
         ListItem(
-            headlineContent = { Text("Request Leave") },
+            headlineContent = { Text(stringResource(R.string.nav_create_sheet_request_leave)) },
             leadingContent = { Icon(Icons.AutoMirrored.Outlined.FactCheck, contentDescription = null) },
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable(onClick = onRequestLeave),
         )
         ListItem(
-            headlineContent = { Text("Plan Leave") },
+            headlineContent = { Text(stringResource(R.string.nav_create_sheet_plan_leave)) },
             leadingContent = { Icon(Icons.AutoMirrored.Outlined.EventNote, contentDescription = null) },
             modifier = Modifier
                 .fillMaxWidth()

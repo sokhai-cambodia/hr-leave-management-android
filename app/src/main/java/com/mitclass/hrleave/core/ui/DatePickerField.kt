@@ -29,8 +29,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.mitclass.hrleave.R
 import com.mitclass.hrleave.core.theme.AppSpacing
 import com.mitclass.hrleave.core.theme.LightBorder
 import com.mitclass.hrleave.core.theme.TextFieldCornerRadius
@@ -73,12 +75,12 @@ fun DatePickerField(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = date?.toString() ?: "Select Date",
+                    text = date?.toString() ?: stringResource(R.string.common_select_date_placeholder),
                     style = MaterialTheme.typography.bodyLarge,
                     color = if (date != null) LocalContentColor.current else MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.weight(1f),
                 )
-                Icon(Icons.Outlined.CalendarMonth, contentDescription = "Pick date")
+                Icon(Icons.Outlined.CalendarMonth, contentDescription = stringResource(R.string.common_pick_date_content_desc))
             }
         }
     }
@@ -95,10 +97,10 @@ fun DatePickerField(
                         onDateSelected(Instant.ofEpochMilli(millis).atZone(ZoneOffset.UTC).toLocalDate())
                     }
                     showDialog = false
-                }) { Text("OK") }
+                }) { Text(stringResource(R.string.common_action_ok)) }
             },
             dismissButton = {
-                TextButton(onClick = { showDialog = false }) { Text("Cancel") }
+                TextButton(onClick = { showDialog = false }) { Text(stringResource(R.string.common_action_cancel)) }
             },
         ) {
             DatePicker(state = state)

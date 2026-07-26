@@ -28,8 +28,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.mitclass.hrleave.R
 import com.mitclass.hrleave.core.theme.AppSpacing
 import com.mitclass.hrleave.core.ui.EmptyStateView
 import com.mitclass.hrleave.core.ui.ErrorStateView
@@ -55,7 +57,7 @@ fun LeaveRequestsListScreen(
             is LeaveRequestsListUiState.Error -> ErrorStateView(message = current.message, onRetry = viewModel::load)
             is LeaveRequestsListUiState.Loaded -> {
                 if (current.requests.isEmpty()) {
-                    EmptyStateView(message = "No leave requests yet")
+                    EmptyStateView(message = stringResource(R.string.leave_requests_empty))
                 } else {
                     LeaveRequestsList(
                         requests = current.requests,
@@ -123,14 +125,14 @@ private fun LeaveRequestRow(request: LeaveRequestDto, onClick: () -> Unit) {
             )
             Spacer(modifier = Modifier.width(AppSpacing.xs))
             Text(
-                text = "${request.startDate} to ${request.endDate}",
+                text = stringResource(R.string.leave_detail_duration_value, request.startDate, request.endDate),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
         Spacer(modifier = Modifier.height(AppSpacing.xs))
         Text(
-            text = "${request.amount} Days",
+            text = stringResource(R.string.leave_common_days_value, request.amount),
             style = MaterialTheme.typography.bodyLarge,
         )
     }

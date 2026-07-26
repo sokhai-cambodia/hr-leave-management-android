@@ -38,9 +38,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.mitclass.hrleave.R
 import com.mitclass.hrleave.core.theme.AppSpacing
 import com.mitclass.hrleave.core.theme.BrandPrimary
 import com.mitclass.hrleave.core.theme.LightBorder
@@ -84,7 +86,7 @@ fun LeavePlanRequestFormScreen(
         var expanded by remember { mutableStateOf(false) }
         val selectedType = state.leaveTypes.firstOrNull { it.id == state.selectedLeaveTypeId }
         Column {
-            Text(text = "Leave type", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold)
+            Text(text = stringResource(R.string.leaveplan_form_type_label), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold)
             Spacer(Modifier.height(AppSpacing.sm))
             ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }) {
                 OutlinedTextField(
@@ -123,7 +125,7 @@ fun LeavePlanRequestFormScreen(
 
         var pendingDate by remember { mutableStateOf<LocalDate?>(null) }
         DatePickerField(
-            label = "Add a date",
+            label = stringResource(R.string.leaveplan_form_add_date_label),
             date = pendingDate,
             onDateSelected = { date ->
                 pendingDate = date
@@ -135,7 +137,7 @@ fun LeavePlanRequestFormScreen(
         }
         Spacer(Modifier.height(AppSpacing.md))
 
-        Text(text = "Selected dates", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold)
+        Text(text = stringResource(R.string.leaveplan_form_selected_dates_label), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold)
         Spacer(Modifier.height(AppSpacing.sm))
         Surface(
             modifier = Modifier
@@ -148,7 +150,7 @@ fun LeavePlanRequestFormScreen(
             Box(modifier = Modifier.padding(AppSpacing.md)) {
                 if (state.dates.isEmpty()) {
                     Text(
-                        text = "No dates added yet",
+                        text = stringResource(R.string.leaveplan_form_no_dates_yet),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -172,7 +174,7 @@ fun LeavePlanRequestFormScreen(
                                 trailingIcon = {
                                     Icon(
                                         Icons.Outlined.Close,
-                                        contentDescription = "Remove $date",
+                                        contentDescription = stringResource(R.string.leaveplan_form_remove_date_content_desc, date.toString()),
                                         modifier = Modifier.size(18.dp),
                                     )
                                 },
@@ -187,8 +189,8 @@ fun LeavePlanRequestFormScreen(
         AppTextField(
             value = state.description,
             onValueChange = viewModel::onDescriptionChanged,
-            label = "Description",
-            placeholder = "Enter reason or extra notes (optional)...",
+            label = stringResource(R.string.leave_common_description_label),
+            placeholder = stringResource(R.string.leave_form_description_placeholder),
             singleLine = false,
             minLines = 3,
         )
@@ -203,20 +205,20 @@ fun LeavePlanRequestFormScreen(
             // Save as Draft, same as the single-Leave-Request form — not just the
             // recommendation-prefilled path (Task 6.3).
             AppButton(
-                text = "Submit",
+                text = stringResource(R.string.common_action_submit),
                 onClick = viewModel::saveAndSubmit,
                 enabled = state.canSave,
                 loading = state.isSaving,
             )
             Spacer(Modifier.height(AppSpacing.sm))
             AppOutlinedButton(
-                text = "Save as Draft",
+                text = stringResource(R.string.common_action_save_as_draft),
                 onClick = viewModel::save,
                 enabled = state.canSave,
             )
         } else {
             AppButton(
-                text = "Update",
+                text = stringResource(R.string.common_action_update),
                 onClick = viewModel::save,
                 enabled = state.canSave,
                 loading = state.isSaving,

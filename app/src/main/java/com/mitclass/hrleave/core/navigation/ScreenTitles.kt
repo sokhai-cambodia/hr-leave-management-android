@@ -1,40 +1,48 @@
 package com.mitclass.hrleave.core.navigation
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavBackStackEntry
+import com.mitclass.hrleave.R
 import com.mitclass.hrleave.feature.leaveplanrequests.LeavePlanRequestRoutes
 import com.mitclass.hrleave.feature.leaverequests.LeaveRequestRoutes
 import com.mitclass.hrleave.feature.profile.ProfileRoutes
 
 /** Title shown in the shared top app bar for the current back-stack entry (Task 13.2). */
+@Composable
 fun screenTitle(entry: NavBackStackEntry?): String {
-    val route = entry?.destination?.route ?: return "HR Leave"
+    val route = entry?.destination?.route ?: return stringResource(R.string.app_name)
     return when (route) {
-        Destination.Dashboard.route -> "Home"
-        Destination.Leaves.route -> "Leaves"
-        Destination.Schedule.route -> "Calendar"
-        Destination.Profile.route -> "Profile"
-        Destination.BusinessCard.route -> "My Business Card"
-        Destination.Approvals.route -> "Approvals"
-        Destination.Notifications.route -> "Notifications"
-        Destination.Recommendations.route -> "Recommendations"
-        Destination.AdminPolicies.route -> "Policies"
-        Destination.AdminPublicHolidays.route -> "Public Holidays"
-        Destination.AdminLeaveTypes.route -> "Leave Types"
-        Destination.AdminTeams.route -> "Teams"
-        Destination.AdminLeaveBalances.route -> "Leave Balances"
-        Destination.AdminUsers.route -> "Admin Users"
-        ProfileRoutes.CHANGE_PASSWORD_ROUTE -> "Change Password"
-        LeaveRequestRoutes.DETAIL_ROUTE -> "Request Details"
+        Destination.Dashboard.route -> stringResource(R.string.nav_tab_home)
+        Destination.Leaves.route -> stringResource(R.string.nav_tab_leaves)
+        Destination.Schedule.route -> stringResource(R.string.nav_tab_calendar)
+        Destination.Profile.route -> stringResource(R.string.nav_tab_profile)
+        Destination.BusinessCard.route -> stringResource(R.string.business_card_title)
+        Destination.Approvals.route -> stringResource(R.string.nav_title_approvals)
+        Destination.Notifications.route -> stringResource(R.string.nav_title_notifications)
+        Destination.Recommendations.route -> stringResource(R.string.nav_title_recommendations)
+        Destination.AdminPolicies.route -> stringResource(R.string.admin_entry_policies)
+        Destination.AdminPublicHolidays.route -> stringResource(R.string.admin_entry_public_holidays)
+        Destination.AdminLeaveTypes.route -> stringResource(R.string.admin_entry_leave_types)
+        Destination.AdminTeams.route -> stringResource(R.string.admin_entry_teams)
+        Destination.AdminLeaveBalances.route -> stringResource(R.string.admin_entry_leave_balances)
+        Destination.AdminUsers.route -> stringResource(R.string.admin_entry_admin_users)
+        ProfileRoutes.CHANGE_PASSWORD_ROUTE -> stringResource(R.string.change_password_nav_label)
+        LeaveRequestRoutes.DETAIL_ROUTE -> stringResource(R.string.nav_title_request_details)
         LeaveRequestRoutes.FORM_ROUTE ->
-            if (entry.arguments?.getString(LeaveRequestRoutes.FORM_ARG).isNullOrBlank()) "New Leave Request" else "Edit Leave Request"
-        LeavePlanRequestRoutes.DETAIL_ROUTE -> "Plan Details"
+            if (entry.arguments?.getString(LeaveRequestRoutes.FORM_ARG).isNullOrBlank()) {
+                stringResource(R.string.nav_title_new_leave_request)
+            } else {
+                stringResource(R.string.nav_title_edit_leave_request)
+            }
+        LeavePlanRequestRoutes.DETAIL_ROUTE -> stringResource(R.string.nav_title_plan_details)
         LeavePlanRequestRoutes.FORM_ROUTE ->
             if (entry.arguments?.getString(LeavePlanRequestRoutes.FORM_ARG).isNullOrBlank()) {
-                "New Leave Plan Request"
+                stringResource(R.string.nav_title_new_leave_plan_request)
             } else {
-                "Edit Leave Plan Request"
+                stringResource(R.string.nav_title_edit_leave_plan_request)
             }
-        else -> "HR Leave"
+        else -> stringResource(R.string.app_name)
     }
 }
 

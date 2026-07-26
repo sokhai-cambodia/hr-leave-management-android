@@ -34,9 +34,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.mitclass.hrleave.R
 import com.mitclass.hrleave.core.theme.AppSpacing
 import com.mitclass.hrleave.core.theme.BrandPrimary
 import com.mitclass.hrleave.core.ui.AppButton
@@ -86,16 +88,16 @@ fun LeaveRequestDetailScreen(
     if (showDeleteConfirm) {
         AlertDialog(
             onDismissRequest = { showDeleteConfirm = false },
-            title = { Text("Delete leave request?") },
-            text = { Text("This can't be undone.") },
+            title = { Text(stringResource(R.string.leave_detail_dialog_delete_request_title)) },
+            text = { Text(stringResource(R.string.common_dialog_irreversible_warning)) },
             confirmButton = {
                 TextButton(onClick = {
                     showDeleteConfirm = false
                     viewModel.delete()
-                }) { Text("Delete") }
+                }) { Text(stringResource(R.string.common_action_delete)) }
             },
             dismissButton = {
-                TextButton(onClick = { showDeleteConfirm = false }) { Text("Cancel") }
+                TextButton(onClick = { showDeleteConfirm = false }) { Text(stringResource(R.string.common_action_cancel)) }
             },
         )
     }
@@ -131,31 +133,31 @@ private fun LeaveRequestDetailContent(
 
             IconDetailRow(
                 icon = Icons.Outlined.CalendarMonth,
-                label = "Duration",
-                value = "${request.startDate} to ${request.endDate}",
+                label = stringResource(R.string.leave_detail_duration_label),
+                value = stringResource(R.string.leave_detail_duration_value, request.startDate, request.endDate),
             )
             Spacer(modifier = Modifier.height(AppSpacing.md))
             IconDetailRow(
                 icon = Icons.Outlined.Schedule,
-                label = "Requested Days",
-                value = "${request.amount} Days",
+                label = stringResource(R.string.leave_common_requested_days_label),
+                value = stringResource(R.string.leave_common_days_value, request.amount),
             )
 
             request.description?.takeIf { it.isNotBlank() }?.let { description ->
                 Spacer(modifier = Modifier.height(AppSpacing.xl))
-                Text(text = "Description", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                Text(text = stringResource(R.string.leave_common_description_label), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(AppSpacing.sm))
                 Text(text = description, style = MaterialTheme.typography.bodyLarge)
             }
 
             Spacer(modifier = Modifier.height(AppSpacing.xl))
-            Text(text = "Request Timeline & Workflow", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+            Text(text = stringResource(R.string.leave_common_timeline_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(AppSpacing.sm))
-            TimelineRow(label = "Created by", value = request.owner.fullName ?: request.owner.email)
-            TimelineRow(label = "Created at", value = request.requestedAt)
-            request.submittedAt?.let { TimelineRow(label = "Submitted at", value = it) }
-            request.approver?.let { TimelineRow(label = "Line approver", value = it.fullName ?: it.email) }
-            request.approvalAt?.let { TimelineRow(label = "Approved at", value = it) }
+            TimelineRow(label = stringResource(R.string.leave_common_timeline_created_by), value = request.owner.fullName ?: request.owner.email)
+            TimelineRow(label = stringResource(R.string.leave_common_timeline_created_at), value = request.requestedAt)
+            request.submittedAt?.let { TimelineRow(label = stringResource(R.string.leave_common_timeline_submitted_at), value = it) }
+            request.approver?.let { TimelineRow(label = stringResource(R.string.leave_common_timeline_line_approver), value = it.fullName ?: it.email) }
+            request.approvalAt?.let { TimelineRow(label = stringResource(R.string.leave_common_timeline_approved_at), value = it) }
 
             if (deleteState is DeleteState.Error) {
                 Text(
@@ -176,16 +178,16 @@ private fun LeaveRequestDetailContent(
         if (request.status == "draft") {
             StickyBottomActionPanel {
                 AppButton(
-                    text = "Submit",
+                    text = stringResource(R.string.common_action_submit),
                     onClick = onSubmitClick,
                     enabled = submitState !is SubmitState.Submitting,
                     loading = submitState is SubmitState.Submitting,
                 )
                 Spacer(modifier = Modifier.height(AppSpacing.sm))
                 Row(horizontalArrangement = Arrangement.spacedBy(AppSpacing.md)) {
-                    AppOutlinedButton(text = "Edit", onClick = onEdit, modifier = Modifier.weight(1f))
+                    AppOutlinedButton(text = stringResource(R.string.common_action_edit), onClick = onEdit, modifier = Modifier.weight(1f))
                     AppOutlinedButton(
-                        text = "Delete",
+                        text = stringResource(R.string.common_action_delete),
                         onClick = onDeleteClick,
                         enabled = deleteState !is DeleteState.Deleting,
                         modifier = Modifier.weight(1f),

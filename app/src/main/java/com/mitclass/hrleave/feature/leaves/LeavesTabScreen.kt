@@ -9,6 +9,8 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.mitclass.hrleave.R
 import com.mitclass.hrleave.core.navigation.Destination
 import com.mitclass.hrleave.core.theme.AppSpacing
 import com.mitclass.hrleave.core.ui.PillTabRow
@@ -31,7 +33,7 @@ fun LeavesTabScreen(
 
     Column(modifier = Modifier.fillMaxWidth()) {
         PillTabRow(
-            titles = listOf("Requests", "Plans"),
+            titles = listOf(stringResource(R.string.leaves_tab_requests), stringResource(R.string.leaves_tab_plans)),
             selectedIndex = selectedTab,
             onSelect = { selectedTab = it },
             modifier = Modifier.padding(AppSpacing.lg),

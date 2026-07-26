@@ -29,8 +29,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.mitclass.hrleave.R
 import com.mitclass.hrleave.core.theme.AppSpacing
 import com.mitclass.hrleave.core.theme.LightBorder
 import com.mitclass.hrleave.core.theme.LightFieldFill
@@ -71,7 +73,7 @@ fun SearchablePickerField(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = selectedLabel.ifBlank { "Select $label" },
+                    text = selectedLabel.ifBlank { stringResource(R.string.admin_select_prefix, label) },
                     style = MaterialTheme.typography.bodyLarge,
                     color = if (selectedLabel.isNotBlank()) {
                         MaterialTheme.colorScheme.onSurface
@@ -80,7 +82,7 @@ fun SearchablePickerField(
                     },
                     modifier = Modifier.weight(1f),
                 )
-                Icon(Icons.Outlined.ArrowDropDown, contentDescription = "Choose $label")
+                Icon(Icons.Outlined.ArrowDropDown, contentDescription = stringResource(R.string.admin_choose_content_desc, label))
             }
         }
     }
@@ -90,13 +92,13 @@ fun SearchablePickerField(
         val filtered = if (query.isBlank()) options else options.filter { it.label.contains(query, ignoreCase = true) }
         AlertDialog(
             onDismissRequest = { showDialog = false },
-            title = { Text("Select $label") },
+            title = { Text(stringResource(R.string.admin_select_prefix, label)) },
             text = {
                 Column {
                     AppTextField(
                         value = query,
                         onValueChange = { query = it },
-                        label = "Search",
+                        label = stringResource(R.string.common_label_search),
                     )
                     Spacer(Modifier.height(AppSpacing.sm))
                     if (loading) {
@@ -123,7 +125,7 @@ fun SearchablePickerField(
                 }
             },
             confirmButton = {
-                TextButton(onClick = { showDialog = false }) { Text("Close") }
+                TextButton(onClick = { showDialog = false }) { Text(stringResource(R.string.common_action_close)) }
             },
         )
     }

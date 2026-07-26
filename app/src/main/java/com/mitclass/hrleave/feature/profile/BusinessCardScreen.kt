@@ -47,10 +47,12 @@ import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import kotlinx.coroutines.launch
+import com.mitclass.hrleave.R
 import com.mitclass.hrleave.core.theme.AppSpacing
 import com.mitclass.hrleave.core.theme.BrandPrimary
 import com.mitclass.hrleave.core.theme.BrandPrimaryDark
@@ -71,7 +73,7 @@ fun BusinessCardScreen(user: UserDto) {
     val coroutineScope = rememberCoroutineScope()
     val cardGraphicsLayer = rememberGraphicsLayer()
     val displayName = user.fullName?.takeIf { it.isNotBlank() } ?: user.email
-    val teamName = user.team?.name ?: "No team assigned"
+    val teamName = user.team?.name ?: stringResource(R.string.common_no_team_assigned)
     val phone = user.phoneNumber?.takeIf { it.isNotBlank() }
     val qrContent = remember(user) { buildVCard(displayName, user.email, teamName, phone) }
     val qrBitmap = remember(qrContent) { encodeQrCodeBitmap(qrContent, QR_SIZE_PX) }
@@ -138,12 +140,12 @@ fun BusinessCardScreen(user: UserDto) {
                 ) {
                     Image(
                         bitmap = qrBitmap.asImageBitmap(),
-                        contentDescription = "Business card QR code",
+                        contentDescription = stringResource(R.string.business_card_qr_content_desc),
                         modifier = Modifier.size(200.dp),
                     )
                     Spacer(Modifier.height(AppSpacing.md))
                     Text(
-                        text = "Scan to save contact",
+                        text = stringResource(R.string.business_card_scan_hint),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -153,7 +155,7 @@ fun BusinessCardScreen(user: UserDto) {
         Spacer(Modifier.height(AppSpacing.lg))
         Row(horizontalArrangement = Arrangement.spacedBy(AppSpacing.md)) {
             AppOutlinedButton(
-                text = "Save",
+                text = stringResource(R.string.common_action_save),
                 onClick = {
                     coroutineScope.launch {
                         val cardBitmap = cardGraphicsLayer.toImageBitmap().asAndroidBitmap()
@@ -164,7 +166,7 @@ fun BusinessCardScreen(user: UserDto) {
                 modifier = Modifier.weight(1f),
             )
             AppButton(
-                text = "Share",
+                text = stringResource(R.string.business_card_share),
                 onClick = {
                     coroutineScope.launch {
                         val cardBitmap = cardGraphicsLayer.toImageBitmap().asAndroidBitmap()
@@ -237,7 +239,11 @@ private fun saveCardToGallery(context: Context, bitmap: Bitmap, displayName: Str
 
     Toast.makeText(
         context,
-        if (saved) "Saved to Pictures" else "Couldn't save the business card",
+        if (saved) {
+            context.getString(R.string.business_card_saved_message)
+        } else {
+            context.getString(R.string.business_card_save_failed_message)
+        },
         Toast.LENGTH_SHORT,
     ).show()
 }
@@ -263,5 +269,5 @@ private fun shareBusinessCard(context: Context, bitmap: Bitmap, name: String, em
         putExtra(Intent.EXTRA_TEXT, caption)
         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
-    context.startActivity(Intent.createChooser(intent, "Share business card"))
+    context.startActivity(Intent.createChooser(intent, context.getString(R.string.business_card_share_chooser_title)))
 }

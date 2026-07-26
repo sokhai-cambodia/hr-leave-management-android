@@ -20,9 +20,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.mitclass.hrleave.R
 import com.mitclass.hrleave.core.theme.AppSpacing
 import com.mitclass.hrleave.core.ui.AppButton
 import com.mitclass.hrleave.core.ui.AppTextField
@@ -44,24 +46,24 @@ fun ChangePasswordScreen(
             .fillMaxSize()
             .padding(AppSpacing.lg),
     ) {
-        Text(text = "Change password", style = MaterialTheme.typography.headlineSmall)
+        Text(text = stringResource(R.string.change_password_headline), style = MaterialTheme.typography.headlineSmall)
         Spacer(Modifier.height(AppSpacing.lg))
         PasswordField(
-            label = "Current password",
+            label = stringResource(R.string.change_password_current_label),
             value = state.currentPassword,
             onValueChange = viewModel::onCurrentPasswordChange,
             enabled = !state.isSaving,
         )
         Spacer(Modifier.height(AppSpacing.md))
         PasswordField(
-            label = "New password",
+            label = stringResource(R.string.password_new_label),
             value = state.newPassword,
             onValueChange = viewModel::onNewPasswordChange,
             enabled = !state.isSaving,
         )
         Spacer(Modifier.height(AppSpacing.md))
         PasswordField(
-            label = "Confirm new password",
+            label = stringResource(R.string.change_password_confirm_label),
             value = state.confirmPassword,
             onValueChange = viewModel::onConfirmPasswordChange,
             enabled = !state.isSaving,
@@ -74,7 +76,7 @@ fun ChangePasswordScreen(
         }
         Spacer(Modifier.height(AppSpacing.lg))
         AppButton(
-            text = "Update password",
+            text = stringResource(R.string.change_password_submit_button),
             onClick = viewModel::submit,
             enabled = state.canSubmit,
             loading = state.isSaving,
@@ -96,7 +98,11 @@ private fun PasswordField(label: String, value: String, onValueChange: (String) 
             IconButton(onClick = { visible = !visible }) {
                 Icon(
                     imageVector = if (visible) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
-                    contentDescription = if (visible) "Hide password" else "Show password",
+                    contentDescription = if (visible) {
+                        stringResource(R.string.common_content_desc_hide_password)
+                    } else {
+                        stringResource(R.string.common_content_desc_show_password)
+                    },
                 )
             }
         },
