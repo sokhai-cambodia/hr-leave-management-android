@@ -116,5 +116,19 @@ Prerequisites: Android Studio (latest stable), a running instance of the backend
 
 ## Screenshots
 
-_To be added: login, dashboard, leave request list/detail, approvals queue, schedule, admin CRUD
-list, dark mode._
+_These are the Flutter sibling app's screens (`ui/` folder) — the exact design reference this
+Android client's UI was built and polished to match (see Phase 13/14 in `tasks/todo.md` and
+`CONTRIBUTING.md`). They are not screenshots of this Android app itself; this app's own
+screenshots are still to be added._
+
+| Login | Home / Dashboard | Leave Requests |
+|:---:|:---:|:---:|
+| ![Login](ui/login.jpg) | ![Home](ui/home.jpg) | ![Leave Requests](ui/leave-list.jpg) |
+
+| Request Detail | Leave Request Form | Schedule |
+|:---:|:---:|:---:|
+| ![Request Detail](ui/detail_page.jpg) | ![Leave Request Form](ui/leave-form.jpg) | ![Schedule](ui/schedule.jpg) |
+
+| Notifications | Profile |
+|:---:|:---:|
+| ![Notifications](ui/notification.jpg) | ![Profile](ui/profile.jpg) |
