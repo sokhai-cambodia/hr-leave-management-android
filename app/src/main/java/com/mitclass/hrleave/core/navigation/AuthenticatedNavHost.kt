@@ -55,7 +55,15 @@ fun AuthenticatedNavHost(
     onLogout: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
-    NavHost(navController = navController, startDestination = Destination.Dashboard.route, modifier = modifier) {
+    NavHost(
+        navController = navController,
+        startDestination = Destination.Dashboard.route,
+        modifier = modifier,
+        enterTransition = NavEnterTransition,
+        exitTransition = NavExitTransition,
+        popEnterTransition = NavPopEnterTransition,
+        popExitTransition = NavPopExitTransition,
+    ) {
         composable(Destination.Dashboard.route) {
             DashboardScreen(
                 user = user,

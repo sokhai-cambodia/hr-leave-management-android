@@ -12,7 +12,14 @@ import com.mitclass.hrleave.feature.auth.ResetPasswordScreen
 @Composable
 fun AuthNavHost() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Destination.Login.route) {
+    NavHost(
+        navController = navController,
+        startDestination = Destination.Login.route,
+        enterTransition = NavEnterTransition,
+        exitTransition = NavExitTransition,
+        popEnterTransition = NavPopEnterTransition,
+        popExitTransition = NavPopExitTransition,
+    ) {
         composable(Destination.Login.route) {
             LoginScreen(
                 onForgotPassword = { navController.navigateSingleTop(Destination.ForgotPassword.route) },
