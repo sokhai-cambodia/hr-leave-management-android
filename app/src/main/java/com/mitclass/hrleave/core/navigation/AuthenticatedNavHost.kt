@@ -61,11 +61,11 @@ fun AuthenticatedNavHost(
                 user = user,
                 isApprover = isApprover,
                 quickActions = dashboardQuickActions,
-                onQuickActionClick = { action -> navController.navigate(action.route) },
-                onPendingApprovalsClick = { navController.navigate(Destination.Approvals.route) },
-                onRequestLeaveClick = { navController.navigate(LeaveRequestRoutes.FORM_CREATE_ROUTE) },
-                onPlanLeaveClick = { navController.navigate(LeavePlanRequestRoutes.FORM_CREATE_ROUTE) },
-                onBusinessCardClick = { navController.navigate(Destination.BusinessCard.route) },
+                onQuickActionClick = { action -> navController.navigateSingleTop(action.route) },
+                onPendingApprovalsClick = { navController.navigateSingleTop(Destination.Approvals.route) },
+                onRequestLeaveClick = { navController.navigateSingleTop(LeaveRequestRoutes.FORM_CREATE_ROUTE) },
+                onPlanLeaveClick = { navController.navigateSingleTop(LeavePlanRequestRoutes.FORM_CREATE_ROUTE) },
+                onBusinessCardClick = { navController.navigateSingleTop(Destination.BusinessCard.route) },
             )
         }
         composable(Destination.Schedule.route) { ScheduleScreen() }
@@ -80,8 +80,8 @@ fun AuthenticatedNavHost(
         ) { entry ->
             LeavesTabScreen(
                 initialTab = entry.arguments?.getString(Destination.Leaves.TAB_ARG) ?: Destination.Leaves.REQUESTS_TAB,
-                onRequestItemClick = { id -> navController.navigate(LeaveRequestRoutes.detail(id)) },
-                onPlanItemClick = { id -> navController.navigate(LeavePlanRequestRoutes.detail(id)) },
+                onRequestItemClick = { id -> navController.navigateSingleTop(LeaveRequestRoutes.detail(id)) },
+                onPlanItemClick = { id -> navController.navigateSingleTop(LeavePlanRequestRoutes.detail(id)) },
             )
         }
         composable(
@@ -89,7 +89,7 @@ fun AuthenticatedNavHost(
             arguments = listOf(navArgument(LeavePlanRequestRoutes.DETAIL_ARG) { type = NavType.StringType }),
         ) {
             LeavePlanRequestDetailScreen(
-                onEdit = { id -> navController.navigate(LeavePlanRequestRoutes.formEdit(id)) },
+                onEdit = { id -> navController.navigateSingleTop(LeavePlanRequestRoutes.formEdit(id)) },
                 onDeleted = { navController.popBackStack() },
             )
         }
@@ -116,7 +116,7 @@ fun AuthenticatedNavHost(
             LeavePlanRequestFormScreen(
                 onSaved = { navController.popBackStack() },
                 onSubmittedSuccess = { id ->
-                    navController.navigate(LeavePlanRequestRoutes.detail(id)) {
+                    navController.navigateSingleTop(LeavePlanRequestRoutes.detail(id)) {
                         popUpTo(LeavePlanRequestRoutes.FORM_ROUTE) { inclusive = true }
                     }
                 },
@@ -127,7 +127,7 @@ fun AuthenticatedNavHost(
             arguments = listOf(navArgument(LeaveRequestRoutes.DETAIL_ARG) { type = NavType.StringType }),
         ) {
             LeaveRequestDetailScreen(
-                onEdit = { id -> navController.navigate(LeaveRequestRoutes.formEdit(id)) },
+                onEdit = { id -> navController.navigateSingleTop(LeaveRequestRoutes.formEdit(id)) },
                 onDeleted = { navController.popBackStack() },
             )
         }
@@ -144,7 +144,7 @@ fun AuthenticatedNavHost(
             LeaveRequestFormScreen(
                 onSaved = { navController.popBackStack() },
                 onSubmittedSuccess = { id ->
-                    navController.navigate(LeaveRequestRoutes.detail(id)) {
+                    navController.navigateSingleTop(LeaveRequestRoutes.detail(id)) {
                         popUpTo(LeaveRequestRoutes.FORM_ROUTE) { inclusive = true }
                     }
                 },
@@ -153,7 +153,7 @@ fun AuthenticatedNavHost(
         composable(Destination.Recommendations.route) {
             RecommendationsScreen(
                 onUseSelectedDates = { leaveTypeId, dates ->
-                    navController.navigate(LeavePlanRequestRoutes.formPrefill(leaveTypeId, dates))
+                    navController.navigateSingleTop(LeavePlanRequestRoutes.formPrefill(leaveTypeId, dates))
                 },
             )
         }
@@ -166,7 +166,7 @@ fun AuthenticatedNavHost(
                         "leave_plan_request" -> Destination.Leaves.route(Destination.Leaves.PLANS_TAB)
                         else -> null
                     }
-                    target?.let { navController.navigate(it) }
+                    target?.let { navController.navigateSingleTop(it) }
                 },
             )
         }
@@ -174,9 +174,9 @@ fun AuthenticatedNavHost(
             ProfileScreen(
                 user = user,
                 isApprover = isApprover,
-                onChangePasswordClick = { navController.navigate(ProfileRoutes.CHANGE_PASSWORD_ROUTE) },
-                onAdminEntryClick = { destination -> navController.navigate(destination.route) },
-                onBusinessCardClick = { navController.navigate(Destination.BusinessCard.route) },
+                onChangePasswordClick = { navController.navigateSingleTop(ProfileRoutes.CHANGE_PASSWORD_ROUTE) },
+                onAdminEntryClick = { destination -> navController.navigateSingleTop(destination.route) },
+                onBusinessCardClick = { navController.navigateSingleTop(Destination.BusinessCard.route) },
                 onLogout = onLogout,
             )
         }

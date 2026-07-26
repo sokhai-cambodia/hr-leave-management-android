@@ -100,7 +100,7 @@ fun AuthenticatedShell(
                     if (isTopLevel) {
                         NotificationBellChip(
                             unreadCount = unreadNotificationCount,
-                            onClick = { navController.navigate(Destination.Notifications.route) },
+                            onClick = { navController.navigateSingleTop(Destination.Notifications.route) },
                         )
                     }
                 },
@@ -169,11 +169,11 @@ fun AuthenticatedShell(
             CreateActionSheetContent(
                 onRequestLeave = {
                     showCreateSheet = false
-                    navController.navigate(LeaveRequestRoutes.FORM_CREATE_ROUTE)
+                    navController.navigateSingleTop(LeaveRequestRoutes.FORM_CREATE_ROUTE)
                 },
                 onPlanLeave = {
                     showCreateSheet = false
-                    navController.navigate(LeavePlanRequestRoutes.FORM_CREATE_ROUTE)
+                    navController.navigateSingleTop(LeavePlanRequestRoutes.FORM_CREATE_ROUTE)
                 },
             )
         }

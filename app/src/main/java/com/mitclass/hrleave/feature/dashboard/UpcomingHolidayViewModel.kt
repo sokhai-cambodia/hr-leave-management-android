@@ -32,7 +32,9 @@ class UpcomingHolidayViewModel @Inject constructor(
 
     fun load() {
         viewModelScope.launch {
-            _uiState.value = UpcomingHolidayUiState.Loading
+            if (_uiState.value !is UpcomingHolidayUiState.Loaded) {
+                _uiState.value = UpcomingHolidayUiState.Loading
+            }
             _uiState.value = when (val result = publicHolidaysRepository.listAll(0, 100)) {
                 is AppResult.Success -> {
                     val now = LocalDate.now()

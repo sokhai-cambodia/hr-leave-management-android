@@ -31,7 +31,9 @@ class LeaveBalancesViewModel @Inject constructor(
 
     fun load() {
         viewModelScope.launch {
-            _uiState.value = LeaveBalancesUiState.Loading
+            if (_uiState.value !is LeaveBalancesUiState.Loaded) {
+                _uiState.value = LeaveBalancesUiState.Loading
+            }
             _uiState.value = when (val result = leaveBalancesRepository.getMyBalances()) {
                 is AppResult.Success -> LeaveBalancesUiState.Loaded(result.data)
                 is AppResult.Failure -> LeaveBalancesUiState.Error(result.message)
