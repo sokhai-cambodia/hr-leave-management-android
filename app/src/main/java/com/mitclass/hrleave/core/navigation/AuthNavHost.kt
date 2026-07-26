@@ -15,13 +15,13 @@ fun AuthNavHost() {
     NavHost(navController = navController, startDestination = Destination.Login.route) {
         composable(Destination.Login.route) {
             LoginScreen(
-                onForgotPassword = { navController.navigate(Destination.ForgotPassword.route) },
+                onForgotPassword = { navController.navigateSingleTop(Destination.ForgotPassword.route) },
             )
         }
         composable(Destination.ForgotPassword.route) {
             ForgotPasswordScreen(
                 onBack = { navController.popBackStack() },
-                onHaveResetToken = { navController.navigate(Destination.ResetPassword.route) },
+                onHaveResetToken = { navController.navigateSingleTop(Destination.ResetPassword.route) },
             )
         }
         composable(Destination.ResetPassword.route) {
