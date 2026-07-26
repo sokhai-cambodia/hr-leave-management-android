@@ -32,6 +32,16 @@ This repo is one of three:
   ```
   If you omit this, the app falls back to `http://10.0.2.2:8000/api/v1` (only correct if you're
   running the backend locally yourself, which is not the expected setup for this team).
+- **Use the deployed HTTPS backend, not a local dev server, on a physical device.** This app has no
+  network security config, and Android blocks plain-HTTP network calls by default on targetSdk 28+
+  (this app targets 35). The shared deployed instance runs behind HTTPS (Traefik), so pointing at
+  it just works — but if you ever point `API_BASE_URL` at a raw local `http://` dev server instead,
+  every network call on a real phone will fail with a `CLEARTEXT communication ... not permitted`
+  crash. That error message is the tell if this happens to you.
+- **`local.properties` is read once at build time, not live-reloaded.** It's baked into
+  `BuildConfig.API_BASE_URL` when Gradle configures the project. If you edit it after an initial
+  sync, re-sync Gradle (or just re-run `./gradlew assembleDebug`) — otherwise the app keeps using
+  the old value with no visible warning.
 - First build: `./gradlew assembleDebug`.
 
 ## Why the Stack Looks Like This
@@ -77,8 +87,12 @@ Living reference docs — read these instead of asking, they're kept current:
 
 ## Workflow
 
-- One feature branch per phase, branched off `main`.
-- One commit per task within that phase; keep commits scoped (don't bundle unrelated tasks).
+- **Planned phase work** (from `tasks/plan.md`): one feature branch per phase, branched off
+  `main`, one commit per task within it — keep commits scoped, don't bundle unrelated tasks.
+- **Anything else** (a bug fix, a small feature, something you noticed while testing that isn't on
+  the phase plan): branch directly off `main` with a short descriptive name (e.g.
+  `fix-dashboard-refresh-flicker`, `add-pull-to-refresh`) — don't wait for a "phase" to exist for
+  it. One commit per distinct fix/change within that branch, same as phase work.
 - Before calling any task done:
   ```
   ./gradlew assembleDebug
@@ -91,7 +105,12 @@ Living reference docs — read these instead of asking, they're kept current:
 - This is a course submission: commit messages should read as normal engineering commits — no
   tool/assistant attribution, no mention of AI assistance, in commits, PR descriptions, or code
   comments.
-- Merge the phase branch back to `main` once its tasks are done and verification is clean.
+- **No CI and no required review gate on this project.** Once the three commands above are clean
+  and you've verified the actual behavior on-device, merge your branch back into `main` yourself
+  and push — you don't need to wait for someone else to approve it. Opening a PR first is fine if
+  you want a second pair of eyes on something risky, but it's your call, not a required step.
+- Delete your branch (local and on origin) once it's merged — `git branch -d <name>` and
+  `git push origin --delete <name>`. Keeps the branch list from accumulating merged history.
 
 ## Gotchas
 
@@ -105,6 +124,30 @@ Living reference docs — read these instead of asking, they're kept current:
 - **DTO field names mirror the backend exactly** (see
   `../hr-leave-management/PROJECT_FEATURES.md`) — don't rename fields for "nicer" Kotlin style,
   it breaks (de)serialization.
+
+## Troubleshooting
+
+- **Gradle sync fails / wrong JDK.** Android Studio bundles its own JDK (JetBrains Runtime) and
+  uses it by default for Gradle — you shouldn't need to install JDK 17 separately. If Android
+  Studio is using a different JDK, fix it under Settings → Build, Execution, Deployment → Build
+  Tools → Gradle → Gradle JDK.
+- **Android Studio prompts to install an SDK platform/build tools.** Expected on a fresh machine —
+  accept the prompt (or open SDK Manager and install API 35). This isn't project-specific
+  configuration, just a one-time IDE setup step.
+- **Physical device shows as "unauthorized" or doesn't appear in the device dropdown.** Enable
+  Developer Options (Settings → About Phone → tap Build Number 7 times) and USB Debugging inside
+  it, then accept the "Allow USB debugging?" prompt that appears on the phone itself when you
+  connect it — easy to miss since it only shows up once per machine.
+- **App installs but nothing loads / spinner never resolves.** In order: confirm `local.properties`
+  has `API_BASE_URL` set and you rebuilt after editing it (see Environment Setup above); confirm
+  your device has internet access; confirm the backend URL actually resolves (open it in a mobile
+  browser — you should get a response, not a timeout).
+- **`CLEARTEXT communication ... not permitted` crash.** You're pointed at a plain-`http://`
+  backend on a physical device — see the HTTPS note under Environment Setup. Point
+  `API_BASE_URL` at the shared HTTPS instance instead.
+- **Login fails with correct-looking credentials.** Accounts aren't self-service (see Gotchas
+  below) — confirm you actually have a provisioned account for the role you're testing, rather than
+  assuming one exists.
 
 ## Who to Ask
 
