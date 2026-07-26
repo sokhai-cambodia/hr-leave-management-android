@@ -31,20 +31,23 @@ class UpcomingHolidayViewModel @Inject constructor(
     }
 
     fun load() {
-        viewModelScope.launch {
-            if (_uiState.value !is UpcomingHolidayUiState.Loaded) {
-                _uiState.value = UpcomingHolidayUiState.Loading
+        viewModelScope.launch { refresh() }
+    }
+
+    /** Suspends until the fetch completes, so pull-to-refresh can await it before hiding its indicator. */
+    suspend fun refresh() {
+        if (_uiState.value !is UpcomingHolidayUiState.Loaded) {
+            _uiState.value = UpcomingHolidayUiState.Loading
+        }
+        _uiState.value = when (val result = publicHolidaysRepository.listAll(0, 100)) {
+            is AppResult.Success -> {
+                val now = LocalDate.now()
+                val next = result.data.first
+                    .filter { LocalDate.parse(it.date) >= now }
+                    .minByOrNull { it.date }
+                UpcomingHolidayUiState.Loaded(next)
             }
-            _uiState.value = when (val result = publicHolidaysRepository.listAll(0, 100)) {
-                is AppResult.Success -> {
-                    val now = LocalDate.now()
-                    val next = result.data.first
-                        .filter { LocalDate.parse(it.date) >= now }
-                        .minByOrNull { it.date }
-                    UpcomingHolidayUiState.Loaded(next)
-                }
-                is AppResult.Failure -> UpcomingHolidayUiState.Error
-            }
+            is AppResult.Failure -> UpcomingHolidayUiState.Error
         }
     }
 }
