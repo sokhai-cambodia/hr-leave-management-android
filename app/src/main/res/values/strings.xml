@@ -182,6 +182,26 @@
     <string name="common_status_approved">Approved</string>
     <string name="common_status_rejected">Rejected</string>
 
+    <!-- Reports -->
+    <string name="reports_nav_label">Reports</string>
+    <string name="reports_personal_section_title">My Leave Usage</string>
+    <string name="reports_personal_empty">No leave balances yet</string>
+    <string name="reports_status_breakdown_title">By Status</string>
+    <string name="reports_team_section_title">Team Overview</string>
+    <string name="reports_team_stat_total">Total Requests</string>
+    <string name="reports_team_stat_pending">Pending</string>
+    <string name="reports_team_stat_approved">Approved</string>
+    <string name="reports_team_stat_rejected">Rejected</string>
+    <string name="reports_team_usage_title">Approved Days by Leave Type</string>
+    <string name="reports_team_usage_empty">No approved requests yet</string>
+    <string name="reports_team_trend_title">Requests per Month</string>
+    <string name="reports_team_turnaround_label">Avg. approval turnaround</string>
+    <string name="reports_team_turnaround_value">%1$.1f hours</string>
+    <string name="reports_team_turnaround_empty">No decided requests yet</string>
+    <string name="reports_team_currently_out_title">Currently Out</string>
+    <string name="reports_team_currently_out_empty">No one is out today</string>
+    <string name="reports_team_currently_out_row">%1$s — %2$s (until %3$s)</string>
+
     <!-- Navigation -->
     <string name="nav_tab_home">Home</string>
     <string name="nav_tab_leaves">Leaves</string>

@@ -54,6 +54,13 @@ class LeavePlanRequestsRepository @Inject constructor(
             is AppResult.Failure -> result
         }
 
+    /** All statuses (not just pending) for the caller's team — feeds the team analytics report. */
+    suspend fun listForApprover(approverId: String, limit: Int): AppResult<List<LeavePlanRequestDto>> =
+        when (val result = safeApiCall { leavePlanRequestsApi.list(approverId = approverId, limit = limit) }) {
+            is AppResult.Success -> AppResult.Success(result.data.data)
+            is AppResult.Failure -> result
+        }
+
     /** No balance credit on reject here (unlike Leave Requests) — plan requests never touch balances. */
     suspend fun approve(id: String): AppResult<LeavePlanRequestDto> = safeApiCall { leavePlanRequestsApi.approve(id) }
 

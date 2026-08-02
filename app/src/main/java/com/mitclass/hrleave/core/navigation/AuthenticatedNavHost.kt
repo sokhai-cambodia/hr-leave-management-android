@@ -2,6 +2,7 @@ package com.mitclass.hrleave.core.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AutoAwesome
+import androidx.compose.material.icons.outlined.BarChart
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -32,18 +33,24 @@ import com.mitclass.hrleave.feature.profile.ChangePasswordScreen
 import com.mitclass.hrleave.feature.profile.ProfileRoutes
 import com.mitclass.hrleave.feature.profile.ProfileScreen
 import com.mitclass.hrleave.feature.recommendations.RecommendationsScreen
+import com.mitclass.hrleave.feature.reports.ReportsScreen
 import com.mitclass.hrleave.feature.schedule.ScheduleScreen
 import com.mitclass.hrleave.feature.settings.SettingsScreen
 
 /**
  * Dashboard quick actions — Schedule/Leave Requests/Leave Plan Requests moved to bottom tabs
- * (Task 13.2/13.3), so only Recommendations remains as a dashboard-only entry point.
+ * (Task 13.2/13.3), so only Recommendations and Reports remain as dashboard-only entry points.
  */
 private val dashboardQuickActions = listOf(
     QuickAction(
         label = "Recommendations",
         icon = Icons.Outlined.AutoAwesome,
         route = Destination.Recommendations.route,
+    ),
+    QuickAction(
+        label = "Reports",
+        icon = Icons.Outlined.BarChart,
+        route = Destination.Reports.route,
     ),
 )
 
@@ -166,6 +173,7 @@ fun AuthenticatedNavHost(
                 },
             )
         }
+        composable(Destination.Reports.route) { ReportsScreen(isApprover = isApprover) }
         composable(Destination.Approvals.route) { ApprovalsQueueScreen() }
         composable(Destination.Notifications.route) {
             NotificationsListScreen(

@@ -53,6 +53,13 @@ class LeaveRequestsRepository @Inject constructor(
             is AppResult.Failure -> result
         }
 
+    /** All statuses (not just pending) for the caller's team — feeds the team analytics report. */
+    suspend fun listForApprover(approverId: String, limit: Int): AppResult<List<LeaveRequestDto>> =
+        when (val result = safeApiCall { leaveRequestsApi.list(approverId = approverId, limit = limit) }) {
+            is AppResult.Success -> AppResult.Success(result.data.data)
+            is AppResult.Failure -> result
+        }
+
     /** Reject credits the balance back — verified server-side (Task 7.1), nothing to recompute client-side. */
     suspend fun approve(id: String): AppResult<LeaveRequestDto> = safeApiCall { leaveRequestsApi.approve(id) }
 
