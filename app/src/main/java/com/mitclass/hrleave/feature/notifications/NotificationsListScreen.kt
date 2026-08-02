@@ -40,7 +40,7 @@ import com.mitclass.hrleave.data.remote.dto.NotificationDto
 
 @Composable
 fun NotificationsListScreen(
-    onNavigateToEntity: (entityType: String) -> Unit,
+    onNavigateToEntity: (entityType: String, entityId: String) -> Unit,
     viewModel: NotificationsListViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsState()
@@ -76,7 +76,7 @@ fun NotificationsListScreen(
                                 notification = notification,
                                 onClick = {
                                     viewModel.markRead(notification.id)
-                                    onNavigateToEntity(notification.entityType)
+                                    onNavigateToEntity(notification.entityType, notification.entityId)
                                 },
                             )
                             if (index != current.notifications.lastIndex) HorizontalDivider()

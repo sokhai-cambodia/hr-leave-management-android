@@ -168,10 +168,10 @@ fun AuthenticatedNavHost(
         composable(Destination.Approvals.route) { ApprovalsQueueScreen() }
         composable(Destination.Notifications.route) {
             NotificationsListScreen(
-                onNavigateToEntity = { entityType ->
+                onNavigateToEntity = { entityType, entityId ->
                     val target = when (entityType) {
-                        "leave_request" -> Destination.Leaves.route(Destination.Leaves.REQUESTS_TAB)
-                        "leave_plan_request" -> Destination.Leaves.route(Destination.Leaves.PLANS_TAB)
+                        "leave_request" -> LeaveRequestRoutes.detail(entityId)
+                        "leave_plan_request" -> LeavePlanRequestRoutes.detail(entityId)
                         else -> null
                     }
                     target?.let { navController.navigateSingleTop(it) }
