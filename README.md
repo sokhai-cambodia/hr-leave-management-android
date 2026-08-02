@@ -82,12 +82,49 @@ own documented migration path off RecyclerView, not a workaround.
 
 ## Tech Stack
 
-- Kotlin, Jetpack Compose (Material Design 3), dark mode via an explicit in-app toggle
-- Hilt (dependency injection)
-- Retrofit + OkHttp + kotlinx.serialization
-- Navigation-Compose
-- androidx.security-crypto (encrypted token storage)
-- JUnit4 + MockK + kotlinx-coroutines-test (unit tests)
+Every version below is pinned in `gradle/libs.versions.toml` (a single version catalog — no
+version numbers are scattered across `build.gradle.kts` files). Kept current as of this table's
+last edit; bump the catalog entry and this row together.
+
+| Library | Version | Why this one |
+|---|---|---|
+| Kotlin | 2.0.21 | Language + K2 compiler; required baseline for the Compose compiler plugin below |
+| Android Gradle Plugin | 8.13.2 | Build tooling; tracks current stable Android Studio |
+| Jetpack Compose BOM | 2024.12.01 | Single version pin for all `androidx.compose.*` artifacts — avoids hand-matching individual Compose module versions |
+| Compose Compiler (`kotlin-compose` plugin) | matches Kotlin 2.0.21 | Kotlin 2.0+ moved the Compose compiler in-tree with Kotlin itself, replacing the old standalone `compose-compiler` version |
+| Material 3 (`androidx.compose.material3`) | via Compose BOM | The design-system layer this app's UI is built on (STYLE_GUIDE.md is a customization of it, not a replacement) |
+| Hilt | 2.52 | Dependency injection — constructor-injects ViewModels/repositories/Retrofit services instead of a hand-rolled service locator |
+| KSP | 2.0.21-1.0.28 | Annotation processing for Hilt; used instead of kapt for faster builds and Kotlin-2.0 compatibility |
+| Navigation-Compose | 2.8.4 | Type-unsafe but lightweight single-NavHost routing; matches this app's single-Activity architecture |
+| Retrofit | 2.11.0 | HTTP client for the FastAPI backend — declarative `@GET`/`@POST` interfaces over hand-rolled `HttpURLConnection`/OkHttp calls |
+| OkHttp | 4.12.0 | Transport + logging interceptor under Retrofit |
+| kotlinx.serialization | 1.7.3 | JSON (de)serialization — chosen over Gson/Moshi for compile-time-checked, reflection-free serializers that pair natively with Kotlin data classes |
+| kotlinx.coroutines | 1.9.0 | Structured concurrency for all suspend-based repository/ViewModel code |
+| androidx.security-crypto | 1.1.0-alpha06 | `EncryptedSharedPreferences` for the JWT access token — the only thing persisted locally that must not sit in plaintext |
+| ZXing core | 3.5.3 | QR code generation for the My Business Card screen |
+| JUnit4 / MockK / kotlinx-coroutines-test | 4.13.2 / 1.13.13 / 1.9.0 | Unit testing + coroutine test dispatchers, and mocking without needing Mockito's reflection tricks on final Kotlin classes |
+
+## UI Toolkit: Jetpack Compose vs. XML Views
+
+This app's UI layer is **100% Jetpack Compose** — there are zero files under `res/layout/`, zero
+`Activity`/`Fragment` classes that inflate a layout, and zero `findViewById`/`ViewBinding` usage.
+`MainActivity` is a ~15-line `ComponentActivity` that calls `setContent { }` once and hosts the
+entire app as composable functions from there.
+
+The two approaches, and why this project picked Compose:
+
+| | XML Views (traditional) | Jetpack Compose (this app) |
+|---|---|---|
+| UI definition | Declarative markup (`res/layout/*.xml`) + imperative Kotlin/Java to bind it (`findViewById`, `RecyclerView.Adapter`, `ViewHolder`) | Declarative Kotlin functions (`@Composable`) — the function's control flow *is* the UI logic |
+| State → UI sync | Manual: mutate a `View` property yourself whenever data changes (`textView.text = ...`), easy to forget a spot and leave stale UI | Automatic: a composable re-executes (recomposes) when the `State`/`StateFlow` it reads changes; no manual view mutation calls |
+| Lists | `RecyclerView` + `Adapter` + `ViewHolder` boilerplate for view recycling | `LazyColumn`/`LazyRow` — same recycling behavior, expressed as a function over a list, no adapter class (see "On RecyclerView" above) |
+| Reuse | Custom `View` subclasses, or `<include>` layout composition | Plain function composition — a "component" is just a smaller `@Composable` called from a bigger one |
+| Where used here | Only `AndroidManifest.xml` and resource XML that Android itself requires regardless of UI toolkit — `strings.xml`, `colors.xml` (base palette), `themes.xml` (splash-screen theme only, since Compose can't own the pre-Activity system splash) | Every screen, dialog, and reusable UI piece (`core/ui/*`, `core/admin/GenericCrudListScreen.kt`, etc.) |
+
+The remaining XML in this repo (`res/values/strings.xml`, `colors.xml`, `AndroidManifest.xml`) isn't
+"the old system used alongside Compose" — it's Android's resource/manifest format, which every
+Android app uses irrespective of whether its UI is Views or Compose. There is no XML *layout*
+anywhere in this app.
 
 ## Installation & Running
 
