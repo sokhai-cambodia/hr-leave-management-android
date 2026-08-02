@@ -34,7 +34,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.mitclass.hrleave.R
 import com.mitclass.hrleave.core.theme.AppSpacing
-import com.mitclass.hrleave.core.theme.LightBorder
 import com.mitclass.hrleave.core.theme.TextFieldCornerRadius
 import java.time.Instant
 import java.time.LocalDate
@@ -65,7 +64,7 @@ fun DatePickerField(
                 .clickable(enabled = enabled) { showDialog = true },
             shape = RoundedCornerShape(TextFieldCornerRadius),
             color = MaterialTheme.colorScheme.surface,
-            border = BorderStroke(1.dp, LightBorder),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
         ) {
             Row(
                 modifier = Modifier

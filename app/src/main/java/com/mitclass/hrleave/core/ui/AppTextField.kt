@@ -17,8 +17,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import com.mitclass.hrleave.core.theme.AppSpacing
 import com.mitclass.hrleave.core.theme.BrandPrimary
 import com.mitclass.hrleave.core.theme.DangerColor
-import com.mitclass.hrleave.core.theme.LightBorder
-import com.mitclass.hrleave.core.theme.LightFieldFill
 import com.mitclass.hrleave.core.theme.TextFieldCornerRadius
 
 /**
@@ -67,15 +65,15 @@ fun AppTextField(
             trailingIcon = trailingIcon,
             shape = RoundedCornerShape(TextFieldCornerRadius),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = LightFieldFill,
-                unfocusedContainerColor = LightFieldFill,
-                disabledContainerColor = LightFieldFill,
-                errorContainerColor = LightFieldFill,
+                focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                errorContainerColor = MaterialTheme.colorScheme.surfaceVariant,
                 // STYLE_GUIDE.md: "outlined/bordered (not borderless), 1.5dp primary-colored
                 // border on focus" — a visible border at rest too, not just on focus.
                 focusedBorderColor = BrandPrimary,
-                unfocusedBorderColor = LightBorder,
-                disabledBorderColor = LightBorder,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                disabledBorderColor = MaterialTheme.colorScheme.outline,
                 errorBorderColor = DangerColor,
                 // STYLE_GUIDE.md: "hint text at 35% opacity."
                 focusedPlaceholderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.35f),

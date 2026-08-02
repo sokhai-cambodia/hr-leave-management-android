@@ -45,8 +45,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.mitclass.hrleave.R
 import com.mitclass.hrleave.core.theme.AppSpacing
 import com.mitclass.hrleave.core.theme.BrandPrimary
-import com.mitclass.hrleave.core.theme.LightBorder
-import com.mitclass.hrleave.core.theme.LightFieldFill
 import com.mitclass.hrleave.core.theme.TextFieldCornerRadius
 import com.mitclass.hrleave.core.ui.AppButton
 import com.mitclass.hrleave.core.ui.AppOutlinedButton
@@ -96,10 +94,10 @@ fun LeavePlanRequestFormScreen(
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                     shape = RoundedCornerShape(TextFieldCornerRadius),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = LightFieldFill,
-                        unfocusedContainerColor = LightFieldFill,
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
                         focusedBorderColor = BrandPrimary,
-                        unfocusedBorderColor = LightBorder,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -144,7 +142,7 @@ fun LeavePlanRequestFormScreen(
                 .fillMaxWidth()
                 .heightIn(min = 80.dp),
             shape = RoundedCornerShape(TextFieldCornerRadius),
-            color = LightFieldFill,
+            color = MaterialTheme.colorScheme.surfaceVariant,
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
         ) {
             Box(modifier = Modifier.padding(AppSpacing.md)) {

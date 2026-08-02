@@ -20,7 +20,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.mitclass.hrleave.core.theme.AppSpacing
-import com.mitclass.hrleave.core.theme.LightFieldFill
 
 data class BarChartEntry(val label: String, val value: Float, val valueText: String)
 
@@ -51,7 +50,7 @@ fun SimpleBarChart(
                         .weight(1f)
                         .height(20.dp)
                         .clip(RoundedCornerShape(4.dp))
-                        .background(LightFieldFill),
+                        .background(MaterialTheme.colorScheme.surfaceVariant),
                 ) {
                     Box(
                         modifier = Modifier

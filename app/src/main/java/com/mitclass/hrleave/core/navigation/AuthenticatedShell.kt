@@ -53,7 +53,6 @@ import com.mitclass.hrleave.core.notifications.NotificationPermissionRequester
 import com.mitclass.hrleave.core.theme.AppSpacing
 import com.mitclass.hrleave.core.theme.BrandPrimary
 import com.mitclass.hrleave.core.theme.DangerColor
-import com.mitclass.hrleave.core.theme.LightFieldFill
 import com.mitclass.hrleave.data.remote.dto.UserDto
 import com.mitclass.hrleave.feature.leaveplanrequests.LeavePlanRequestRoutes
 import com.mitclass.hrleave.feature.leaverequests.LeaveRequestRoutes
@@ -218,7 +217,7 @@ private fun NotificationBellChip(unreadCount: Int, onClick: () -> Unit) {
         modifier = Modifier
             .size(40.dp)
             .clip(CircleShape)
-            .background(LightFieldFill)
+            .background(MaterialTheme.colorScheme.surfaceVariant)
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
