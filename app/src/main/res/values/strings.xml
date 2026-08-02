@@ -175,6 +175,13 @@
     <string name="settings_about_section_title">About</string>
     <string name="settings_about_version_label">App version</string>
 
+    <!-- Status filter (Leave Requests / Leave Plan Requests lists) -->
+    <string name="common_status_all">All</string>
+    <string name="common_status_draft">Draft</string>
+    <string name="common_status_pending">Pending</string>
+    <string name="common_status_approved">Approved</string>
+    <string name="common_status_rejected">Rejected</string>
+
     <!-- Navigation -->
     <string name="nav_tab_home">Home</string>
     <string name="nav_tab_leaves">Leaves</string>

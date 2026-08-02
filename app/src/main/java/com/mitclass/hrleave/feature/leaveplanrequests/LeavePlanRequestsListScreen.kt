@@ -36,7 +36,9 @@ import com.mitclass.hrleave.core.theme.AppSpacing
 import com.mitclass.hrleave.core.ui.EmptyStateView
 import com.mitclass.hrleave.core.ui.ErrorStateView
 import com.mitclass.hrleave.core.ui.OnResume
+import com.mitclass.hrleave.core.ui.SearchSortBar
 import com.mitclass.hrleave.core.ui.StatusChip
+import com.mitclass.hrleave.core.ui.StatusFilterRow
 import com.mitclass.hrleave.data.remote.dto.LeavePlanRequestDto
 
 /** No FAB here — the shell's global center FAB is the one create entry point (Task 14.2). */
@@ -46,23 +48,42 @@ fun LeavePlanRequestsListScreen(
     viewModel: LeavePlanRequestsListViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsState()
+    val searchQuery by viewModel.searchQuery.collectAsState()
+    val sortAscending by viewModel.sortAscending.collectAsState()
+    val statusFilter by viewModel.statusFilter.collectAsState()
     OnResume(onResume = viewModel::load)
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        when (val current = state) {
-            is LeavePlanRequestsListUiState.Loading -> LoadingBox()
-            is LeavePlanRequestsListUiState.Error -> ErrorStateView(message = current.message, onRetry = viewModel::load)
-            is LeavePlanRequestsListUiState.Loaded -> {
-                if (current.requests.isEmpty()) {
-                    EmptyStateView(message = stringResource(R.string.leaveplan_requests_empty))
-                } else {
-                    LeavePlanRequestsList(
-                        requests = current.requests,
-                        canLoadMore = current.canLoadMore,
-                        isLoadingMore = current.isLoadingMore,
-                        onItemClick = onItemClick,
-                        onLoadMore = viewModel::loadMore,
-                    )
+    Column(modifier = Modifier.fillMaxSize()) {
+        SearchSortBar(
+            searchQuery = searchQuery,
+            onSearchQueryChange = viewModel::onSearchQueryChange,
+            sortAscending = sortAscending,
+            onToggleSort = viewModel::toggleSortDirection,
+            modifier = Modifier.padding(horizontal = AppSpacing.lg, vertical = AppSpacing.sm),
+        )
+        StatusFilterRow(
+            selected = statusFilter,
+            onSelect = viewModel::onStatusFilterSelected,
+            modifier = Modifier.padding(horizontal = AppSpacing.lg),
+        )
+        Spacer(modifier = Modifier.height(AppSpacing.sm))
+        Box(modifier = Modifier.fillMaxSize()) {
+            when (val current = state) {
+                is LeavePlanRequestsListUiState.Loading -> LoadingBox()
+                is LeavePlanRequestsListUiState.Error -> ErrorStateView(message = current.message, onRetry = viewModel::load)
+                is LeavePlanRequestsListUiState.Loaded -> {
+                    val visibleRequests = viewModel.visibleRequests(current.requests)
+                    if (visibleRequests.isEmpty()) {
+                        EmptyStateView(message = stringResource(R.string.leaveplan_requests_empty))
+                    } else {
+                        LeavePlanRequestsList(
+                            requests = visibleRequests,
+                            canLoadMore = current.canLoadMore,
+                            isLoadingMore = current.isLoadingMore,
+                            onItemClick = onItemClick,
+                            onLoadMore = viewModel::loadMore,
+                        )
+                    }
                 }
             }
         }
