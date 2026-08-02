@@ -1,5 +1,7 @@
 package com.mitclass.hrleave.core.theme
 
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
 
@@ -27,12 +29,17 @@ val DarkBorder = Color(0xFF3A3A3E)
 
 /**
  * STYLE_GUIDE.md "status pastel formula": derive a badge/stat-card background by blending the
- * status color at 14% alpha over white, using the full-saturation color as the foreground. One
- * shared helper instead of hand-picked bg/fg pairs per status.
+ * status color at 14% alpha over the current theme's surface, using the full-saturation color as
+ * the foreground. One shared helper instead of hand-picked bg/fg pairs per status.
  *
  * Actually composites down to an OPAQUE color rather than returning a translucent
  * `copy(alpha = 0.14f)` — a translucent Card background lets its own elevation shadow show
  * through unevenly (stronger near the edges), producing a muddy two-tone "frame" instead of a
  * flat pastel fill.
+ *
+ * Composites over `MaterialTheme.colorScheme.surface` — not a hardcoded white — so this reads as
+ * a light pastel card in light mode (surface == white) and a muted dark-tinted card in dark mode,
+ * instead of every stat card/pill/action tile staying a bright white box regardless of theme.
  */
-fun Color.pastelContainer(): Color = this.copy(alpha = 0.14f).compositeOver(Color.White)
+@Composable
+fun Color.pastelContainer(): Color = this.copy(alpha = 0.14f).compositeOver(MaterialTheme.colorScheme.surface)
