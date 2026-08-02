@@ -22,6 +22,7 @@ fun screenTitle(entry: NavBackStackEntry?): String {
         Destination.Approvals.route -> stringResource(R.string.nav_title_approvals)
         Destination.Notifications.route -> stringResource(R.string.nav_title_notifications)
         Destination.Recommendations.route -> stringResource(R.string.nav_title_recommendations)
+        Destination.Reports.route -> stringResource(R.string.reports_nav_label)
         Destination.AdminPolicies.route -> stringResource(R.string.admin_entry_policies)
         Destination.AdminPublicHolidays.route -> stringResource(R.string.admin_entry_public_holidays)
         Destination.AdminLeaveTypes.route -> stringResource(R.string.admin_entry_leave_types)

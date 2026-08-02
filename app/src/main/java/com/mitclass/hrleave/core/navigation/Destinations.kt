@@ -21,6 +21,7 @@ sealed class Destination(val route: String) {
         fun route(tab: String = REQUESTS_TAB) = "leaves?tab=$tab"
     }
     data object Recommendations : Destination("recommendations")
+    data object Reports : Destination("reports")
     data object Approvals : Destination("approvals")
     data object Notifications : Destination("notifications")
     data object Profile : Destination("profile")
