@@ -17,7 +17,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.mitclass.hrleave.core.theme.AppSpacing
 import com.mitclass.hrleave.core.theme.BrandPrimary
-import com.mitclass.hrleave.core.theme.LightFieldFill
 import com.mitclass.hrleave.core.theme.PillCornerRadius
 
 /**
@@ -35,7 +34,7 @@ fun PillTabRow(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(color = LightFieldFill, shape = RoundedCornerShape(PillCornerRadius))
+            .background(color = MaterialTheme.colorScheme.surfaceVariant, shape = RoundedCornerShape(PillCornerRadius))
             .padding(4.dp),
     ) {
         titles.forEachIndexed { index, title ->

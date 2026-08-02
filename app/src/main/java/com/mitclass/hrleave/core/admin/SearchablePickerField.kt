@@ -34,8 +34,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.mitclass.hrleave.R
 import com.mitclass.hrleave.core.theme.AppSpacing
-import com.mitclass.hrleave.core.theme.LightBorder
-import com.mitclass.hrleave.core.theme.LightFieldFill
 import com.mitclass.hrleave.core.theme.TextFieldCornerRadius
 import com.mitclass.hrleave.core.ui.AppTextField
 
@@ -62,8 +60,8 @@ fun SearchablePickerField(
                 .fillMaxWidth()
                 .clickable { showDialog = true },
             shape = RoundedCornerShape(TextFieldCornerRadius),
-            color = LightFieldFill,
-            border = BorderStroke(1.dp, LightBorder),
+            color = MaterialTheme.colorScheme.surfaceVariant,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
         ) {
             Row(
                 modifier = Modifier

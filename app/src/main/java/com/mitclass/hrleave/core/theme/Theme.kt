@@ -46,6 +46,7 @@ private val DarkColors = darkColorScheme(
     background = DarkBackground,
     surface = DarkSurface,
     surfaceTint = DarkSurface,
+    surfaceVariant = DarkFieldFill,
     surfaceDim = DarkSurface,
     surfaceBright = DarkSurface,
     surfaceContainerLowest = DarkSurface,
@@ -53,6 +54,7 @@ private val DarkColors = darkColorScheme(
     surfaceContainer = DarkSurface,
     surfaceContainerHigh = DarkSurface,
     surfaceContainerHighest = DarkSurface,
+    outline = DarkBorder,
     error = DangerColor,
 )
 

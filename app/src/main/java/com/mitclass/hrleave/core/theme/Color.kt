@@ -22,6 +22,8 @@ val LightBorder = Color(0xFFEAEAEE)
 
 val DarkBackground = Color(0xFF121212)
 val DarkSurface = Color(0xFF1E1E1E)
+val DarkFieldFill = Color(0xFF2A2A2E)
+val DarkBorder = Color(0xFF3A3A3E)
 
 /**
  * STYLE_GUIDE.md "status pastel formula": derive a badge/stat-card background by blending the
