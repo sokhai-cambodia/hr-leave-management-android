@@ -75,6 +75,7 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.security.crypto)
+    implementation(libs.androidx.datastore.preferences)
     implementation(libs.zxing.core)
 
     implementation(platform(libs.androidx.compose.bom))

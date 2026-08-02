@@ -10,7 +10,9 @@ import android.os.Build
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.mitclass.hrleave.core.storage.UserPreferencesRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -25,6 +27,7 @@ private const val NOTIFICATION_ID = 1001
 @Singleton
 class SystemNotifier @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val userPreferencesRepository: UserPreferencesRepository,
 ) {
     init {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -39,8 +42,9 @@ class SystemNotifier @Inject constructor(
 
     @SuppressLint("MissingPermission") // guarded by hasPostNotificationsPermission() below, which
     // lint's static check can't see through since it isn't an inline ActivityCompat call.
-    fun notifyUnreadCountIncreased(unreadCount: Int) {
+    suspend fun notifyUnreadCountIncreased(unreadCount: Int) {
         if (!hasPostNotificationsPermission()) return
+        if (!userPreferencesRepository.notificationsEnabled.first()) return
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setContentTitle("HR Leave")
