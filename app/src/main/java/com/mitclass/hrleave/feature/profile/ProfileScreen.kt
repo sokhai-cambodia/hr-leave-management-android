@@ -24,6 +24,7 @@ import androidx.compose.material.icons.outlined.Gavel
 import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.QrCode2
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -80,6 +81,7 @@ fun ProfileScreen(
     onChangePasswordClick: () -> Unit,
     onAdminEntryClick: (Destination) -> Unit = {},
     onBusinessCardClick: () -> Unit = {},
+    onSettingsClick: () -> Unit = {},
     onLogout: () -> Unit = {},
     viewModel: ProfileViewModel = hiltViewModel(),
 ) {
@@ -174,6 +176,24 @@ fun ProfileScreen(
             Icon(imageVector = Icons.Outlined.QrCode2, contentDescription = null)
             Text(
                 text = stringResource(R.string.business_card_title),
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = AppSpacing.md),
+            )
+            Icon(imageVector = Icons.Outlined.ChevronRight, contentDescription = null)
+        }
+        HorizontalDivider()
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onSettingsClick)
+                .padding(vertical = AppSpacing.md),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(imageVector = Icons.Outlined.Settings, contentDescription = null)
+            Text(
+                text = stringResource(R.string.settings_nav_label),
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier
                     .weight(1f)

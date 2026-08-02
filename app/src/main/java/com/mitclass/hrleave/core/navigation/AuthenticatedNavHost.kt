@@ -33,6 +33,7 @@ import com.mitclass.hrleave.feature.profile.ProfileRoutes
 import com.mitclass.hrleave.feature.profile.ProfileScreen
 import com.mitclass.hrleave.feature.recommendations.RecommendationsScreen
 import com.mitclass.hrleave.feature.schedule.ScheduleScreen
+import com.mitclass.hrleave.feature.settings.SettingsScreen
 
 /**
  * Dashboard quick actions — Schedule/Leave Requests/Leave Plan Requests moved to bottom tabs
@@ -185,6 +186,7 @@ fun AuthenticatedNavHost(
                 onChangePasswordClick = { navController.navigateSingleTop(ProfileRoutes.CHANGE_PASSWORD_ROUTE) },
                 onAdminEntryClick = { destination -> navController.navigateSingleTop(destination.route) },
                 onBusinessCardClick = { navController.navigateSingleTop(Destination.BusinessCard.route) },
+                onSettingsClick = { navController.navigateSingleTop(Destination.Settings.route) },
                 onLogout = onLogout,
             )
         }
@@ -194,6 +196,7 @@ fun AuthenticatedNavHost(
         composable(Destination.BusinessCard.route) {
             BusinessCardScreen(user = user)
         }
+        composable(Destination.Settings.route) { SettingsScreen() }
         composable(Destination.AdminPolicies.route) { PoliciesAdminScreen(isSuperuser = user.isSuperuser) }
         composable(Destination.AdminPublicHolidays.route) { PublicHolidaysAdminScreen(isSuperuser = user.isSuperuser) }
         composable(Destination.AdminLeaveTypes.route) { LeaveTypesAdminScreen(isSuperuser = user.isSuperuser) }
