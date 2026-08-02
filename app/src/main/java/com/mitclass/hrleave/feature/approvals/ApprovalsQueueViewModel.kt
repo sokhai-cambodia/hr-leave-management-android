@@ -40,8 +40,45 @@ class ApprovalsQueueViewModel @Inject constructor(
     private val _actionError = MutableStateFlow<String?>(null)
     val actionError: StateFlow<String?> = _actionError.asStateFlow()
 
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
+
+    private val _sortAscending = MutableStateFlow(true)
+    val sortAscending: StateFlow<Boolean> = _sortAscending.asStateFlow()
+
     init {
         load()
+    }
+
+    fun onSearchQueryChange(query: String) {
+        _searchQuery.value = query
+    }
+
+    fun toggleSortDirection() {
+        _sortAscending.value = !_sortAscending.value
+    }
+
+    /** Client-side filter (by requester name/leave type) + sort by start date over the loaded queue. */
+    fun visibleLeaveRequests(loaded: List<LeaveRequestDto>): List<LeaveRequestDto> {
+        val query = _searchQuery.value.trim()
+        val filtered = loaded.filter {
+            query.isBlank() ||
+                (it.owner.fullName ?: it.owner.email).contains(query, ignoreCase = true) ||
+                it.leaveType.name.contains(query, ignoreCase = true)
+        }
+        val sorted = filtered.sortedBy { it.startDate }
+        return if (_sortAscending.value) sorted else sorted.asReversed()
+    }
+
+    fun visibleLeavePlanRequests(loaded: List<LeavePlanRequestDto>): List<LeavePlanRequestDto> {
+        val query = _searchQuery.value.trim()
+        val filtered = loaded.filter {
+            query.isBlank() ||
+                (it.owner.fullName ?: it.owner.email).contains(query, ignoreCase = true) ||
+                it.leaveType.name.contains(query, ignoreCase = true)
+        }
+        val sorted = filtered.sortedBy { request -> request.details.minOfOrNull { it.leaveDate }.orEmpty() }
+        return if (_sortAscending.value) sorted else sorted.asReversed()
     }
 
     fun load() {

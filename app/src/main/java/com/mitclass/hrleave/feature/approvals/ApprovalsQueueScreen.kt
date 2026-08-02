@@ -49,6 +49,7 @@ import com.mitclass.hrleave.core.theme.pastelContainer
 import com.mitclass.hrleave.core.ui.EmptyStateView
 import com.mitclass.hrleave.core.ui.OnResume
 import com.mitclass.hrleave.core.ui.PillTabRow
+import com.mitclass.hrleave.core.ui.SearchSortBar
 import com.mitclass.hrleave.data.remote.dto.LeavePlanRequestDto
 import com.mitclass.hrleave.data.remote.dto.LeaveRequestDto
 
@@ -59,6 +60,8 @@ fun ApprovalsQueueScreen(
     val state by viewModel.uiState.collectAsState()
     val processingIds by viewModel.processingIds.collectAsState()
     val actionError by viewModel.actionError.collectAsState()
+    val searchQuery by viewModel.searchQuery.collectAsState()
+    val sortAscending by viewModel.sortAscending.collectAsState()
     OnResume(onResume = viewModel::load)
 
     var selectedTab by remember { mutableIntStateOf(0) }
@@ -72,7 +75,14 @@ fun ApprovalsQueueScreen(
             ),
             selectedIndex = selectedTab,
             onSelect = { selectedTab = it },
-            modifier = Modifier.padding(AppSpacing.lg),
+            modifier = Modifier.padding(horizontal = AppSpacing.lg, vertical = AppSpacing.sm),
+        )
+        SearchSortBar(
+            searchQuery = searchQuery,
+            onSearchQueryChange = viewModel::onSearchQueryChange,
+            sortAscending = sortAscending,
+            onToggleSort = viewModel::toggleSortDirection,
+            modifier = Modifier.padding(horizontal = AppSpacing.lg, vertical = AppSpacing.sm),
         )
         actionError?.let {
             Row(
@@ -106,14 +116,14 @@ fun ApprovalsQueueScreen(
             is ApprovalsQueueUiState.Loaded -> {
                 if (selectedTab == 0) {
                     LeaveRequestsTab(
-                        requests = current.leaveRequests,
+                        requests = viewModel.visibleLeaveRequests(current.leaveRequests),
                         processingIds = processingIds,
                         onApprove = viewModel::approveLeaveRequest,
                         onReject = { id -> pendingReject = PendingReject.LeaveRequest(id) },
                     )
                 } else {
                     LeavePlanRequestsTab(
-                        requests = current.leavePlanRequests,
+                        requests = viewModel.visibleLeavePlanRequests(current.leavePlanRequests),
                         processingIds = processingIds,
                         onApprove = viewModel::approveLeavePlanRequest,
                         onReject = { id -> pendingReject = PendingReject.LeavePlanRequest(id) },

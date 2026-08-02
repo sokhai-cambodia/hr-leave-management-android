@@ -34,8 +34,44 @@ class LeaveRequestsListViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<LeaveRequestsListUiState>(LeaveRequestsListUiState.Loading)
     val uiState: StateFlow<LeaveRequestsListUiState> = _uiState.asStateFlow()
 
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
+
+    private val _sortAscending = MutableStateFlow(false)
+    val sortAscending: StateFlow<Boolean> = _sortAscending.asStateFlow()
+
+    private val _statusFilter = MutableStateFlow<String?>(null)
+    val statusFilter: StateFlow<String?> = _statusFilter.asStateFlow()
+
     init {
         load()
+    }
+
+    fun onSearchQueryChange(query: String) {
+        _searchQuery.value = query
+    }
+
+    fun toggleSortDirection() {
+        _sortAscending.value = !_sortAscending.value
+    }
+
+    fun onStatusFilterSelected(status: String?) {
+        _statusFilter.value = status
+    }
+
+    /** Client-side filter + sort over currently-loaded pages — the list endpoint has no server-side search/sort. */
+    fun visibleRequests(loaded: List<LeaveRequestDto>): List<LeaveRequestDto> {
+        val query = _searchQuery.value.trim()
+        val status = _statusFilter.value
+        val filtered = loaded
+            .filter { status == null || it.status == status }
+            .filter {
+                query.isBlank() ||
+                    it.leaveType.name.contains(query, ignoreCase = true) ||
+                    it.description.orEmpty().contains(query, ignoreCase = true)
+            }
+        val sorted = filtered.sortedBy { it.startDate }
+        return if (_sortAscending.value) sorted else sorted.asReversed()
     }
 
     fun load() {
